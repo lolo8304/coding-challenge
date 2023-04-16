@@ -1,0 +1,10 @@
+{
+  "key": "value",
+  "key-n": 101,
+  "key-o": {
+    "key": "value",
+    "key2": {
+      "key": "value"
+    }
+  }
+}

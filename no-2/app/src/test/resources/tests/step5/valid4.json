@@ -1,0 +1,24 @@
+{
+    "string": "Hello, world!",
+    "number": 42.3e-1,
+    "integer": 1234567890,
+    "boolean": true,
+    "null_value": null,
+    "array": [
+      {
+        "name": "Alice",
+        "age": 25
+      },
+      {
+        "name": "Bob",
+        "age": 30
+      }
+    ],
+    "nested": {
+      "object": {
+        "foo": "bar",
+        "baz": [1, 2, 3]
+      }
+    }
+  }
+  

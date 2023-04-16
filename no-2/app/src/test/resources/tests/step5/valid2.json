@@ -1,0 +1,50 @@
+{
+    "name": "John Smith",
+    "age": 42,
+    "isMarried": true,
+    "salary": 75000.50,
+    "skills": ["programming", "data analysis", "project management"],
+    "contact": {
+        "email": "john.smith@example.com",
+        "phone": "+1 (123) 456-7890"
+    },
+    "education": {
+        "degree": "Master's",
+        "field": "Computer Science",
+        "year": 2010,
+        "gpa": 3.85
+    },
+    "languages": [
+        {
+            "name": "English",
+            "level": "native"
+        },
+        {
+            "name": "French",
+            "level": "intermediate"
+        },
+        {
+            "name": "Mandarin",
+            "level": "beginner"
+        }
+    ],
+    "bankAccounts": [
+        {
+            "name": "Checking Account",
+            "balance": 2500.35,
+            "currency": "USD",
+            "active": true
+        },
+        {
+            "name": "Savings Account",
+            "balance": -5000.00,
+            "currency": "EUR",
+            "active": false
+        }
+    ],
+    "pi": 3.14159265359,
+    "isPositive": false,
+    "hexNumber": "0x3e8",
+    "exponentialNumber": 1.23e+6,
+    "exponentialNumber2": 0e+10
+}

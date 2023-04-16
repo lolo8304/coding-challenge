@@ -1,0 +1,17 @@
+{
+    "integer": 42,
+    "negative_integer": -123,
+    "float": 3.14159265359,
+    "negative_float": -2.71828182846,
+    "scientific_notation": 1.23e4,
+    "negative_scientific_notation": -5.67e-8,
+    "big_integer": 9007199254740992,
+    "negative_big_integer": -9007199254740992,
+    "max_integer": 2147483647,
+    "min_integer": -2147483648,
+    "max_float": 3.4028235e38,
+    "min_float": 1.17549435e-38,
+    "infinity": 111111111111111111111111111111111111111111111111111111111,
+    "negative_infinity": -111111111111111111111111111111111111111111111111111111111
+  }
+  

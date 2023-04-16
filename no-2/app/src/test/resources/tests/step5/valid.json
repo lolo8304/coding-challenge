@@ -1,0 +1,14 @@
+{
+    "string": "Hello, world!",
+    "number": 42,
+    "boolean": true,
+    "null": null,
+    "array": ["apple", "banana", "cherry"],
+    "object": {
+      "property": "value",
+      "nested": {
+        "foo": "bar"
+      }
+    }
+  }
+  

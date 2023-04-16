@@ -1,0 +1,67 @@
+{
+    "name": "John Doe",
+    "age": 30,
+    "address": {
+      "street": "123 Main St",
+      "city": "Anytown",
+      "state": "CA",
+      "zip": 12345
+    },
+    "phone_numbers": [
+      "+1 555-555-1234",
+      "+1 555-555-5678"
+    ],
+    "email": "johndoe@example.com",
+    "is_verified": true,
+    "balance": 98765432101234567890123456789012345678901234567890.1234567890123456789,
+    "credit_limit": 12345678901234567890123456789012345678901234567890,
+    "order_history": [
+      {
+        "order_number": "1234",
+        "order_date": "2022-04-15T13:00:00.000Z",
+        "items": [
+          {
+            "name": "Product 1",
+            "price": 123.45,
+            "quantity": 2
+          },
+          {
+            "name": "Product 2",
+            "price": 67.89,
+            "quantity": 1
+          }
+        ]
+      },
+      {
+        "order_number": "5678",
+        "order_date": "2022-04-16T13:00:00.000Z",
+        "items": [
+          {
+            "name": "Product 3",
+            "price": 234.56,
+            "quantity": 3
+          },
+          {
+            "name": "Product 4",
+            "price": 789.01,
+            "quantity": 2
+          }
+        ]
+      }
+    ],
+    "payment_methods": [
+      {
+        "type": "credit_card",
+        "number": 12345678123456781234567812345678,
+        "expiration_date": "2023-12-31",
+        "cvv": 123
+      },
+      {
+        "type": "bank_transfer",
+        "account_number": 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,
+        "routing_number": 123456789,
+        "swift_code": "ABCD1234"
+      }
+    ]
+  }
+  
