@@ -1,0 +1,1 @@
+To keep things simple, these examples for building Huffman trees uses a sorted list to keep the partial Huffman trees ordered by frequency. But a real implementation would use a heap to implement a priority queue keyed by the frequencies
