@@ -6,6 +6,11 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import cut.Cut;
+import cut.Cutter;
+import cut.CutterException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,9 +38,93 @@ class CutTest {
         }
     }
 
-    @Test void test() throws URISyntaxException, IOException {
+    @Test
+    void shape6x1_sample_expectscorrect() throws URISyntaxException, IOException, CutterException {
+        //Arrange
+        ReadReader("sample.tsv");
+        var cut = new Cut("", "", '\t', "1");
+        var cutter = new Cutter(reader, cut);
 
+        //Act
+        var result = cutter.processLines();
+        
+        //Assert
+        var shape = result.shape();
+        assertEquals(6, shape.rows);
+        assertEquals(1, shape.cols);
+
+        System.out.println(result.printResult());
+    }
+
+    @Test
+    void shape6x3_sample_expectscorrect() throws URISyntaxException, IOException, CutterException {
+        //Arrange
+        ReadReader("sample.tsv");
+        var cut = new Cut("", "", '\t', "1,3,2");
+        var cutter = new Cutter(reader, cut);
+
+        //Act
+        var result = cutter.processLines();
+        
+        //Assert
+        var shape = result.shape();
+        assertEquals(6, shape.rows);
+        assertEquals(3, shape.cols);
+
+        System.out.println(result.printResult());
     }
 
 
+
+    @Test
+    void shapeNx1_fourchords_expectscorrect() throws URISyntaxException, IOException, CutterException {
+        //Arrange
+        ReadReader("fourchords.csv");
+        var cut = new Cut("", "", ',', "1");
+        var cutter = new Cutter(reader, cut);
+
+        //Act
+        var result = cutter.processLines();
+        
+        //Assert
+        var shape = result.shape();
+        assertEquals(1, shape.cols);
+
+        System.out.println(result.printResult());
+    }
+
+
+    @Test
+    void shapeNx3_fourchords_expectscorrect() throws URISyntaxException, IOException, CutterException {
+        //Arrange
+        ReadReader("fourchords.csv");
+        var cut = new Cut("", "", ',', "1,2,3");
+        var cutter = new Cutter(reader, cut);
+
+        //Act
+        var result = cutter.processLines();
+        
+        //Assert
+        var shape = result.shape();
+        assertEquals(3, shape.cols);
+
+        System.out.println(result.printResult());
+    }
+
+    @Test
+    void shapeNx1_fourchords_expectsempty() throws URISyntaxException, IOException, CutterException {
+        //Arrange
+        ReadReader("fourchords.csv");
+        var cut = new Cut("", "", ',', "10");
+        var cutter = new Cutter(reader, cut);
+
+        //Act
+        var result = cutter.processLines();
+        
+        //Assert
+        var shape = result.shape();
+        assertEquals(1, shape.cols);
+
+        System.out.println(result.printResult());
+    }
 }
