@@ -59,16 +59,27 @@ public class Result<T> {
 
     public String printResult() {
         var buffer = new StringBuilder();
+        var start = true;
         for (Row<T> row : rows) {
-            buffer.append('\n');
+            if (!start) {
+                buffer.append('\n');
+            }
             for (int i = 0; i < this.dimensions; i++) {
                 if (i > 0) {
                     buffer.append(delimiter);
                 }
                 buffer.append(row.get(i));
             }
+            start = false;
         }
         return buffer.toString();
+    }
+
+    public Result<T> add(Result<T> result) {
+        Result<T> newResult = new Result<>(dimensions, delimiter);
+        newResult.rows.addAll(this.rows);
+        newResult.rows.addAll(result.rows);
+        return newResult;
     }
 
     public class Row<S> {
