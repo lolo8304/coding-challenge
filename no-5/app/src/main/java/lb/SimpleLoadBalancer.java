@@ -83,26 +83,16 @@ public class SimpleLoadBalancer {
                 reqBuilder.header(reqHeaderKey, reqHeaderValue);
             }
             var beRequest = reqBuilder.build();
-            _logger.info("be call: before execute");
             var beResponse = httpClient.newCall(beRequest).execute();
-            _logger.info("be call: executed");
 
             int statusCode = beResponse.code();
             String responseBody = beResponse.body().string();
-            if (beResponse.isSuccessful()) {
-                response.setContentType(beResponse.header("Content-Type"));
-                response.setStatus(statusCode);
-                _logger.info("be call: status received " + statusCode);
-                beResponse.close();
-            } else {
-                response.setContentType(beResponse.header("Content-Type"));
-                response.setStatus(statusCode);
-                _logger.info("be call: status failed " + statusCode);
-                beResponse.close();
-            }
+            response.setContentType(beResponse.header("Content-Type"));
+            response.setStatus(statusCode);
+            beResponse.close();
 
             PrintWriter writer = response.getWriter();
-            writer.println("from " + be + "// " + responseBody);
+            writer.println("from " + be + " // " + responseBody);
             writer.flush();
             writer.close();
 
