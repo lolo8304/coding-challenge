@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name = "lb", mixinStandardHelpOptions = true, version = "lb 1.0", description = "This challenge is to build your own application layer load balancer")
 public class LoadBalancer implements Callable<Result> {
@@ -20,8 +21,19 @@ public class LoadBalancer implements Callable<Result> {
         System.exit(exitCode);
     }
 
+    @Option(names = "-p", description = "-b specifies byte positions")
+    int port = 8080;
+
+    @Option(names = "-b", description = "-b specifies byte positions")
+    boolean isBackend = false;
+
     @Override
     public Result call() throws Exception {
+        if (port >= 9000) {
+            new SimpleBackend(this.port);
+        } else {
+            new SimpleLoadBalancer(this.port);
+        }
         return new Result();
     }
 }
