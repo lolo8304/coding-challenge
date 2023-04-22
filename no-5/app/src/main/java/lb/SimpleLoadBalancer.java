@@ -2,16 +2,12 @@ package lb;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -22,19 +18,26 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class SimpleLoadBalancer {
 
     static final Logger _logger = Logger.getLogger(SimpleLoadBalancer.class.getName());
+    private int port;
+    private List<String> backendServers;
+    private LoadBalancerStrategy lbStrategy;
 
-    static void log(HttpServletRequest request) {
+    static void log(String be, HttpServletRequest request) {
         _logger.info(
-                request.getRemoteAddr() + " " +
+                be + " " + request.getRemoteAddr() + " " +
                         request.getMethod() + " " + request.getRequestURI() + " " + request.getProtocol()
                         + " User-Agent: " + request.getHeader("User-Agent"));
     }
 
-    public SimpleLoadBalancer(int port) throws Exception {
+    public SimpleLoadBalancer(int port, LoadBalancerStrategy lbStrategy) throws Exception {
+        this.port = port;
+        this.lbStrategy = lbStrategy;
 
         // Create a Jetty server instance
         Server server = new Server(new QueuedThreadPool(20));
@@ -56,10 +59,6 @@ public class SimpleLoadBalancer {
         server.join();
     }
 
-    private String getBackendServer() {
-        return "http://localhost:9000";
-    }
-
     public static class HelloServlet extends HttpServlet {
 
         private SimpleLoadBalancer loadbalancer;
@@ -72,44 +71,42 @@ public class SimpleLoadBalancer {
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
 
-            try {
+            var be = loadbalancer.lbStrategy.getNext();
 
-                HttpClient httpClient = HttpClientBuilder.create().build();
-
-                var beRequest = new HttpGet(loadbalancer.getBackendServer() + request.getRequestURI());
-                _logger.info("be call: " + loadbalancer.getBackendServer() + request.getRequestURI());
-                _logger.info("be method: " + request.getMethod());
-
-                var reqHeaders = request.getHeaderNames();
-                while (reqHeaders.hasMoreElements()) {
-                    String reqHeaderKey = reqHeaders.nextElement();
-                    _logger.info("Set header " + reqHeaderKey + "=" +
-                            request.getHeader(reqHeaderKey));
-                    // beRequest.setHeader(reqHeaderKey, request.getHeader(reqHeaderKey));
-                }
-                _logger.info("be call: before execute");
-                HttpResponse beResponse = httpClient.execute(beRequest);
-                _logger.info("be call: executed");
-                int statusCode = beResponse.getStatusLine().getStatusCode();
-                _logger.info("be call: status received " + statusCode);
-
-                HttpEntity httpEntity = beResponse.getEntity();
-                String responseBody = EntityUtils.toString(httpEntity);
-
-                response.setContentType(beResponse.getHeaders("Content-Type")[0].getValue());
-                response.setStatus(statusCode);
-
-                PrintWriter writer = response.getWriter();
-                writer.print(responseBody);
-                writer.flush();
-                writer.close();
-
-                SimpleLoadBalancer.log(request);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new IOException("Error while sending to backend", e);
+            OkHttpClient httpClient = new OkHttpClient();
+            var reqBuilder = new Request.Builder()
+                    .url(be + request.getRequestURI());
+            var reqHeaders = request.getHeaderNames();
+            while (reqHeaders.hasMoreElements()) {
+                String reqHeaderKey = reqHeaders.nextElement();
+                String reqHeaderValue = request.getHeader(reqHeaderKey);
+                reqBuilder.header(reqHeaderKey, reqHeaderValue);
             }
+            var beRequest = reqBuilder.build();
+            _logger.info("be call: before execute");
+            var beResponse = httpClient.newCall(beRequest).execute();
+            _logger.info("be call: executed");
+
+            int statusCode = beResponse.code();
+            String responseBody = beResponse.body().string();
+            if (beResponse.isSuccessful()) {
+                response.setContentType(beResponse.header("Content-Type"));
+                response.setStatus(statusCode);
+                _logger.info("be call: status received " + statusCode);
+                beResponse.close();
+            } else {
+                response.setContentType(beResponse.header("Content-Type"));
+                response.setStatus(statusCode);
+                _logger.info("be call: status failed " + statusCode);
+                beResponse.close();
+            }
+
+            PrintWriter writer = response.getWriter();
+            writer.println("from " + be + "// " + responseBody);
+            writer.flush();
+            writer.close();
+
+            SimpleLoadBalancer.log(be, request);
         }
     }
 }

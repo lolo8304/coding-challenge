@@ -40,7 +40,7 @@ public class SimpleBackend {
         server.setHandler(context);
 
         // Add a servlet to handle incoming requests
-        context.addServlet(new ServletHolder(new BackendServlet()), "/ss"); // Map /hello URL to HelloServlet
+        context.addServlet(new ServletHolder(new BackendServlet()), "/"); // Map /hello URL to HelloServlet
 
         _logger.info("Start Backend on port " + port);
         // Start the server
