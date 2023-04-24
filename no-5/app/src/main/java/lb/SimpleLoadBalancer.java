@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
@@ -18,6 +20,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lb.strategies.LoadBalancerStrategy;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -25,7 +28,6 @@ public class SimpleLoadBalancer {
 
     static final Logger _logger = Logger.getLogger(SimpleLoadBalancer.class.getName());
     private int port;
-    private List<String> backendServers;
     private LoadBalancerStrategy lbStrategy;
 
     static void log(String be, HttpServletRequest request) {
@@ -51,7 +53,7 @@ public class SimpleLoadBalancer {
         server.setHandler(context);
 
         // Add a servlet to handle incoming requests
-        context.addServlet(new ServletHolder(new HelloServlet(this)), "/"); // Map /hello URL to HelloServlet
+        context.addServlet(new ServletHolder(new LoadBalancerServlet(this)), "/"); // Map /hello URL to HelloServlet
 
         _logger.info("Start Loadbalancer on port " + port);
         // Start the server
@@ -59,11 +61,11 @@ public class SimpleLoadBalancer {
         server.join();
     }
 
-    public static class HelloServlet extends HttpServlet {
+    public static class LoadBalancerServlet extends HttpServlet {
 
         private SimpleLoadBalancer loadbalancer;
 
-        public HelloServlet(SimpleLoadBalancer loadbalancer) {
+        public LoadBalancerServlet(SimpleLoadBalancer loadbalancer) {
             this.loadbalancer = loadbalancer;
         }
 

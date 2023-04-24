@@ -1,4 +1,4 @@
-package lb;
+package lb.strategies;
 
 import java.util.List;
 

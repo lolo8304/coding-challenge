@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import lb.strategies.RoundRobin;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -25,8 +26,10 @@ public class LoadBalancer implements Callable<Result> {
 
     @Option(names = "-p", description = "-b specifies byte positions")
     int port = 8080;
+    @Option(names = "-blist", description = "-blist specifies byte positions")
+    String bePools;
 
-    @Option(names = "-b", description = "-b specifies byte positions")
+    @Option(names = "-b", arity = "0..", description = "-b specifies byte positions")
     boolean isBackend = false;
 
     @Override
@@ -35,8 +38,14 @@ public class LoadBalancer implements Callable<Result> {
             new SimpleBackend(this.port);
         } else {
             List<String> backendServers = new ArrayList<>();
-            backendServers.add("http://localhost:9000");
-            backendServers.add("http://localhost:9001");
+            if (bePools != null && bePools.isEmpty()) {
+                backendServers.add("http://localhost:9000");
+            } else {
+                var bePoolArray = bePools.split(",");
+                for (String beUrl : bePoolArray) {
+                    backendServers.add(beUrl);
+                }
+            }
             var lbStrategy = new RoundRobin(backendServers);
             new SimpleLoadBalancer(this.port, lbStrategy);
         }

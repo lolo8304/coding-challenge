@@ -41,6 +41,7 @@ public class SimpleBackend {
 
         // Add a servlet to handle incoming requests
         context.addServlet(new ServletHolder(new BackendServlet()), "/"); // Map /hello URL to HelloServlet
+        context.addServlet(new ServletHolder(new HealthServlet()), "/health"); // Map /hello URL to HelloServlet
 
         _logger.info("Start Backend on port " + port);
         // Start the server
@@ -63,6 +64,22 @@ public class SimpleBackend {
 
             SimpleBackend.log(request);
         }
+    }
 
+    public static class HealthServlet extends HttpServlet {
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+            // Set the response content type
+            response.setContentType("text/plain");
+
+            // Write the response body
+            PrintWriter writer = response.getWriter();
+            writer.println("healthy");
+            writer.flush();
+            writer.close();
+
+            SimpleBackend.log(request);
+        }
     }
 }
