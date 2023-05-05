@@ -1,7 +1,7 @@
 package lb;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import lb.strategies.RoundRobin;
@@ -30,20 +30,16 @@ public class LoadBalancer implements Callable<Result> {
 
     @Override
     public Result call() throws Exception {
-        if (port >= 9000) {
+        if (this.isBackend) {
             new SimpleBackend(this.port);
         } else {
-            List<String> backendServers = new ArrayList<>();
-            if (bePools != null && bePools.isEmpty()) {
-                backendServers.add("http://localhost:9000");
-            } else {
-                var bePoolArray = bePools.split(",");
-                for (String beUrl : bePoolArray) {
-                    backendServers.add(beUrl);
-                }
+            if (bePools == null || bePools.isEmpty()) {
+                bePools = "http://localhost:9000";
             }
+            var bePoolArray = bePools.split(",");
+            var backendServers = new ArrayList<String>(Arrays.asList(bePoolArray));
             var lbStrategy = new RoundRobin(backendServers);
-            lbStrategy.checkHealthChecks();
+            lbStrategy.startHealthChecks();
             new SimpleLoadBalancer(this.port, lbStrategy);
         }
         return new Result();

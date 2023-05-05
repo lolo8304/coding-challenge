@@ -1,8 +1,6 @@
 package lb;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
@@ -32,17 +30,17 @@ public class SimpleLoadBalancer {
                         + " User-Agent: " + request.getHeader("User-Agent"));
     }
 
-    public SimpleLoadBalancer(int port, LoadBalancerStrategy lbStrategy) throws Exception {
+    protected SimpleLoadBalancer(int port, LoadBalancerStrategy lbStrategy) throws Exception {
         this.lbStrategy = lbStrategy;
 
         // Create a Jetty server instance
-        Server server = new Server(new QueuedThreadPool(20));
-        ServerConnector connector = new ServerConnector(server);
+        var server = new Server(new QueuedThreadPool(20));
+        var connector = new ServerConnector(server);
         connector.setPort(port); // Set the desired port
         server.addConnector(connector);
 
         // Create a servlet context handler
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        var context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
@@ -57,21 +55,20 @@ public class SimpleLoadBalancer {
 
     public static class LoadBalancerServlet extends HttpServlet {
 
-        private SimpleLoadBalancer loadbalancer;
+        private transient SimpleLoadBalancer loadbalancer;
 
         public LoadBalancerServlet(SimpleLoadBalancer loadbalancer) {
             this.loadbalancer = loadbalancer;
         }
 
-        private Response executeRequest(Optional<String> be, HttpServletRequest request) throws IOException {
-            var beUrl = be.get();
-            OkHttpClient httpClient = new OkHttpClient();
+        private Response executeRequest(String beUrl, HttpServletRequest request) throws IOException {
+            var httpClient = new OkHttpClient();
             var reqBuilder = new Request.Builder()
                     .url(beUrl + request.getRequestURI());
             var reqHeaders = request.getHeaderNames();
             while (reqHeaders.hasMoreElements()) {
-                String reqHeaderKey = reqHeaders.nextElement();
-                String reqHeaderValue = request.getHeader(reqHeaderKey);
+                var reqHeaderKey = reqHeaders.nextElement();
+                var reqHeaderValue = request.getHeader(reqHeaderKey);
                 reqBuilder.header(reqHeaderKey, reqHeaderValue);
             }
             var beRequest = reqBuilder.build();
@@ -90,14 +87,14 @@ public class SimpleLoadBalancer {
             var retryCount = 1;
             while (retryCount > 0) {
                 try {
-                    var beResponse = this.executeRequest(be, request);
+                    var beResponse = this.executeRequest(beUrl, request);
                     int statusCode = beResponse.code();
-                    String responseBody = beResponse.body().string();
+                    var responseBody = beResponse.body().string();
                     response.setContentType(beResponse.header("Content-Type"));
                     response.setStatus(statusCode);
                     beResponse.close();
 
-                    PrintWriter writer = response.getWriter();
+                    var writer = response.getWriter();
                     writer.println("from " + beUrl + " // " + responseBody);
                     writer.flush();
                     writer.close();

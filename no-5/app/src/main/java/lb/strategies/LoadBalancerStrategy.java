@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class LoadBalancerStrategy {
@@ -55,9 +57,13 @@ public abstract class LoadBalancerStrategy {
         this.invalidServers.remove(url);
         if (!this.validServers.contains(url)) {
             this.validServers.add(url);
-            _logger.info("+ Healthy backend: " + url);
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info("+ Healthy backend: " + url);
+            }
         } else {
-            // _logger.info(" Still ok backend: " + url);
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest(" Still ok backend: " + url);
+            }
         }
     }
 
@@ -67,7 +73,9 @@ public abstract class LoadBalancerStrategy {
         }
         if (validServers.contains(url)) {
             this.validServers.remove(url);
-            _logger.info("- Unhealthy backend: " + url);
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info("- Unhealthy backend: " + url);
+            }
         }
     }
 
@@ -77,7 +85,7 @@ public abstract class LoadBalancerStrategy {
 
     public abstract void reset();
 
-    public void checkHealthChecks() {
+    public void startHealthChecks() {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(5);
 
         // Define the piece of code to be executed
@@ -116,7 +124,7 @@ public abstract class LoadBalancerStrategy {
             return false;
         }
         try {
-            OkHttpClient httpClient = new OkHttpClient.Builder()
+            var httpClient = new OkHttpClient.Builder()
                     .connectTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
                     .readTimeout(3, java.util.concurrent.TimeUnit.SECONDS)
                     .build();
@@ -125,14 +133,9 @@ public abstract class LoadBalancerStrategy {
             var response = httpClient.newCall(request).execute();
 
             int statusCode = response.code();
-            String responseBody = response.body().string();
+            var responseBody = response.body().string();
             return statusCode == 200 && responseBody.startsWith("healthy");
-            /*
-             * _logger.info("Status: " + statusCode + ", Body: " + responseBody +
-             * ", healthy: " + healthy);
-             */
         } catch (Exception e) {
-            // _logger.info("Error while healthcheck: " + e.getMessage());
             return false;
         }
     }

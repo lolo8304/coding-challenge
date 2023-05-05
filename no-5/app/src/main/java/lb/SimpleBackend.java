@@ -1,7 +1,6 @@
 package lb;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
@@ -29,13 +28,13 @@ public class SimpleBackend {
     protected SimpleBackend(int port) throws Exception {
 
         // Create a Jetty server instance
-        Server server = new Server(new QueuedThreadPool(20));
-        ServerConnector connector = new ServerConnector(server);
+        var server = new Server(new QueuedThreadPool(20));
+        var connector = new ServerConnector(server);
         connector.setPort(port); // Set the desired port
         server.addConnector(connector);
 
         // Create a servlet context handler
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        var context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
@@ -57,7 +56,7 @@ public class SimpleBackend {
             response.setContentType("text/plain");
 
             // Write the response body
-            PrintWriter writer = response.getWriter();
+            var writer = response.getWriter();
             writer.println("Replied with a hello message");
             writer.flush();
             writer.close();
@@ -79,7 +78,7 @@ public class SimpleBackend {
             response.setContentType("text/plain");
 
             // Write the response body
-            PrintWriter writer = response.getWriter();
+            var writer = response.getWriter();
             writer.println("healthy");
             writer.flush();
             writer.close();

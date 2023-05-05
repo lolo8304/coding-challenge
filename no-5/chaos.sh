@@ -25,5 +25,5 @@ do
 
 done
 
-${scriptpath}/bes.sh -nokill
+${scriptpath}/be-servers.sh -nokill
 

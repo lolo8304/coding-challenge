@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import lb.strategies.RoundRobin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
