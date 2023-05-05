@@ -2,12 +2,7 @@ package lb;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
@@ -23,11 +18,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lb.strategies.LoadBalancerStrategy;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 public class SimpleLoadBalancer {
 
     static final Logger _logger = Logger.getLogger(SimpleLoadBalancer.class.getName());
-    private int port;
     private LoadBalancerStrategy lbStrategy;
 
     static void log(String be, HttpServletRequest request) {
@@ -38,7 +33,6 @@ public class SimpleLoadBalancer {
     }
 
     public SimpleLoadBalancer(int port, LoadBalancerStrategy lbStrategy) throws Exception {
-        this.port = port;
         this.lbStrategy = lbStrategy;
 
         // Create a Jetty server instance
@@ -69,15 +63,11 @@ public class SimpleLoadBalancer {
             this.loadbalancer = loadbalancer;
         }
 
-        @Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException {
-
-            var be = loadbalancer.lbStrategy.getNext();
-
+        private Response executeRequest(Optional<String> be, HttpServletRequest request) throws IOException {
+            var beUrl = be.get();
             OkHttpClient httpClient = new OkHttpClient();
             var reqBuilder = new Request.Builder()
-                    .url(be + request.getRequestURI());
+                    .url(beUrl + request.getRequestURI());
             var reqHeaders = request.getHeaderNames();
             while (reqHeaders.hasMoreElements()) {
                 String reqHeaderKey = reqHeaders.nextElement();
@@ -85,20 +75,41 @@ public class SimpleLoadBalancer {
                 reqBuilder.header(reqHeaderKey, reqHeaderValue);
             }
             var beRequest = reqBuilder.build();
-            var beResponse = httpClient.newCall(beRequest).execute();
+            return httpClient.newCall(beRequest).execute();
+        }
 
-            int statusCode = beResponse.code();
-            String responseBody = beResponse.body().string();
-            response.setContentType(beResponse.header("Content-Type"));
-            response.setStatus(statusCode);
-            beResponse.close();
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
 
-            PrintWriter writer = response.getWriter();
-            writer.println("from " + be + " // " + responseBody);
-            writer.flush();
-            writer.close();
+            var be = loadbalancer.lbStrategy.getNext();
+            if (be.isEmpty()) {
+                throw new ServletException("No backend found");
+            }
+            var beUrl = be.get();
+            var retryCount = 1;
+            while (retryCount > 0) {
+                try {
+                    var beResponse = this.executeRequest(be, request);
+                    int statusCode = beResponse.code();
+                    String responseBody = beResponse.body().string();
+                    response.setContentType(beResponse.header("Content-Type"));
+                    response.setStatus(statusCode);
+                    beResponse.close();
 
-            SimpleLoadBalancer.log(be, request);
+                    PrintWriter writer = response.getWriter();
+                    writer.println("from " + beUrl + " // " + responseBody);
+                    writer.flush();
+                    writer.close();
+
+                    SimpleLoadBalancer.log(beUrl, request);
+                    retryCount = 0;
+
+                } catch (IOException e) {
+                    loadbalancer.lbStrategy.unhealthy(beUrl);
+                    retryCount--;
+                }
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ public class SimpleBackend {
                         + " User-Agent: " + request.getHeader("User-Agent"));
     }
 
-    public SimpleBackend(int port) throws Exception {
+    protected SimpleBackend(int port) throws Exception {
 
         // Create a Jetty server instance
         Server server = new Server(new QueuedThreadPool(20));
@@ -71,6 +71,11 @@ public class SimpleBackend {
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
             // Set the response content type
+
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+            }
             response.setContentType("text/plain");
 
             // Write the response body
