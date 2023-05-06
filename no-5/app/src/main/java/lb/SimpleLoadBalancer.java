@@ -79,34 +79,38 @@ public class SimpleLoadBalancer {
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
 
-            var be = loadbalancer.lbStrategy.getNext();
-            if (be.isEmpty()) {
-                throw new ServletException("No backend found");
-            }
-            var beUrl = be.get();
-            var retryCount = 1;
+            var retryCount = 2;
             while (retryCount > 0) {
+                var be = loadbalancer.lbStrategy.getNext();
+                if (be.isEmpty()) {
+                    throw new ServletException("No backend found");
+                }
+                var beUrl = be.get();
                 try {
                     var beResponse = this.executeRequest(beUrl, request);
-                    int statusCode = beResponse.code();
-                    var responseBody = beResponse.body().string();
-                    response.setContentType(beResponse.header("Content-Type"));
-                    response.setStatus(statusCode);
-                    beResponse.close();
-
-                    var writer = response.getWriter();
-                    writer.println("from " + beUrl + " // " + responseBody);
-                    writer.flush();
-                    writer.close();
-
-                    SimpleLoadBalancer.log(beUrl, request);
-                    retryCount = 0;
-
+                    fetchResponseAndSendBack(request, response, beUrl, beResponse);
+                    return;
                 } catch (IOException e) {
                     loadbalancer.lbStrategy.unhealthy(beUrl);
                     retryCount--;
                 }
             }
+        }
+
+        private void fetchResponseAndSendBack(HttpServletRequest request, HttpServletResponse response, String beUrl,
+                Response beResponse) throws IOException {
+            int statusCode = beResponse.code();
+            var responseBody = beResponse.body().string();
+            response.setContentType(beResponse.header("Content-Type"));
+            response.setStatus(statusCode);
+            beResponse.close();
+
+            var writer = response.getWriter();
+            writer.println("from " + beUrl + " // " + responseBody);
+            writer.flush();
+            writer.close();
+
+            SimpleLoadBalancer.log(beUrl, request);
         }
     }
 }

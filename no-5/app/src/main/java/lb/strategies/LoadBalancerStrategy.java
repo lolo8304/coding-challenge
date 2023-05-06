@@ -110,7 +110,7 @@ public abstract class LoadBalancerStrategy {
 
     private boolean isTcpHealthy(String urlString) {
         int timeout = 1000; // 1 seconds
-        try (Socket socket = new Socket()) {
+        try (var socket = new Socket()) {
             var url = new URL(urlString);
             socket.connect(new InetSocketAddress(url.getHost(), url.getPort()), timeout);
             return true;
