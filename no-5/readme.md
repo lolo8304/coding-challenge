@@ -75,7 +75,7 @@ to server many requests in parallel I have already added a server with thread po
 var server = new Server(new QueuedThreadPool(20));
 ```
 
-For the implementation of the load balancer I am using OkHttp3 library. I tried many others but they had been intering with jetty webserver.
+For the implementation of the load balancer I am using OkHttp3 library. I tried many others but they had been interfering with jetty webserver.
 
 here is the refactored method to execute a request to a backend server url
 
@@ -94,7 +94,7 @@ here is the refactored method to execute a request to a backend server url
         return httpClient.newCall(beRequest).execute();
 }
 ```
-I also dynamically copied all the headers from the request and sent it to the backend. For simplicity i implemented a simple get and no body is taken over. This could be done on the beRequest builder. 
+I also dynamically copied all the headers from the request and sent it to the backend. For simplicity I implemented a simple get and no body is taken over. This could be done on the beRequest builder. 
 ```java
         var beRequest = reqBuilder.build();
 ```
