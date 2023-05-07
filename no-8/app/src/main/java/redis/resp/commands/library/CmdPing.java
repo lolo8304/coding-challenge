@@ -28,7 +28,7 @@ public class CmdPing extends RespLibraryFunction {
     @Override
     public RespSortedMap getCommandDocs() {
         var args = new RespSortedMap().put("name", "message").put("type", "string").put("flags",
-                new RespArray("optional"));
+                new RespArray(new RespSimpleString("optional")));
         return new RespSortedMap()
                 .put("summary", "Ping the server")
                 .put("since", "1.0.0")

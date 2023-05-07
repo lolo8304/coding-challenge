@@ -1,2 +1,2 @@
-./app/build/install/app/bin/app -p=6379
+./app/build/install/app/bin/app -p=6380
 

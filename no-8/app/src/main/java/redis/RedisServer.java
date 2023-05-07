@@ -134,9 +134,8 @@ public class RedisServer {
             if (_logger.isLoggable(Level.INFO)) {
                 var resultString = response.toRespString();
                 var escapedString = RespScanner.convertNewLinesBack(resultString);
-                _logger.info("Response: " + escapedString);
                 byte[] bytes = response.toRespString().getBytes();
-                _logger.info("Sent response: size=" + bytes.length);
+                _logger.fine("Response: " + bytes.length + " - " + escapedString);
                 return bytes;
             } else {
                 return response.toRespString().getBytes();

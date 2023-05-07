@@ -6,6 +6,8 @@ import java.util.Dictionary;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
@@ -14,7 +16,7 @@ import redis.resp.types.RespArray;
 import redis.resp.types.RespSortedMap;
 
 public class RespCommandLibrary {
-
+    static final Logger _logger = Logger.getLogger(RespCommandLibrary.class.getName());
     private final TreeMap<String, RespLibraryFunction> functions;
     public static final RespCommandLibrary INSTANCE = new RespCommandLibrary();
 
@@ -28,11 +30,12 @@ public class RespCommandLibrary {
     }
 
     private void init() {
-        this.register(new CmdPing(INSTANCE));
         this.register(new CmdCommand(INSTANCE));
+        this.register(new CmdEcho(INSTANCE));
         this.register(new CmdEcho(INSTANCE));
         this.register(new CmdSet(INSTANCE));
         this.register(new CmdGet(INSTANCE));
+        this.register(new CmdConfig(INSTANCE));
     }
 
     public RespLibraryFunction get(String function) throws RespCommandException {
@@ -44,6 +47,14 @@ public class RespCommandLibrary {
     }
 
     public RespResponse execute(RespRequest request) throws RespCommandException {
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.fine(
+                    "Execute command: " + request.getFunction() + " - " + request.command.array.toRespEscapedString());
+        }
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine(
+                    "Execute command: " + request.getFunction() + " - " + request.command.array.toRespEscapedString());
+        }
         var f = get(request.getFunction());
         var subfunction = request.getSubFunction();
         if (subfunction.isPresent() && f.hasSubFunction(subfunction.get())) {

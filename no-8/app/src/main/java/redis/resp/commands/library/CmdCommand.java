@@ -7,6 +7,7 @@ import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespArray;
+import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespSortedMap;
 
 public class CmdCommand extends RespLibraryFunction {
@@ -37,15 +38,25 @@ public class CmdCommand extends RespLibraryFunction {
 
     @Override
     public RespSortedMap getCommandDocs() {
-        var args = new RespSortedMap().put("name", "message").put("type", "string").put("flags",
-                new RespArray("optional", "multiple"));
+        var argsCmd1 = new RespSortedMap().put("name", "command-name").put("type", "string").put("flags",
+                new RespArray(new RespSimpleString("optional"), new RespSimpleString("multiple")));
+        var argsCmd = new RespArray(argsCmd1);
+
+        var argsDocs = new RespSortedMap()
+                .put("summary", "Get array of specific Redis command documentation")
+                .put("since", "7.0.0")
+                .put("group", "server")
+                .put("complexity", "O(N) where N is the number of commands to look up")
+                .put("arguments", argsCmd);
+
+        var args = new RespSortedMap().put("command|docs", argsDocs);
 
         return new RespSortedMap()
-                .put("summary", "Set the string value of a key")
-                .put("since", "1.0.0")
-                .put("group", "string")
+                .put("summary", "Get array of Redis command details")
+                .put("since", "2.8.13")
+                .put("group", "server")
                 .put("complexity", "O(1)")
-                .put("arguments", args);
+                .put("subcommands", args);
     }
 
 }
