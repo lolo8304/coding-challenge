@@ -39,6 +39,7 @@ public class CmdCommand extends RespLibraryFunction {
     public RespSortedMap getCommandDocs() {
         var args = new RespSortedMap().put("name", "message").put("type", "string").put("flags",
                 new RespArray("optional", "multiple"));
+
         return new RespSortedMap()
                 .put("summary", "Set the string value of a key")
                 .put("since", "1.0.0")

@@ -32,6 +32,7 @@ public class RespCommandLibrary {
         this.register(new CmdCommand(INSTANCE));
         this.register(new CmdEcho(INSTANCE));
         this.register(new CmdSet(INSTANCE));
+        this.register(new CmdGet(INSTANCE));
     }
 
     public RespLibraryFunction get(String function) throws RespCommandException {
