@@ -1,0 +1,11 @@
+*$5\r\nLPUSH\r\n$5\r\nmykey\r\n
+*2\r\n$5\r\nLPUSH\r\n$5\r\nmykey\r\n$5\r\nvalue\r\n$5\r\nextra\r\n
+*3\r\n$5\r\nLRANGE\r\n$5\r\nmykey\r\n
+*2\r\n$3\r\nSET\r\n$5\r\nmykey\r\n$6\r\nvalue\r\n
+*4\r\n$5\r\nLRANGE\r\n$5\r\nmykey\r\n$1\r\n0\r\n$2\r\n-1\r\n
+&2\r\n$5\r\nLPUSH\r\n$5\r\nmykey\r\n
+*2\r\n$5\r\nLPUSH\r\n$5\r\nmykey\r\n$5\r\nvalue\r\n&extra\r\n
+*3\r\n$5\r\nLRANGE\r\n$5\r\nmykey\r\n:one\r\n
+*2\r\n$3\r\nSET\r\n$5\r\nmykey\r\n$value\r\n
+*4\r\n$5\r\nLRANGE\r\n$5\r\nmykey\r\n$1\r\n0\r\n$2\r\n-1.5\r\n
+*5\r\n$5\r\nHMSET\r\n$5\r\nmykey\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$3\r\nbaz\r\n$3\r\nqux\r\n

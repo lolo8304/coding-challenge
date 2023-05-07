@@ -1,0 +1,12 @@
+SMEMBERS "qutotes cars"
+2
+
+SMEMBERS with\ escaped\ spaces with\ escaped\ spaces\ too
+3
+
+SMEMBERS "qutotes cars"
+2
+
+SMEMBERS with\ escaped\ spaces with\ escaped\ spaces\ too
+3
+

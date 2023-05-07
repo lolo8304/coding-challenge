@@ -1,0 +1,33 @@
+PING
+1
+*1\r\n$4\r\nPING\r\n
+SET key1 value1
+3
+
+GET key1
+2
+
+INCR key1
+2
+
+DECRBY key2 5
+3
+
+HSET hash1 field1 value1
+4
+
+HGET hash1 field1
+3
+
+RPUSH list1 value1 value2 value3
+5
+
+LPOP list1
+2
+
+SADD set1 member1 member2 member3
+5
+
+SMEMBERS set1
+2
+

@@ -21,14 +21,14 @@ public class Redis implements Callable<Result> {
     }
 
     @Option(names = "-p", description = "-p to specify the port default 6379")
-    int port = 6379;
+    int port = 6380;
 
     @Option(names = "-t", description = "-t to specify the max number of threads used default 10")
     int maxThreads = 10;
 
     @Override
     public Result call() throws Exception {
-        new RedisServer(this.port, this.maxThreads);
+        new RedisServer(this.port);
         return new Result();
     }
 }

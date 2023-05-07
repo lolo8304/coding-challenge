@@ -26,9 +26,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 
     // This dependency is used by the application.
-    implementation 'org.eclipse.jetty:jetty-server:11.0.15'
-    implementation 'org.eclipse.jetty:jetty-servlet:11.0.15'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'io.netty:netty-all:4.1.92.Final'
 }
 
 tasks.named('test') {

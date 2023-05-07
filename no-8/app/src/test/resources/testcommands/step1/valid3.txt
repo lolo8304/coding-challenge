@@ -1,0 +1,12 @@
+SMEMBERS A1
+2
+*2\r\n$8\r\nSMEMBERS\r\n$2\r\nA1\r\n
+SMEMBERS 1
+2
+*2\r\n$8\r\nSMEMBERS\r\n:1\r\n
+SMEMBERS 1 2
+3
+*3\r\n$8\r\nSMEMBERS\r\n:1\r\n:2\r\n
+SMEMBERS 1 ABC
+3
+*3\r\n$8\r\nSMEMBERS\r\n:1\r\n$3\r\nABC\r\n

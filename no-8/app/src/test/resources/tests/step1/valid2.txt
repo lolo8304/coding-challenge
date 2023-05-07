@@ -1,0 +1,14 @@
++OK\r\n
+$5\r\nhello\r\n
+:123\r\n
+*3\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$3\r\nbaz\r\n
+*-1\r\n
+$-1\r\n
+-ERR unknown command\r\n
+$6\r\nfoobar\r\n
+:0\r\n
+*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n
+*-2\r\n
+$0\r\n\r\n
+*3\r\n$3\r\nSET\r\n$5\r\nmykey\r\n$7\r\nmyvalue\r\n
+*1\r\n$4\r\nPING\r\n

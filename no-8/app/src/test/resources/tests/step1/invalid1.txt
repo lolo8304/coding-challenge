@@ -1,0 +1,4 @@
++OK\n
+$4\r\nfoo\r\nbar\r\n
+:-123\n
+*2\r\n$3\r\nfoo\r\n

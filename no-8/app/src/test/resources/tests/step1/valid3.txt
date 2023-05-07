@@ -1,0 +1,4 @@
+*6\r\n$5\r\nHMSET\r\n$5\r\nmykey\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$3\r\nbaz\r\n$3\r\nqux\r\n
+*4\r\n$6\r\nLRANGE\r\n$5\r\nmykey\r\n$1\r\n0\r\n$1\r\n5\r\n
+*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n
+*3\r\n:1\r\n:2\r\n:3\r\n
