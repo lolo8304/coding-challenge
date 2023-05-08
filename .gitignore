@@ -24,3 +24,4 @@ hs_err_pid*
 **/bin/**
 no-3/app/src/test/resources/tests/135-0.txt
 template/**
+no-8/dump*
