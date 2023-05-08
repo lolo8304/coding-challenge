@@ -1,7 +1,6 @@
 package redis;
 
 import java.nio.ByteBuffer;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

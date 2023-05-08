@@ -1,8 +1,5 @@
 package redis.resp.commands.library;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.commands.RespCommandException;
@@ -23,12 +20,10 @@ public class CmdCommand extends RespLibraryFunction {
 
     @Override
     public RespResponse execute(RespRequest request, String subFunction) throws RespCommandException {
-        switch (subFunction) {
-            case "docs":
-                return executeSubFunctionDocs(request);
-
-            default:
-                return super.execute(request, subFunction);
+        if (subFunction.equals("docs")) {
+            return executeSubFunctionDocs(request);
+        } else {
+            return super.execute(request, subFunction);
         }
     }
 

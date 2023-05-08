@@ -1,14 +1,9 @@
 package redis.resp.commands.library;
 
-import java.util.Optional;
-
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.commands.RespCommandException;
-import redis.resp.types.RespArray;
-import redis.resp.types.RespBulkString;
 import redis.resp.types.RespError;
-import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespSortedMap;
 
 public class CmdConfig extends RespLibraryFunction {

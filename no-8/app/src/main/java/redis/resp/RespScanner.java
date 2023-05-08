@@ -1,5 +1,7 @@
 package redis.resp;
 
+import static redis.resp.types.RespNull.NULL;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -14,7 +16,6 @@ import redis.resp.types.RespError;
 import redis.resp.types.RespInteger;
 import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespType;
-import static redis.resp.types.RespNull.NULL;
 
 public class RespScanner {
 

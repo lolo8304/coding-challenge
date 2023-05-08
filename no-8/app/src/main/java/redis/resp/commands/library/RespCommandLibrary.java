@@ -1,8 +1,5 @@
 package redis.resp.commands.library;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Dictionary;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;

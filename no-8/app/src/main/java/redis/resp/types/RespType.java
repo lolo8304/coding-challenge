@@ -4,14 +4,13 @@ import java.util.Optional;
 
 import redis.resp.RespException;
 import redis.resp.RespScanner;
-import redis.resp.commands.RespCommandException;
 
 public abstract class RespType<T> {
     public static final RespType[] EMPTY_ARRAY = new RespType[0];
 
     public final T value;
 
-    public RespType(T value) {
+    protected RespType(T value) {
         this.value = value;
     }
 

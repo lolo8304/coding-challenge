@@ -2,7 +2,6 @@ package redis.resp.commands;
 
 import java.util.Optional;
 
-import redis.resp.commands.library.RespCommandLibrary;
 import redis.resp.types.RespArray;
 import redis.resp.types.RespType;
 

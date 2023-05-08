@@ -4,10 +4,8 @@ import java.util.Optional;
 
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
-import redis.resp.types.RespArray;
 import redis.resp.types.RespBulkString;
 import redis.resp.types.RespError;
-import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespSortedMap;
 
 public class CmdEcho extends RespLibraryFunction {
