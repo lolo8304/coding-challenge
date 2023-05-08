@@ -8,7 +8,7 @@ import redis.resp.types.RespSortedMap;
 
 public class CmdConfig extends RespLibraryFunction {
 
-    protected CmdConfig(RespCommandLibrary library) {
+    public CmdConfig(RespCommandLibrary library) {
         super("CONFIG", new String[] { "GET" }, library);
     }
 

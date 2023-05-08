@@ -9,7 +9,7 @@ import redis.resp.types.RespSortedMap;
 
 public class CmdGet extends RespLibraryFunction {
 
-    protected CmdGet(RespCommandLibrary library) {
+    public CmdGet(RespCommandLibrary library) {
         super("GET", library);
     }
 

@@ -11,7 +11,7 @@ import redis.resp.types.RespSortedMap;
 
 public class CmdPing extends RespLibraryFunction {
 
-    protected CmdPing(RespCommandLibrary library) {
+    public CmdPing(RespCommandLibrary library) {
         super("PING", library);
     }
 

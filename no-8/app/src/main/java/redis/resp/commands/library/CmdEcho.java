@@ -10,7 +10,7 @@ import redis.resp.types.RespSortedMap;
 
 public class CmdEcho extends RespLibraryFunction {
 
-    protected CmdEcho(RespCommandLibrary library) {
+    public CmdEcho(RespCommandLibrary library) {
         super("ECHO", library);
     }
 

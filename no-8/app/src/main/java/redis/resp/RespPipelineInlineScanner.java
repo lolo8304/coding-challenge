@@ -14,6 +14,10 @@ public class RespPipelineInlineScanner {
         this.buffer = buffer;
     }
 
+    public RespPipelineInlineScanner(String str) {
+        this.buffer = ByteBuffer.wrap(str.getBytes());
+    }
+
     public Optional<String> nextCommand() {
         StringBuilder commandBuilder = new StringBuilder();
 
