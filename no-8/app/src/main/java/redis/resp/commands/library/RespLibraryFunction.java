@@ -12,14 +12,16 @@ public abstract class RespLibraryFunction {
     private final String name;
     private final String[] subFunctions;
 
-    protected RespLibraryFunction(String name, RespCommandLibrary library) {
-        this.name = name;
+    protected RespLibraryFunction(RespCommandLibrary library) {
+        this.name = commandName();
         this.subFunctions = EMPTY;
         this.library = library;
     }
 
-    protected RespLibraryFunction(String name, String[] subFunctions, RespCommandLibrary library) {
-        this.name = name;
+    public abstract String commandName();
+
+    protected RespLibraryFunction(String[] subFunctions, RespCommandLibrary library) {
+        this.name = commandName();
         this.subFunctions = subFunctions;
         this.library = library;
     }

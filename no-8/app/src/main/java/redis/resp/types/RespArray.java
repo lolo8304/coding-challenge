@@ -1,10 +1,13 @@
 package redis.resp.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class RespArray extends RespType<RespType[]> {
+
+    public final static RespArray EMPTY_ARRAY = new RespArray(RespType.EMPTY_TYPE_ARRAY);
 
     public final Long length;
 
@@ -83,4 +86,13 @@ public class RespArray extends RespType<RespType[]> {
         return false;
     }
 
+    public RespSortedMap arrayToMap() {
+        var entries = new ArrayList<RespSortedMap.Entry>();
+        for (int i = 0; i < this.value.length; i++) {
+            var key = (String) this.value[i++].value;
+            var value = this.value[i];
+            entries.add(new RespSortedMap.Entry(key, value));
+        }
+        return new RespSortedMap(entries);
+    }
 }

@@ -3,7 +3,6 @@ package redis.resp;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import redis.resp.types.RespNull;
 import redis.resp.types.RespType;
 
 public class RedisCache {
@@ -34,13 +33,13 @@ public class RedisCache {
         }
     }
 
-    public RespType get(String key) {
+    public <T extends RespType> Optional<T> get(String key) {
         synchronized (SYNC) {
             var context = getCache(key);
             if (context.isEmpty()) {
-                return RespNull.NULL;
+                return Optional.empty();
             } else {
-                return context.get().value;
+                return Optional.of((T) context.get().value);
             }
         }
     }

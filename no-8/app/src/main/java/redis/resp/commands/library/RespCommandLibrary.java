@@ -28,11 +28,15 @@ public class RespCommandLibrary {
 
     private void init() {
         this.register(new CmdCommand(INSTANCE));
-        this.register(new CmdEcho(INSTANCE));
+        this.register(new CmdPing(INSTANCE));
         this.register(new CmdEcho(INSTANCE));
         this.register(new CmdSet(INSTANCE));
         this.register(new CmdGet(INSTANCE));
         this.register(new CmdConfig(INSTANCE));
+        this.register(new CmdHmSet(INSTANCE));
+        this.register(new CmdHmGet(INSTANCE));
+        this.register(new CmdHGet(INSTANCE));
+
     }
 
     public RespLibraryFunction get(String function) throws RespCommandException {
@@ -44,10 +48,6 @@ public class RespCommandLibrary {
     }
 
     public RespResponse execute(RespRequest request) throws RespCommandException {
-        if (_logger.isLoggable(Level.INFO)) {
-            _logger.fine(
-                    "Execute command: " + request.getFunction() + " - " + request.command.array.toRespEscapedString());
-        }
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine(
                     "Execute command: " + request.getFunction() + " - " + request.command.array.toRespEscapedString());

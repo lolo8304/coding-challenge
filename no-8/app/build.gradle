@@ -28,6 +28,7 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'io.netty:netty-all:4.1.92.Final'
+    implementation 'redis.clients:jedis:4.4.0'
 }
 
 tasks.named('test') {

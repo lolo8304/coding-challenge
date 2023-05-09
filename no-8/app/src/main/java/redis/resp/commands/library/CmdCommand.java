@@ -10,7 +10,12 @@ import redis.resp.types.RespSortedMap;
 public class CmdCommand extends RespLibraryFunction {
 
     protected CmdCommand(RespCommandLibrary library) {
-        super("COMMAND", new String[] { "DOCS" }, library);
+        super(new String[] { "DOCS" }, library);
+    }
+
+    @Override
+    public String commandName() {
+        return "COMMAND";
     }
 
     @Override
@@ -28,6 +33,7 @@ public class CmdCommand extends RespLibraryFunction {
     }
 
     private RespResponse executeSubFunctionDocs(RespRequest request) {
+        // return new RespResponse(new RespSortedMap());
         return new RespResponse(RespCommandLibrary.INSTANCE.getCommandDocs(request.getArguments(2)));
     }
 

@@ -3,10 +3,11 @@
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,7 @@ class RedisCmdTests {
 
         // Act
         var response = ping.execute(request);
-        var pong = (RespSimpleString) response.values[0];
+        var pong = (RespBulkString) response.values[0];
 
         // Assert
         assertEquals("PONG", pong.value);
@@ -110,12 +111,12 @@ class RedisCmdTests {
         // Act
         var response = set.execute(request);
         var responseType = (RespSimpleString) response.values[0];
-        var cacheObject = cache.get("mykey");
+        Optional<RespSimpleString> cacheObject = cache.get("mykey");
 
         // Assert
         assertEquals("OK", responseType.value);
-        assertNotNull(cacheObject);
-        assertEquals("this-is-a-set-test", cacheObject.value);
+        assertTrue(cacheObject.isPresent());
+        assertEquals("this-is-a-set-test", cacheObject.get().value);
 
     }
 
@@ -135,8 +136,8 @@ class RedisCmdTests {
 
         // Assert
         assertEquals("OK", responseType2.value);
-        assertNotNull(cacheObject);
-        assertEquals("this-is-the-second-string", cacheObject.value);
+        assertTrue(cacheObject.isPresent());
+        assertEquals("this-is-the-second-string", cacheObject.get().value);
 
     }
 }

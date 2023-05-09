@@ -5,20 +5,31 @@ import java.util.Optional;
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.types.RespError;
+import redis.resp.types.RespNull;
 import redis.resp.types.RespSortedMap;
+import redis.resp.types.RespType;
 
 public class CmdGet extends RespLibraryFunction {
 
     public CmdGet(RespCommandLibrary library) {
-        super("GET", library);
+        super(library);
+    }
+
+    @Override
+    public String commandName() {
+        return "GET";
     }
 
     @Override
     public RespResponse execute(RespRequest request) {
         Optional<String> key = request.command.getValue(1);
         if (key.isPresent()) {
-            var returnValue = request.cache.get(key.get());
-            return new RespResponse(returnValue);
+            Optional<RespType> returnValue = request.cache.get(key.get());
+            if (returnValue.isPresent()) {
+                return new RespResponse(returnValue.get());
+            } else {
+                return new RespResponse(RespNull.NULL);
+            }
         } else {
             return new RespResponse(new RespError("ERR wrong number of arguments for 'get' command"));
         }

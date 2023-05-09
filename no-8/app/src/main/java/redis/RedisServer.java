@@ -73,12 +73,19 @@ public class RedisServer {
         }
 
         @Override
-        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        public void channelRead(ChannelHandlerContext ctx, Object msg) throws RespCommandException {
             var nettyBufferIn = (ByteBuf) msg;
             byte[] bytes = new byte[nettyBufferIn.readableBytes()];
             nettyBufferIn.readBytes(bytes);
             // important to position correctly
             var nioBufferIn = ByteBuffer.wrap(bytes);
+
+            if (_logger.isLoggable(Level.INFO)) {
+                var requestString = new String(bytes);
+                var requestEscapedString = RespScanner.convertNewLinesBack(requestString);
+                byte[] requestBytes = requestString.getBytes();
+                _logger.info("Request: " + requestBytes.length + " - " + requestEscapedString);
+            }
 
             var response = executeCommand(nioBufferIn);
             var bytesResponse = this.getBytesFromResponse(response);
@@ -112,7 +119,13 @@ public class RedisServer {
             return RespResponse.join(responses);
         }
 
-        private RespResponse executeCommand(ByteBuffer buffer) {
+        private RespResponse executeCommand(ByteBuffer buffer) throws RespCommandException {
+            buffer.mark();
+            if (!RespScanner.isValidRespTypeChar(buffer.get())) {
+                buffer.reset();
+                return executeInlineCommand(buffer);
+            }
+            buffer.reset();
             try {
                 var scanner = new RespScanner(buffer);
                 var commands = scanner.getCommands();
@@ -133,8 +146,8 @@ public class RedisServer {
             if (_logger.isLoggable(Level.INFO)) {
                 var resultString = response.toRespString();
                 var escapedString = RespScanner.convertNewLinesBack(resultString);
-                byte[] bytes = response.toRespString().getBytes();
-                _logger.fine("Response: " + bytes.length + " - " + escapedString);
+                byte[] bytes = resultString.getBytes();
+                _logger.info("Response: " + bytes.length + " - " + escapedString);
                 return bytes;
             } else {
                 return response.toRespString().getBytes();

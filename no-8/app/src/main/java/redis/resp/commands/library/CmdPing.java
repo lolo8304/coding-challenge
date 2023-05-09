@@ -12,7 +12,12 @@ import redis.resp.types.RespSortedMap;
 public class CmdPing extends RespLibraryFunction {
 
     public CmdPing(RespCommandLibrary library) {
-        super("PING", library);
+        super(library);
+    }
+
+    @Override
+    public String commandName() {
+        return "PING";
     }
 
     @Override
@@ -21,7 +26,7 @@ public class CmdPing extends RespLibraryFunction {
         if (message.isPresent()) {
             return new RespResponse(new RespBulkString(message.get()));
         } else {
-            return new RespResponse(new RespSimpleString("PONG"));
+            return new RespResponse(new RespBulkString("PONG"));
         }
     }
 

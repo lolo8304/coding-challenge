@@ -6,7 +6,7 @@ import redis.resp.RespException;
 import redis.resp.RespScanner;
 
 public abstract class RespType<T> {
-    public static final RespType[] EMPTY_ARRAY = new RespType[0];
+    public static final RespType[] EMPTY_TYPE_ARRAY = new RespType[0];
 
     public final T value;
 

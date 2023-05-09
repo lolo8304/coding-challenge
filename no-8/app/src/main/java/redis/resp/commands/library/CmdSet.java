@@ -13,7 +13,12 @@ import redis.resp.types.RespType;
 public class CmdSet extends RespLibraryFunction {
 
     public CmdSet(RespCommandLibrary library) {
-        super("SET", library);
+        super(library);
+    }
+
+    @Override
+    public String commandName() {
+        return "SET";
     }
 
     @Override

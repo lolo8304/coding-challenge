@@ -3,13 +3,19 @@ package redis.resp.commands.library;
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.commands.RespCommandException;
+import redis.resp.types.RespArray;
 import redis.resp.types.RespError;
 import redis.resp.types.RespSortedMap;
 
 public class CmdConfig extends RespLibraryFunction {
 
     public CmdConfig(RespCommandLibrary library) {
-        super("CONFIG", new String[] { "GET" }, library);
+        super(new String[] { "GET" }, library);
+    }
+
+    @Override
+    public String commandName() {
+        return "CONFIG";
     }
 
     @Override
@@ -29,9 +35,17 @@ public class CmdConfig extends RespLibraryFunction {
     }
 
     private RespResponse executeSubFunctionGet(RespRequest request) {
-        var arg = request.command.getValue(1);
+        var arg = request.command.getValue(2);
         if (arg.isPresent()) {
-            return new RespResponse(new RespSortedMap().put("save", "3600 1 300 100 60 10000"));
+            switch ((String) arg.get()) {
+                case "save":
+                    return new RespResponse(new RespSortedMap().put("save", "3600 1 300 100 60 10000"));
+                case "appendonly":
+                    return new RespResponse(new RespSortedMap().put("appendonly", "no"));
+
+                default:
+                    return new RespResponse(RespArray.EMPTY_ARRAY);
+            }
         } else {
             return new RespResponse(new RespError("ERR wrong number of arguments for 'config|get' command"));
         }

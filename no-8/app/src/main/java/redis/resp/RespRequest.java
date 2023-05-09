@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import redis.resp.commands.RespCommand;
 import redis.resp.types.RespArray;
+import redis.resp.types.RespType;
 
 public class RespRequest {
 
@@ -31,6 +32,10 @@ public class RespRequest {
 
     public boolean hasSubFunction(String subFunction) {
         return this.command.array.hasSubFunction(subFunction);
+    }
+
+    public Optional<RespType> getArgument(int index) {
+        return this.command.get(index);
     }
 
     public Optional<RespArray> getArguments() {

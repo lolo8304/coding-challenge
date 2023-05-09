@@ -19,6 +19,12 @@ import redis.resp.types.RespType;
 
 public class RespScanner {
 
+    private static final String RESP_TYPE_START_CHARS = "+-$:*";
+
+    public static boolean isValidRespTypeChar(byte b) {
+        return RESP_TYPE_START_CHARS.indexOf(b) >= 0;
+    }
+
     private final ByteBuffer buffer;
     private int position;
 
@@ -152,7 +158,7 @@ public class RespScanner {
         }
         var length = intValue.get().intValue();
         if (length < 0) {
-            return Optional.of(new RespArray(length, RespType.EMPTY_ARRAY));
+            return Optional.of(new RespArray(length, RespType.EMPTY_TYPE_ARRAY));
         }
         var array = new RespType[length.intValue()];
         for (int i = 0; i < length; i++) {

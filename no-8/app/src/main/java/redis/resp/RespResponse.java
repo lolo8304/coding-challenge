@@ -44,15 +44,8 @@ public class RespResponse {
     }
 
     public void toRespString(StringBuilder builder) {
-        var first = true;
         for (RespType respType : values) {
-            if (!first) {
-                builder.append("\r\n");
-            } else {
-                first = false;
-            }
             respType.toRespString(builder);
         }
     }
-
 }
