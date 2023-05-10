@@ -84,7 +84,8 @@ public class RedisServer {
                 var requestString = new String(bytes);
                 var requestEscapedString = RespScanner.convertNewLinesBack(requestString);
                 byte[] requestBytes = requestString.getBytes();
-                _logger.info("Request: " + requestBytes.length + " - " + requestEscapedString);
+                _logger.info("Request: " + requestBytes.length + " - " +
+                        requestEscapedString);
             }
 
             var response = executeCommand(nioBufferIn);
