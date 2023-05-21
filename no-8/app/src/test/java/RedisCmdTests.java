@@ -12,9 +12,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import redis.resp.RedisCache;
 import redis.resp.RespPipelineInlineScanner;
 import redis.resp.RespRequest;
+import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.commands.RespCommandException;
 import redis.resp.commands.library.CmdEcho;

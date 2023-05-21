@@ -8,7 +8,6 @@ import redis.resp.types.RespArray;
 import redis.resp.types.RespError;
 import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespSortedMap;
-import redis.resp.types.RespType;
 
 public class CmdSet extends RespLibraryFunction {
 
@@ -22,18 +21,42 @@ public class CmdSet extends RespLibraryFunction {
     }
 
     @Override
+
     public RespResponse execute(RespRequest request) {
         Optional<String> key = request.command.getValue(1);
-        Optional<RespType> value = request.command.get(2);
-        if (key.isPresent() && value.isPresent()) {
+        Optional<String> stringValue = request.command.getValue(2);
+        if (key.isPresent() && stringValue.isPresent()) {
             // convert from BulkString to SimpleString -x option is not available
-            Optional<String> stringValue = request.command.getValue(2);
-            if (stringValue.isPresent()) {
-                var returnValue = request.cache.set(key.get(), new RespSimpleString(stringValue.get()));
-                return new RespResponse(returnValue);
-            } else {
-                return new RespResponse(new RespError("ERR wrong number of arguments for 'set' command"));
+            Optional<String> option = request.getString(3);
+            if (option.isPresent()) {
+                switch (option.get().toLowerCase()) {
+                    case "ex":
+                        Optional<Integer> expireTimeInS = request.getInteger(4);
+                        break;
+                    case "px":
+                        Optional<Integer> expireTimeInMs = request.getInteger(4);
+                        break;
+                    case "exat":
+                        Optional<Integer> expireInS = request.getInteger(4);
+                        break;
+                    case "pxat":
+                        Optional<Integer> expireInMs = request.getInteger(4);
+                        break;
+                    case "nx":
+                        break;
+                    case "xx":
+                        break;
+                    case "keepttl":
+                        break;
+                    case "get":
+                        break;
+                    default:
+                        break;
+
+                }
             }
+            var returnValue = request.cache.set(key.get(), new RespSimpleString(stringValue.get()));
+            return new RespResponse(returnValue);
         } else {
             return new RespResponse(new RespError("ERR wrong number of arguments for 'set' command"));
         }

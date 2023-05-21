@@ -3,6 +3,7 @@ package redis.resp;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.types.RespArray;
 import redis.resp.types.RespType;
@@ -32,6 +33,14 @@ public class RespRequest {
 
     public boolean hasSubFunction(String subFunction) {
         return this.command.array.hasSubFunction(subFunction);
+    }
+
+    public Optional<String> getString(int index) {
+        return this.command.getValue(index);
+    }
+
+    public Optional<Integer> getInteger(int index) {
+        return this.command.getValue(index);
     }
 
     public Optional<RespType> getArgument(int index) {

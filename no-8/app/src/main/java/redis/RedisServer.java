@@ -16,11 +16,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import redis.resp.RedisCache;
 import redis.resp.RespPipelineInlineScanner;
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
 import redis.resp.RespScanner;
+import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.commands.RespCommandException;
 import redis.resp.commands.RespInlineCommand;
@@ -80,7 +80,7 @@ public class RedisServer {
             // important to position correctly
             var nioBufferIn = ByteBuffer.wrap(bytes);
 
-            if (_logger.isLoggable(Level.INFO)) {
+            if (_logger.isLoggable(Level.FINER)) {
                 var requestString = new String(bytes);
                 var requestEscapedString = RespScanner.convertNewLinesBack(requestString);
                 byte[] requestBytes = requestString.getBytes();
@@ -144,7 +144,7 @@ public class RedisServer {
         }
 
         public byte[] getBytesFromResponse(RespResponse response) {
-            if (_logger.isLoggable(Level.INFO)) {
+            if (_logger.isLoggable(Level.FINER)) {
                 var resultString = response.toRespString();
                 var escapedString = RespScanner.convertNewLinesBack(resultString);
                 byte[] bytes = resultString.getBytes();

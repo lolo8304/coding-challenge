@@ -33,8 +33,9 @@ public class CmdCommand extends RespLibraryFunction {
     }
 
     private RespResponse executeSubFunctionDocs(RespRequest request) {
-        // return new RespResponse(new RespSortedMap());
-        return new RespResponse(RespCommandLibrary.INSTANCE.getCommandDocs(request.getArguments(2)));
+        return new RespResponse(new RespSortedMap());
+        // return new
+        // RespResponse(RespCommandLibrary.INSTANCE.getCommandDocs(request.getArguments(2)));
     }
 
     @Override
