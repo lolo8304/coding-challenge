@@ -60,6 +60,18 @@ public class RespArray extends RespType<RespType[]> {
         }
     }
 
+    public RespArray lpush(List<RespType> value) {
+        var newArray = new ArrayList<>(value);
+        newArray.addAll(Arrays.asList(this.value));
+        return new RespArray(newArray);
+    }
+
+    public RespArray rpush(List<RespType> value) {
+        var newArray = new ArrayList<>(Arrays.asList(this.value));
+        newArray.addAll(value);
+        return new RespArray(newArray);
+    }
+
     @Override
     public boolean isCommandType() {
         return true;

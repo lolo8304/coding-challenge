@@ -27,7 +27,9 @@ import redis.resp.commands.library.CmdExists;
 import redis.resp.commands.library.CmdGet;
 import redis.resp.commands.library.CmdIncr;
 import redis.resp.commands.library.CmdIncrBy;
+import redis.resp.commands.library.CmdLPush;
 import redis.resp.commands.library.CmdPing;
+import redis.resp.commands.library.CmdRPush;
 import redis.resp.commands.library.CmdSet;
 import redis.resp.commands.library.RespCommandLibrary;
 import redis.resp.types.RespArray;
@@ -485,4 +487,87 @@ class RedisCmdTests {
 
     }
 
+    @Test
+    void lpush2_startwithnull_getLen2()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+
+        // Act
+        var lpush = new CmdLPush(lib);
+        var request2 = getRequestFromString("LPUSH resource-name hello3 hello4");
+        var responseLPush = lpush.execute(request2);
+        var responseLPushType = (RespInteger) responseLPush.values[0];
+
+        // Assert
+        assertEquals(2L, responseLPushType.value);
+
+    }
+
+    @Test
+    void lpush2_startwith2_getLen2()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var lpush = new CmdLPush(lib);
+        var request = getRequestFromString("LPUSH resource-name hello3 hello4");
+        var responseLPush = lpush.execute(request);
+
+        // Act
+        var request2 = getRequestFromString("LPUSH resource-name hello1 hello2");
+        var responseLPush2 = lpush.execute(request2);
+        var responseLPush2Type = (RespInteger) responseLPush2.values[0];
+
+        // Assert
+        assertEquals(4L, responseLPush2Type.value);
+
+    }
+
+    @Test
+    void lpush2_startwith2_getHello2atposition1()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var lpush = new CmdLPush(lib);
+        var request = getRequestFromString("LPUSH resource-name hello3 hello4");
+        var responseLPush = lpush.execute(request);
+
+        // Act
+        var request2 = getRequestFromString("LPUSH resource-name hello1 hello2");
+        var responseLPush2 = lpush.execute(request2);
+        var responseLPush2Type = (RespInteger) responseLPush2.values[0];
+
+        var get = new CmdGet(lib);
+        var request3 = getRequestFromString("GET resource-name");
+        var responseGet = get.execute(request3);
+        var responseGetType = (RespArray) responseGet.values[0];
+
+        // Assert
+        assertEquals("hello2", responseGetType.value[1].value);
+
+    }
+
+    @Test
+    void rpush2_startwith2_getHello2atposition1()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var rpush = new CmdRPush(lib);
+        var request = getRequestFromString("RPUSH resource-name hello1 hello2");
+        var responseRPush = rpush.execute(request);
+
+        // Act
+        var request2 = getRequestFromString("RPUSH resource-name hello3 hello4");
+        var responseRPush2 = rpush.execute(request2);
+        var responseRPush2Type = (RespInteger) responseRPush2.values[0];
+
+        var get = new CmdGet(lib);
+        var request3 = getRequestFromString("GET resource-name");
+        var responseGet = get.execute(request3);
+        var responseGetType = (RespArray) responseGet.values[0];
+
+        // Assert
+        assertEquals("hello3", responseGetType.value[2].value);
+
+    }
 }
