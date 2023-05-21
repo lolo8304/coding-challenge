@@ -4,10 +4,14 @@ import java.util.Optional;
 
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
+import redis.resp.cache.ExpirationPolicy;
+import redis.resp.cache.ExpireAt;
+import redis.resp.cache.ExpireIn;
+import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespArray;
 import redis.resp.types.RespError;
-import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespSortedMap;
+import redis.resp.types.RespType;
 
 public class CmdSet extends RespLibraryFunction {
 
@@ -22,40 +26,53 @@ public class CmdSet extends RespLibraryFunction {
 
     @Override
 
-    public RespResponse execute(RespRequest request) {
+    public RespResponse execute(RespRequest request) throws RespCommandException {
         Optional<String> key = request.command.getValue(1);
-        Optional<String> stringValue = request.command.getValue(2);
-        if (key.isPresent() && stringValue.isPresent()) {
+        Optional<RespType> objectValue = request.command.get(2);
+        if (key.isPresent() && objectValue.isPresent()) {
             // convert from BulkString to SimpleString -x option is not available
-            Optional<String> option = request.getString(3);
-            if (option.isPresent()) {
-                switch (option.get().toLowerCase()) {
-                    case "ex":
-                        Optional<Integer> expireTimeInS = request.getInteger(4);
-                        break;
-                    case "px":
-                        Optional<Integer> expireTimeInMs = request.getInteger(4);
-                        break;
-                    case "exat":
-                        Optional<Integer> expireInS = request.getInteger(4);
-                        break;
-                    case "pxat":
-                        Optional<Integer> expireInMs = request.getInteger(4);
-                        break;
-                    case "nx":
-                        break;
-                    case "xx":
-                        break;
-                    case "keepttl":
-                        break;
-                    case "get":
-                        break;
-                    default:
-                        break;
-
+            var index = 3;
+            Optional<String> option = request.getString(index++);
+            ExpirationPolicy setPolicy = ExpirationPolicy.NONE;
+            while (option.isPresent()) {
+                if (option.isPresent()) {
+                    switch (option.get().toLowerCase()) {
+                        case "ex":
+                            Optional<Integer> expireTimeInS = request.getInteger(index++);
+                            setPolicy = setPolicy.add(ExpireIn.seconds(expireTimeInS.get()));
+                            break;
+                        case "px":
+                            Optional<Long> expireTimeInMs = request.getLong(index++);
+                            setPolicy = setPolicy.add(ExpireIn.milliseconds(expireTimeInMs.get()));
+                            break;
+                        case "exat":
+                            Optional<Integer> expireInS = request.getInteger(index++);
+                            setPolicy = setPolicy.add(ExpireAt.seconds(expireInS.get()));
+                            break;
+                        case "pxat":
+                            Optional<Long> expireInMs = request.getLong(index++);
+                            setPolicy = setPolicy.add(ExpireAt.milliseconds(expireInMs.get()));
+                            break;
+                        case "nx":
+                            setPolicy = setPolicy.add(ExpirationPolicy.SET_IF_NOT_EXISTS);
+                            break;
+                        case "xx":
+                            setPolicy = setPolicy.add(ExpirationPolicy.SET_IF_EXISTS);
+                            ;
+                            break;
+                        case "keepttl":
+                            setPolicy = setPolicy.add(ExpirationPolicy.KEEP_TTL);
+                            break;
+                        case "get":
+                            setPolicy = setPolicy.add(ExpirationPolicy.GET_POLICY);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                option = request.getString(index++);
             }
-            var returnValue = request.cache.set(key.get(), new RespSimpleString(stringValue.get()));
+            var returnValue = request.cache.set(key.get(), objectValue.get(), setPolicy);
             return new RespResponse(returnValue);
         } else {
             return new RespResponse(new RespError("ERR wrong number of arguments for 'set' command"));

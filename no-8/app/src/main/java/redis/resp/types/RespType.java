@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import redis.resp.RespException;
 import redis.resp.RespScanner;
+import redis.resp.cache.ExpirationPolicy;
+import redis.resp.commands.RespCommandException;
 
 public abstract class RespType<T> {
     public static final RespType[] EMPTY_TYPE_ARRAY = new RespType[0];
@@ -75,11 +77,19 @@ public abstract class RespType<T> {
         return Optional.empty();
     }
 
-    public RespType valueForSetOperation(Optional<RespType> oldValue) {
-        if (oldValue.isEmpty()) {
-            return this;
+    // if expiration policy changes the return value, return this - if not keep
+    // standard algorithm with nil and old value
+    public RespType valueForSetOperation(Optional<RespType> oldValue, ExpirationPolicy expirationPolicy)
+            throws RespCommandException {
+        var newValueOrEmpty = expirationPolicy.changedValueForSetOperation(this, oldValue);
+        if (newValueOrEmpty.isPresent()) {
+            return newValueOrEmpty.get();
         } else {
-            return oldValue.get();
+            if (oldValue.isEmpty()) {
+                return this;
+            } else {
+                return oldValue.get();
+            }
         }
     }
 

@@ -2,6 +2,9 @@ package redis.resp.types;
 
 import java.util.Optional;
 
+import redis.resp.cache.ExpirationPolicy;
+import redis.resp.commands.RespCommandException;
+
 public class RespBulkString extends RespType<String> {
 
     public final Long nofBytes;
@@ -65,13 +68,15 @@ public class RespBulkString extends RespType<String> {
         return Optional.of(value);
     }
 
-    // Bulk string reply: the old string value stored at key.
-    public RespType valueForSetOperation(Optional<RespType> oldValue) {
-        if (oldValue.isEmpty()) {
-            return this;
+    // Simple string reply: OK if SET was executed correctly.
+    @Override
+    public RespType valueForSetOperation(Optional<RespType> oldValue, ExpirationPolicy expirationPolicy)
+            throws RespCommandException {
+        var newValueOrEmpty = expirationPolicy.changedValueForSetOperation(this, oldValue);
+        if (newValueOrEmpty.isPresent()) {
+            return newValueOrEmpty.get();
         } else {
-            return oldValue.get();
+            return new RespSimpleString("OK");
         }
     }
-
 }

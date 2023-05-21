@@ -40,7 +40,21 @@ public class RespRequest {
     }
 
     public Optional<Integer> getInteger(int index) {
-        return this.command.getValue(index);
+        Optional<String> value = this.command.getValue(index);
+        if (value.isPresent()) {
+            return Optional.of(Integer.valueOf(value.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Long> getLong(int index) {
+        Optional<String> value = this.command.getValue(index);
+        if (value.isPresent()) {
+            return Optional.of(Long.valueOf(value.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Optional<RespType> getArgument(int index) {

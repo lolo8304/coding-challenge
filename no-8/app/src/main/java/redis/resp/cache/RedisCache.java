@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespNull;
 import redis.resp.types.RespType;
 
@@ -22,7 +23,7 @@ public class RedisCache {
     private int maxMemoryBytes;
 
     public RedisCache() {
-        this(200 * 1024);
+        this(300 * 1024);
     }
 
     public RedisCache(int maxMemoryBytes) {
@@ -32,16 +33,16 @@ public class RedisCache {
         this.maxMemoryBytes = maxMemoryBytes;
     }
 
-    public RespType set(String key, RespType value) {
+    public RespType set(String key, RespType value) throws RespCommandException {
         return set(key, value, ExpirationPolicy.NONE);
     }
 
-    public RespType set(String key, RespType value, ExpirationPolicy expirationPolicy) {
+    public RespType set(String key, RespType value, ExpirationPolicy expirationPolicy) throws RespCommandException {
         synchronized (SYNC) {
             var context = getValidContext(key);
             RespType returnValue;
             if (context.isEmpty()) {
-                returnValue = value.valueForSetOperation(Optional.empty());
+                returnValue = value.valueForSetOperation(Optional.empty(), expirationPolicy);
                 var newContext = new RedisCacheContext(this, key, value);
                 if (newContext.trySetValue(value, expirationPolicy)) {
                     newContext.lastOperation = Operation.SET;
@@ -51,7 +52,8 @@ public class RedisCache {
                     return RespNull.NULL;
                 }
             } else {
-                returnValue = value.valueForSetOperation(Optional.of(context.get().getInternalValue()));
+                returnValue = value.valueForSetOperation(Optional.of(context.get().getInternalValue()),
+                        expirationPolicy);
                 if (context.get().trySetValue(value, expirationPolicy)) {
                     context.get().lastOperation = Operation.OVERRIDE;
                 } else {
@@ -70,6 +72,16 @@ public class RedisCache {
             } else {
                 return Optional.of((T) context.get().getValue());
             }
+        }
+    }
+
+    public boolean del(String key) {
+        synchronized (SYNC) {
+            var context = getValidContext(key);
+            if (context.isPresent()) {
+                this.removeContext(context.get());
+            }
+            return context.isPresent();
         }
     }
 
@@ -313,7 +325,9 @@ public class RedisCache {
 
     public void registerMemoryInBytes(int oldMemoryInBytes, int newMemoryInBytes) {
         this.memoryInBytes += (newMemoryInBytes - oldMemoryInBytes);
-        _logger.info("Memory used: " + this.getMemoryInBytesToString() + " [ higer than max = " + hasMaxMemoryReached()
+        _logger.info("Memory used: " + fromMemoryInBytesToString(this.memoryInBytes) + " [ max="
+                + fromMemoryInBytesToString(this.maxMemoryBytes) + ", high="
+                + hasMaxMemoryReached()
                 + "]");
     }
 
@@ -321,11 +335,11 @@ public class RedisCache {
         return this.memoryInBytes;
     }
 
-    public String getMemoryInBytesToString() {
+    public static String fromMemoryInBytesToString(int memory) {
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
         decimalFormat.setMaximumFractionDigits(1);
-        if (this.memoryInBytes > 1024) {
-            int kb = this.memoryInBytes / 1024;
+        if (memory > 1024) {
+            int kb = memory / 1024;
             if (kb > 1024) {
                 var mb = kb / 1024.0;
                 return decimalFormat.format(mb) + " mb";
@@ -333,7 +347,7 @@ public class RedisCache {
                 return decimalFormat.format(kb) + " kb";
             }
         } else {
-            return this.memoryInBytes + " byte";
+            return memory + " byte";
         }
     }
 

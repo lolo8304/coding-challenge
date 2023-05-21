@@ -30,9 +30,12 @@ public class RespCommandLibrary {
         this.register(new CmdCommand(INSTANCE));
         this.register(new CmdPing(INSTANCE));
         this.register(new CmdEcho(INSTANCE));
+        this.register(new CmdConfig(INSTANCE));
+
         this.register(new CmdSet(INSTANCE));
         this.register(new CmdGet(INSTANCE));
-        this.register(new CmdConfig(INSTANCE));
+        this.register(new CmdDel(INSTANCE));
+
         this.register(new CmdHmSet(INSTANCE));
         this.register(new CmdHmGet(INSTANCE));
         this.register(new CmdHSet(INSTANCE));
@@ -43,7 +46,7 @@ public class RespCommandLibrary {
     public RespLibraryFunction get(String function) throws RespCommandException {
         var f = functions.get(function.toLowerCase());
         if (f == null) {
-            throw new RespCommandException("Function '" + function + "' does not exists");
+            throw new RespCommandException("ERR unknown command '" + function + "'");
         }
         return f;
     }
