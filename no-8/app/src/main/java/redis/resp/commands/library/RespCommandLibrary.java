@@ -35,6 +35,7 @@ public class RespCommandLibrary {
         this.register(new CmdSet(INSTANCE));
         this.register(new CmdGet(INSTANCE));
         this.register(new CmdDel(INSTANCE));
+        this.register(new CmdExists(INSTANCE));
 
         this.register(new CmdHmSet(INSTANCE));
         this.register(new CmdHmGet(INSTANCE));
