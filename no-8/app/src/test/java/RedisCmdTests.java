@@ -111,7 +111,7 @@ class RedisCmdTests {
         // Act
         var response = set.execute(request);
         var responseType = (RespSimpleString) response.values[0];
-        Optional<RespSimpleString> cacheObject = cache.get("mykey");
+        Optional<RespType> cacheObject = cache.get("mykey");
 
         // Assert
         assertEquals("OK", responseType.value);
