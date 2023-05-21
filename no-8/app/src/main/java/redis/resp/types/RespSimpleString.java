@@ -2,6 +2,7 @@ package redis.resp.types;
 
 import java.util.Optional;
 
+import redis.resp.RespException;
 import redis.resp.cache.ExpirationPolicy;
 import redis.resp.commands.RespCommandException;
 
@@ -14,6 +15,10 @@ public class RespSimpleString extends RespType<String> {
     @Override
     public void toRespString(StringBuilder buffer) {
         buffer.append('+').append(value).append("\r\n");
+    }
+
+    public String stringValue() throws RespException {
+        return this.value;
     }
 
     // Simple string reply: OK if SET was executed correctly.

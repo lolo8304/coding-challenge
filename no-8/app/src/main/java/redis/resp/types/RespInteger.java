@@ -1,5 +1,7 @@
 package redis.resp.types;
 
+import redis.resp.RespException;
+
 public class RespInteger extends RespType<Long> {
 
     public RespInteger(Long value) {
@@ -18,5 +20,10 @@ public class RespInteger extends RespType<Long> {
     @Override
     public void toRespString(StringBuilder buffer) {
         buffer.append(':').append(value).append("\r\n");
+    }
+
+    @Override
+    public String stringValue() throws RespException {
+        return String.valueOf(this.value);
     }
 }

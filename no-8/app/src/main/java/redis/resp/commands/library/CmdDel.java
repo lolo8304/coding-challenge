@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
+import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespError;
 import redis.resp.types.RespInteger;
 import redis.resp.types.RespSortedMap;
@@ -20,7 +21,7 @@ public class CmdDel extends RespLibraryFunction {
     }
 
     @Override
-    public RespResponse execute(RespRequest request) {
+    public RespResponse execute(RespRequest request) throws RespCommandException {
         if (request.getArgumentsCount(1) < 1) {
             return new RespResponse(new RespError("ERR wrong number of arguments for 'del' command"));
         }

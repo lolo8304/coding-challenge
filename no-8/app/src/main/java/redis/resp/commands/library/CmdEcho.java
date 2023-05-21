@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import redis.resp.RespRequest;
 import redis.resp.RespResponse;
+import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespBulkString;
 import redis.resp.types.RespError;
 import redis.resp.types.RespSortedMap;
@@ -20,7 +21,7 @@ public class CmdEcho extends RespLibraryFunction {
     }
 
     @Override
-    public RespResponse execute(RespRequest request) {
+    public RespResponse execute(RespRequest request) throws RespCommandException {
         Optional<String> message = request.command.getValue(1);
         if (message.isPresent()) {
             return new RespResponse(new RespBulkString(message.get()));

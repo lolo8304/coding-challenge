@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
+import redis.resp.commands.RespCommandException;
 import redis.resp.types.RespArray;
 import redis.resp.types.RespInteger;
 import redis.resp.types.RespType;
@@ -73,21 +74,25 @@ public class RespRequest {
         return this.command.get(index);
     }
 
-    public Optional<RespArray> getArguments() {
+    public Optional<RespArray> getArguments() throws RespCommandException {
         return this.getArguments(1);
     }
 
-    public int getArgumentsCount(int starting) {
+    public int getArgumentsCount(int starting) throws RespCommandException {
         var array = this.getArguments(starting);
         return array.isEmpty() ? 0 : array.get().value.length;
     }
 
-    public Optional<RespArray> getArguments(int starting) {
+    public Optional<RespArray> getArguments(int starting) throws RespCommandException {
         var i = starting;
         var filters = new ArrayList<String>();
         var arguments = this.command.get(i++);
         while (arguments.isPresent()) {
-            filters.add((String) arguments.get().value);
+            try {
+                filters.add(arguments.get().getString());
+            } catch (RespException e) {
+                throw new RespCommandException(e.getMessage());
+            }
             arguments = this.command.get(i++);
         }
         Optional<RespArray> array = Optional.empty();

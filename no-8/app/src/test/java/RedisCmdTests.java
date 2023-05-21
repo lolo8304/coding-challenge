@@ -13,15 +13,20 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import redis.resp.RespException;
 import redis.resp.RespPipelineInlineScanner;
 import redis.resp.RespRequest;
 import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.commands.RespCommandException;
+import redis.resp.commands.library.CmdDecr;
+import redis.resp.commands.library.CmdDecrBy;
 import redis.resp.commands.library.CmdDel;
 import redis.resp.commands.library.CmdEcho;
 import redis.resp.commands.library.CmdExists;
 import redis.resp.commands.library.CmdGet;
+import redis.resp.commands.library.CmdIncr;
+import redis.resp.commands.library.CmdIncrBy;
 import redis.resp.commands.library.CmdPing;
 import redis.resp.commands.library.CmdSet;
 import redis.resp.commands.library.RespCommandLibrary;
@@ -365,4 +370,119 @@ class RedisCmdTests {
         assertNotEquals(RespNull.NULL, responseNullType);
 
     }
+
+    @Test
+    void incr_startwith10_get11()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name 10");
+        set.execute(request1);
+
+        // Act
+        var incr = new CmdIncr(lib);
+        var request2 = getRequestFromString("INCR resource-name");
+        var responseIncr = incr.execute(request2);
+        var responseIncrType = responseIncr.values[0];
+
+        // Assert
+        assertEquals(11L, responseIncrType.getLong());
+
+    }
+
+    @Test
+    void incr12_startwith10_get11()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name 10");
+        set.execute(request1);
+
+        // Act
+        var incr = new CmdIncrBy(lib);
+        var request2 = getRequestFromString("INCRBY resource-name 12");
+        var responseIncr = incr.execute(request2);
+        var responseIncrType = responseIncr.values[0];
+
+        // Assert
+        assertEquals(22L, responseIncrType.getLong());
+
+    }
+
+    @Test
+    void incr1_startwithnull_get1()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+
+        // Act
+        var incr = new CmdIncr(lib);
+        var request2 = getRequestFromString("INCR resource-name");
+        var responseIncr = incr.execute(request2);
+        var responseIncrType = responseIncr.values[0];
+
+        // Assert
+        assertEquals(1L, responseIncrType.getLong());
+
+    }
+
+    @Test
+    void decr_startwith10_get11()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name 10");
+        set.execute(request1);
+
+        // Act
+        var decr = new CmdDecr(lib);
+        var request2 = getRequestFromString("DECR resource-name");
+        var responseDecr = decr.execute(request2);
+        var responseDecrType = responseDecr.values[0];
+
+        // Assert
+        assertEquals(9L, responseDecrType.getLong());
+
+    }
+
+    @Test
+    void decr12_startwith10_get_2()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name 10");
+        set.execute(request1);
+
+        // Act
+        var decr = new CmdDecrBy(lib);
+        var request2 = getRequestFromString("DECRBY resource-name 12");
+        var responseDecr = decr.execute(request2);
+        var responseDecrType = responseDecr.values[0];
+
+        // Assert
+        assertEquals(-2L, responseDecrType.getLong());
+
+    }
+
+    @Test
+    void decr1_startwithnull_get_1()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException, RespException {
+
+        // Arrange
+
+        // Act
+        var decr = new CmdDecr(lib);
+        var request2 = getRequestFromString("DECR resource-name");
+        var responseDecr = decr.execute(request2);
+        var responseDecrType = responseDecr.values[0];
+
+        // Assert
+        assertEquals(-1L, responseDecrType.getLong());
+
+    }
+
 }

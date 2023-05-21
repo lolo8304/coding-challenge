@@ -28,6 +28,10 @@ public abstract class RespType<T> {
         throw new RespException("int value not allowed for this type");
     }
 
+    public String stringValue() throws RespException {
+        throw new RespException("String value not allowed for this type");
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -93,4 +97,45 @@ public abstract class RespType<T> {
         }
     }
 
+    public static Long getLong(RespType obj) throws RespException {
+        if (obj instanceof RespInteger) {
+            return obj.intValue();
+        } else {
+            return Long.valueOf(obj.stringValue());
+        }
+    }
+
+    public Integer getInteger() throws RespException {
+        return getInteger(this);
+    }
+
+    public String getString() throws RespException {
+        return getString(this);
+    }
+
+    public Long getLong() throws RespException {
+        return getLong(this);
+    }
+
+    public static Integer getInteger(RespType obj) throws RespException {
+        if (obj instanceof RespInteger) {
+            return Integer.valueOf((int) obj.intValue().longValue());
+        } else {
+            return Integer.valueOf(obj.stringValue());
+        }
+    }
+
+    public static String getString(RespType obj) throws RespException {
+        return obj.stringValue();
+    }
+
+    public RespType incr(Long by) throws RespException {
+        Long number = getLong(this);
+        number += by;
+        return new RespBulkString(number);
+    }
+
+    public RespType decr(Long by) throws RespException {
+        return incr(-by);
+    }
 }

@@ -2,6 +2,7 @@ package redis.resp.types;
 
 import java.util.Optional;
 
+import redis.resp.RespException;
 import redis.resp.cache.ExpirationPolicy;
 import redis.resp.commands.RespCommandException;
 
@@ -15,6 +16,11 @@ public class RespBulkString extends RespType<String> {
     }
 
     public RespBulkString(Integer value) {
+        super(String.valueOf(value));
+        this.nofBytes = (long) this.value.length();
+    }
+
+    public RespBulkString(Long value) {
         super(String.valueOf(value));
         this.nofBytes = (long) this.value.length();
     }
@@ -52,6 +58,10 @@ public class RespBulkString extends RespType<String> {
         } else if (!nofBytes.equals(other.nofBytes))
             return false;
         return true;
+    }
+
+    public String stringValue() throws RespException {
+        return this.value;
     }
 
     @Override
