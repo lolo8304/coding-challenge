@@ -65,6 +65,11 @@ public class RespRequest {
         return this.getArguments(1);
     }
 
+    public int getArgumentsCount(int starting) {
+        var array = this.getArguments(starting);
+        return array.isEmpty() ? 0 : array.get().value.length;
+    }
+
     public Optional<RespArray> getArguments(int starting) {
         var i = starting;
         var filters = new ArrayList<String>();

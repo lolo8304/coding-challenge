@@ -22,6 +22,9 @@ public class CmdGet extends RespLibraryFunction {
 
     @Override
     public RespResponse execute(RespRequest request) {
+        if (request.getArgumentsCount(1) != 1) {
+            return new RespResponse(new RespError("ERR wrong number of arguments for 'get' command"));
+        }
         Optional<String> key = request.command.getValue(1);
         if (key.isPresent()) {
             Optional<RespType> returnValue = request.cache.get(key.get());
