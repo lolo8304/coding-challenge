@@ -3,6 +3,7 @@
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -17,12 +18,17 @@ import redis.resp.RespRequest;
 import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.commands.RespCommandException;
+import redis.resp.commands.library.CmdDel;
 import redis.resp.commands.library.CmdEcho;
+import redis.resp.commands.library.CmdExists;
+import redis.resp.commands.library.CmdGet;
 import redis.resp.commands.library.CmdPing;
 import redis.resp.commands.library.CmdSet;
 import redis.resp.commands.library.RespCommandLibrary;
 import redis.resp.types.RespArray;
 import redis.resp.types.RespBulkString;
+import redis.resp.types.RespInteger;
+import redis.resp.types.RespNull;
 import redis.resp.types.RespSimpleString;
 import redis.resp.types.RespType;
 
@@ -138,6 +144,225 @@ class RedisCmdTests {
         assertEquals("OK", responseType2.value);
         assertTrue(cacheObject.isPresent());
         assertEquals("this-is-the-second-string", cacheObject.get().value);
+
+    }
+
+    @Test
+    void exists_mykey_return1() throws URISyntaxException, IOException, RespCommandException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request = getRequestFromString("set mykey this-is-the-first-string");
+        set.execute(request);
+
+        // Act
+        var set2 = new CmdExists(lib);
+        var request2 = getRequestFromString("exists mykey");
+        var response2 = set2.execute(request2);
+        var responseType2 = (RespInteger) response2.values[0];
+
+        // Assert
+        assertEquals(1, responseType2.value);
+
+    }
+
+    @Test
+    void exists_mykey123_return2() throws URISyntaxException, IOException, RespCommandException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey1 this-is-the-first-string");
+        var request2 = getRequestFromString("set mykey2 this-is-the-first-string");
+        var request3 = getRequestFromString("set mykey3notfound this-is-the-first-string");
+        set.execute(request1);
+        set.execute(request2);
+        set.execute(request3);
+
+        // Act
+        var set2 = new CmdExists(lib);
+        var request4 = getRequestFromString("exists mykey1  mykey2  mykey3");
+        var response2 = set2.execute(request4);
+        var responseType2 = (RespInteger) response2.values[0];
+
+        // Assert
+        assertEquals(2, responseType2.value);
+
+    }
+
+    @Test
+    void del_mykey123_return2() throws URISyntaxException, IOException, RespCommandException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey1 this-is-the-first-string");
+        var request2 = getRequestFromString("set mykey2 this-is-the-first-string");
+        var request3 = getRequestFromString("set mykey3notfound this-is-the-first-string");
+        set.execute(request1);
+        set.execute(request2);
+        set.execute(request3);
+
+        // Act
+        var set2 = new CmdDel(lib);
+        var request4 = getRequestFromString("del mykey1  mykey2  mykey3");
+        var response2 = set2.execute(request4);
+        var responseType2 = (RespInteger) response2.values[0];
+
+        // Assert
+        assertEquals(2, responseType2.value);
+
+    }
+
+    @Test
+    void del_mykey123AskAnyKey_return0() throws URISyntaxException, IOException, RespCommandException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey1 this-is-the-first-string");
+        var request2 = getRequestFromString("set mykey2 this-is-the-first-string");
+        var request3 = getRequestFromString("set mykey3notfound this-is-the-first-string");
+        set.execute(request1);
+        set.execute(request2);
+        set.execute(request3);
+
+        // Act
+        var set2 = new CmdDel(lib);
+        var request4 = getRequestFromString("del anykeynotfound");
+        var response2 = set2.execute(request4);
+        var responseType2 = (RespInteger) response2.values[0];
+
+        // Assert
+        assertEquals(0, responseType2.value);
+
+    }
+
+    @Test
+    void set_valueEx2s_expectsOK() throws URISyntaxException, IOException, RespCommandException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey this-is-the-first-string EX 2");
+        set.execute(request1);
+
+        // Act
+        var get = new CmdGet(lib);
+        var request4 = getRequestFromString("get mykey");
+        var response2 = get.execute(request4);
+        var responseType2 = (RespType) response2.values[0];
+
+        // Assert
+        assertNotEquals(RespNull.NULL, responseType2.value);
+
+    }
+
+    @Test
+    void set_valueEx2s_expectNullAfter3s()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey this-is-the-first-string EX 2");
+        set.execute(request1);
+        Thread.sleep(2500);
+
+        // Act
+        var get = new CmdGet(lib);
+        var request4 = getRequestFromString("get mykey");
+        var response2 = get.execute(request4);
+        var responseType2 = (RespType) response2.values[0];
+
+        // Assert
+        assertEquals(RespNull.NULL, responseType2);
+
+    }
+
+    @Test
+    void set_valueEx2sTtlAgain_expectOkAfter2_5s()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey this-is-the-first-string EX 2");
+        set.execute(request1);
+        Thread.sleep(1000);
+        var request2 = getRequestFromString("set mykey this-is-the-first-string KEEPTTL");
+        set.execute(request2);
+        Thread.sleep(1500);
+
+        // Act
+        var get = new CmdGet(lib);
+        var request4 = getRequestFromString("get mykey");
+        var response2 = get.execute(request4);
+        var responseType2 = (RespType) response2.values[0];
+
+        // Assert
+        assertNotEquals(RespNull.NULL, responseType2);
+
+    }
+
+    @Test
+    void set_valueEx2sTtlAgain_expectNullAfter3_5s()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("set mykey this-is-the-first-string EX 2");
+        set.execute(request1);
+        Thread.sleep(1000);
+        var request2 = getRequestFromString("set mykey this-is-the-first-string KEEPTTL");
+        set.execute(request2);
+        Thread.sleep(2500);
+
+        // Act
+        var get = new CmdGet(lib);
+        var request4 = getRequestFromString("get mykey");
+        var response2 = get.execute(request4);
+        var responseType2 = (RespType) response2.values[0];
+
+        // Assert
+        assertEquals(RespNull.NULL, responseType2);
+
+    }
+
+    @Test
+    void set_RedLockAlgorithm_expectsLockNullDuring2s()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name anystring NX EX 2");
+        set.execute(request1);
+
+        // Act
+        var get = new CmdGet(lib);
+        var request4 = getRequestFromString("get resource-name");
+        var response2 = get.execute(request4);
+        var responseType2 = (RespType) response2.values[0];
+
+        var responseLock = set.execute(request1);
+        var responseLockType = responseLock.values[0];
+
+        // Assert
+        assertEquals("anystring", responseType2.value);
+        assertEquals(RespNull.NULL, responseLockType);
+
+    }
+
+    @Test
+    void set_RedLockAlgorithm_expectsUnlockAfter3s()
+            throws URISyntaxException, IOException, RespCommandException, InterruptedException {
+
+        // Arrange
+        var set = new CmdSet(lib);
+        var request1 = getRequestFromString("SET resource-name anystring NX EX 2");
+        set.execute(request1);
+        Thread.currentThread().sleep(3000);
+
+        // Act
+        var responseNull = set.execute(request1);
+        var responseNullType = responseNull.values[0];
+
+        // Assert
+        assertNotEquals(RespNull.NULL, responseNullType);
 
     }
 }

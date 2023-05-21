@@ -67,7 +67,7 @@ public class CmdSet extends RespLibraryFunction {
                             setPolicy = setPolicy.add(ExpirationPolicy.GET_POLICY);
                             break;
                         default:
-                            break;
+                            return new RespResponse(new RespError("ERR syntax error argument '" + option.get() + "'"));
                     }
                 }
                 option = request.getString(index++);

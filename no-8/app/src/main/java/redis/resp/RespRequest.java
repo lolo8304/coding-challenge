@@ -6,6 +6,7 @@ import java.util.Optional;
 import redis.resp.cache.RedisCache;
 import redis.resp.commands.RespCommand;
 import redis.resp.types.RespArray;
+import redis.resp.types.RespInteger;
 import redis.resp.types.RespType;
 
 public class RespRequest {
@@ -40,18 +41,29 @@ public class RespRequest {
     }
 
     public Optional<Integer> getInteger(int index) {
-        Optional<String> value = this.command.getValue(index);
-        if (value.isPresent()) {
-            return Optional.of(Integer.valueOf(value.get()));
+        var obj = this.command.get(index);
+        if (obj.isPresent()) {
+            if (obj.get() instanceof RespInteger) {
+                Optional<Long> value = this.command.getValue(index);
+                return Optional.of(Integer.valueOf((int) value.get().longValue()));
+            } else {
+                Optional<String> value = this.command.getValue(index);
+                return Optional.of(Integer.valueOf(value.get()));
+            }
         } else {
             return Optional.empty();
         }
     }
 
     public Optional<Long> getLong(int index) {
-        Optional<String> value = this.command.getValue(index);
-        if (value.isPresent()) {
-            return Optional.of(Long.valueOf(value.get()));
+        var obj = this.command.get(index);
+        if (obj.isPresent()) {
+            if (obj.get() instanceof RespInteger) {
+                return this.command.getValue(index);
+            } else {
+                Optional<String> value = this.command.getValue(index);
+                return Optional.of(Long.valueOf(value.get()));
+            }
         } else {
             return Optional.empty();
         }
