@@ -32,8 +32,11 @@ public class RedisServer {
 
     public final RedisCache cache;
 
-    public RedisServer(int port) throws InterruptedException {
+    public RedisServer(int port, boolean noSave) throws InterruptedException {
         this.cache = new RedisCache();
+        if (!noSave) {
+            this.cache.load();
+        }
         start(port);
     }
 
@@ -131,6 +134,10 @@ public class RedisServer {
                 var scanner = new RespScanner(buffer);
                 var commands = scanner.getCommands();
                 var responses = new RespResponse[commands.size()];
+
+                if (this.server.cache.hasBlockingOperation()) {
+                    throw new RespCommandException("ERROR - due to blocking operation");
+                }
 
                 for (int i = 0; i < commands.size(); i++) {
                     RespCommand command = commands.get(i);

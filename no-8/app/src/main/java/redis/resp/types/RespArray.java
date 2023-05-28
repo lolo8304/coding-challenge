@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import redis.resp.RespException;
+
 public class RespArray extends RespType<RespType[]> {
 
     public final static RespArray EMPTY_ARRAY = new RespArray(RespType.EMPTY_TYPE_ARRAY);
@@ -106,5 +108,11 @@ public class RespArray extends RespType<RespType[]> {
             entries.add(new RespSortedMap.Entry(key, value));
         }
         return new RespSortedMap(entries);
+    }
+
+    @Override
+    public void loadFrom(RespArray data) throws RespException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'loadFrom'");
     }
 }

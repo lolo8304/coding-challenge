@@ -2,12 +2,12 @@ package redis.resp.types;
 
 import java.util.Optional;
 
+import redis.resp.IRespBuilder;
 import redis.resp.RespException;
-import redis.resp.RespScanner;
 import redis.resp.cache.ExpirationPolicy;
 import redis.resp.commands.RespCommandException;
 
-public abstract class RespType<T> {
+public abstract class RespType<T> implements IRespBuilder {
     public static final RespType[] EMPTY_TYPE_ARRAY = new RespType[0];
 
     public final T value;
@@ -58,13 +58,11 @@ public abstract class RespType<T> {
     }
 
     public String toRespString() {
-        var builder = new StringBuilder();
-        toRespString(builder);
-        return builder.toString();
+        return IRespBuilder.toRespString(this);
     }
 
     public String toRespEscapedString() {
-        return RespScanner.convertNewLinesBack(toRespString());
+        return IRespBuilder.toRespEscapedString(this);
     }
 
     public abstract void toRespString(StringBuilder buffer);
@@ -137,5 +135,16 @@ public abstract class RespType<T> {
 
     public RespType decr(Long by) throws RespException {
         return incr(-by);
+    }
+
+    @Override
+    public RespType toRespType() {
+        return this;
+    }
+
+    @Override
+    public void loadFrom(RespArray data) throws RespException {
+        // TODO Auto-generated method stub
+
     }
 }

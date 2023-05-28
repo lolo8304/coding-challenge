@@ -26,9 +26,12 @@ public class Redis implements Callable<Result> {
     @Option(names = "-t", description = "-t to specify the max number of threads used default 10")
     int maxThreads = 10;
 
+    @Option(names = "--no-save", description = "--no-save to specify start from scratch")
+    boolean noSave = false;
+
     @Override
     public Result call() throws Exception {
-        new RedisServer(this.port);
+        new RedisServer(this.port, this.noSave);
         return new Result();
     }
 }

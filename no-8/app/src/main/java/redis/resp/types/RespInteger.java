@@ -26,4 +26,5 @@ public class RespInteger extends RespType<Long> {
     public String stringValue() throws RespException {
         return String.valueOf(this.value);
     }
+
 }

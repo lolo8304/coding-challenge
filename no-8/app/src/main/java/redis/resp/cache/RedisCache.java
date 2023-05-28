@@ -1,36 +1,55 @@
 package redis.resp.cache;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import redis.resp.IRespBuilder;
+import redis.resp.RespException;
+import redis.resp.RespScanner;
 import redis.resp.commands.RespCommandException;
+import redis.resp.types.RespArray;
+import redis.resp.types.RespInteger;
 import redis.resp.types.RespNull;
+import redis.resp.types.RespSortedMap;
 import redis.resp.types.RespType;
 
-public class RedisCache {
+public class RedisCache implements IRespBuilder {
     static final Logger _logger = Logger.getLogger(RedisCache.class.getName());
 
     private final static Object SYNC = new Object();
+    private final static String DUMP_NAME = "dump.rdb";
 
-    private final TreeMap<String, RedisCacheContext> keyCache;
-    private final LRUCache lruCache;
+    private CacheMap keyCache;
+    private LRUCache lruCache;
 
     private int memoryInBytes;
     private int maxMemoryBytes;
+
+    private boolean blocking;
 
     public RedisCache() {
         this(300 * 1024);
     }
 
+    public RedisCache(RespArray respArray) throws RespException {
+        this.loadFrom(respArray);
+    }
+
     public RedisCache(int maxMemoryBytes) {
-        this.keyCache = new TreeMap<>();
-        this.lruCache = new LRUCache(this);
+        this.keyCache = new CacheMap(this);
+        this.lruCache = new LRUCache(this, this.keyCache);
         this.memoryInBytes = 0;
         this.maxMemoryBytes = maxMemoryBytes;
+        this.blocking = false;
     }
 
     public RespType set(String key, RespType value) throws RespCommandException {
@@ -155,9 +174,119 @@ public class RedisCache {
         }
     }
 
-    public static class RedisCacheContext {
+    public void registerMemoryInBytes(int oldMemoryInBytes, int newMemoryInBytes) {
+        this.memoryInBytes += (newMemoryInBytes - oldMemoryInBytes);
+        _logger.info("Memory used: " + fromMemoryInBytesToString(this.memoryInBytes) + " [ max="
+                + fromMemoryInBytesToString(this.maxMemoryBytes) + ", high="
+                + hasMaxMemoryReached()
+                + "]");
+    }
+
+    public int getMemoryInBytes() {
+        return this.memoryInBytes;
+    }
+
+    public static String fromMemoryInBytesToString(int memory) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        decimalFormat.setMaximumFractionDigits(1);
+        if (memory > 1024) {
+            int kb = memory / 1024;
+            if (kb > 1024) {
+                var mb = kb / 1024.0;
+                return decimalFormat.format(mb) + " mb";
+            } else {
+                return decimalFormat.format(kb) + " kb";
+            }
+        } else {
+            return memory + " byte";
+        }
+    }
+
+    public boolean hasMaxMemoryReached() {
+        return this.memoryInBytes > this.maxMemoryBytes;
+    }
+
+    public boolean hasBlockingOperation() {
+        return this.blocking;
+    }
+
+    public void startBlockingOperation() {
+        this.blocking = true;
+    }
+
+    public void stopBlockingOperation() {
+        this.blocking = false;
+    }
+
+    public void load() {
+        this.load(DUMP_NAME);
+    }
+
+    public void load(String fileName) {
+        _logger.info("LOAD: start from " + fileName + " ...");
+        File file = new File(fileName);
+        if (file.exists()) {
+            try {
+                String content = Files.readString(Paths.get(fileName));
+                var scanner = new RespScanner(RespScanner.convertNewLines(content));
+                var next = scanner.next();
+                if (next.isPresent()) {
+                    var data = (RespArray) next.get();
+                    loadFrom(data);
+                }
+                _logger.info("LOAD: ... done");
+            } catch (IOException e) {
+                _logger.severe("LOAD: Error reading from '" + fileName + "(" + e.getMessage() + ")");
+            } catch (RespException e) {
+                _logger.severe("LOAD: Error converting content (" + e.getMessage() + ")");
+            }
+        } else {
+            _logger.info("LOAD: not found ... done");
+        }
+    }
+
+    public void save() {
+        this.save(DUMP_NAME);
+    }
+
+    public void save(String fileName) {
+        _logger.info("SAVE: start to " + fileName + " ...");
+        var buffer = new StringBuilder();
+        this.toRespString(buffer);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            var content = RespScanner.convertNewLinesBack(buffer.toString());
+            writer.write(content);
+            writer.flush();
+        } catch (IOException e) {
+            _logger.severe("Error while writing to '" + fileName);
+        }
+        _logger.info("SAVE: ... done");
+    }
+
+    @Override
+    public void toRespString(StringBuilder buffer) {
+        this.toRespType().toRespString(buffer);
+    }
+
+    @Override
+    public RespType toRespType() {
+        return new RespSortedMap()
+                .put("keyCache", this.keyCache.toRespType())
+                .put("lruCache", this.lruCache.toRespType())
+                .put("memoryInBytes", new RespInteger(memoryInBytes))
+                .put("maxMemoryBytes", new RespInteger(maxMemoryBytes));
+    }
+
+    public void loadFrom(RespArray data) throws RespException {
+        var map = data.arrayToMap();
+        this.keyCache = new CacheMap(this, (RespArray) map.get("keyCache").get());
+        this.lruCache = new LRUCache(this, this.keyCache, (RespArray) map.get("keyCache").get());
+        this.memoryInBytes = map.get("memoryInBytes").get().getInteger();
+    }
+
+    public static class RedisCacheContext implements IRespBuilder {
         private final RedisCache cache;
-        private final String key;
+        private String key;
         private RespType value;
         private Operation lastOperation;
         private Instant lru;
@@ -175,6 +304,11 @@ public class RedisCache {
             this.expirationTime = Optional.empty();
             this.touch();
             this.registerMemoryInBytes();
+        }
+
+        public RedisCacheContext(RedisCache cache, RespArray data) throws RespException {
+            this.cache = cache;
+            loadFrom(data);
         }
 
         public RespType getValue() {
@@ -313,6 +447,56 @@ public class RedisCache {
                 return false;
             return true;
         }
+
+        @Override
+        public void toRespString(StringBuilder buffer) {
+            this.toRespType().toRespString(buffer);
+        }
+
+        @Override
+        public RespType toRespType() {
+            return new RespSortedMap()
+                    .put("key", this.key)
+                    .put("value", this.value)
+                    .put("operation", lastOperation.name())
+                    .put("instant", this.lru.getEpochSecond())
+                    .put("ttl",
+                            this.ttl.isPresent()
+                                    ? new RespSortedMap().put("seconds", this.ttl.get().getSeconds()).put("nanos",
+                                            this.ttl.get().getNano())
+                                    : RespNull.NULL)
+                    .put("expirationTime",
+                            this.expirationTime.isPresent()
+                                    ? new RespInteger(this.expirationTime.get().getEpochSecond())
+                                    : RespNull.NULL)
+                    .put("memoryInBytes", this.memoryInBytes);
+        }
+
+        @Override
+        public void loadFrom(RespArray data) throws RespException {
+            var map = data.arrayToMap();
+            this.key = map.get("key").get().getString();
+            this.value = map.get("value").get();
+            this.lastOperation = Operation.valueOf(map.get("operation").get().getString());
+
+            var tmpTtl = map.get("ttl");
+            if (tmpTtl.isPresent() && !tmpTtl.get().equals(RespNull.NULL)) {
+                var ttlMap = ((RespArray) tmpTtl.get()).arrayToMap();
+                var s = ttlMap.get("seconds").get().getLong();
+                var nanos = ttlMap.get("nanos").get().getInteger();
+                ttl = Optional.of(Duration.ofSeconds(s, nanos));
+            } else {
+                ttl = Optional.empty();
+            }
+            var tmpExpirationTime = map.get("expirationTime");
+            if (tmpExpirationTime.isPresent() && !tmpExpirationTime.get().equals(RespNull.NULL)) {
+                this.expirationTime = Optional.of(Instant.ofEpochMilli(tmpExpirationTime.get().getLong()));
+            } else {
+                this.expirationTime = Optional.empty();
+            }
+
+            this.memoryInBytes = map.get("memoryInBytes").get().getInteger();
+        }
     }
 
     public enum Operation {
@@ -321,38 +505,6 @@ public class RedisCache {
         OVERRIDE,
         CLEARED,
         EXPIRED
-    }
-
-    public void registerMemoryInBytes(int oldMemoryInBytes, int newMemoryInBytes) {
-        this.memoryInBytes += (newMemoryInBytes - oldMemoryInBytes);
-        _logger.info("Memory used: " + fromMemoryInBytesToString(this.memoryInBytes) + " [ max="
-                + fromMemoryInBytesToString(this.maxMemoryBytes) + ", high="
-                + hasMaxMemoryReached()
-                + "]");
-    }
-
-    public int getMemoryInBytes() {
-        return this.memoryInBytes;
-    }
-
-    public static String fromMemoryInBytesToString(int memory) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        decimalFormat.setMaximumFractionDigits(1);
-        if (memory > 1024) {
-            int kb = memory / 1024;
-            if (kb > 1024) {
-                var mb = kb / 1024.0;
-                return decimalFormat.format(mb) + " mb";
-            } else {
-                return decimalFormat.format(kb) + " kb";
-            }
-        } else {
-            return memory + " byte";
-        }
-    }
-
-    public boolean hasMaxMemoryReached() {
-        return this.memoryInBytes > this.maxMemoryBytes;
     }
 
 }

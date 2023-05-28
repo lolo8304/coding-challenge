@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+
+import redis.resp.RespException;
 
 public class RespSortedMap extends RespType<List<RespSortedMap.Entry>> {
 
@@ -46,6 +49,13 @@ public class RespSortedMap extends RespType<List<RespSortedMap.Entry>> {
         return this;
     }
 
+    public RespSortedMap put(String key, long value) {
+        var entry = new Entry(key, new RespBulkString(value));
+        this.value.add(entry);
+        this.map.put(entry.key, entry.value);
+        return this;
+    }
+
     public <T extends RespType> Optional<T> get(String key) {
         T found = (T) this.map.get(key);
         return found == null ? Optional.empty() : Optional.of(found);
@@ -63,6 +73,10 @@ public class RespSortedMap extends RespType<List<RespSortedMap.Entry>> {
             list.add(entry.value);
         }
         return new RespArray(list);
+    }
+
+    public void forEach(BiConsumer<String, RespType> action) throws RespException {
+        map.forEach(action);
     }
 
     public static class Entry {
