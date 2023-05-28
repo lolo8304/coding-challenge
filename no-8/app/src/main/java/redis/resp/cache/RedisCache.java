@@ -235,6 +235,8 @@ public class RedisCache implements IRespBuilder {
                     loadFrom(data);
                 }
                 _logger.info("LOAD: ... done");
+                _logger.info("LOAD: objects loaded " + this.keyCache.size() + " total memory "
+                        + this.fromMemoryInBytesToString(this.memoryInBytes));
             } catch (IOException e) {
                 _logger.severe("LOAD: Error reading from '" + fileName + "(" + e.getMessage() + ")");
             } catch (RespException e) {
@@ -459,16 +461,9 @@ public class RedisCache implements IRespBuilder {
                     .put("key", this.key)
                     .put("value", this.value)
                     .put("operation", lastOperation.name())
-                    .put("instant", this.lru.getEpochSecond())
-                    .put("ttl",
-                            this.ttl.isPresent()
-                                    ? new RespSortedMap().put("seconds", this.ttl.get().getSeconds()).put("nanos",
-                                            this.ttl.get().getNano())
-                                    : RespNull.NULL)
-                    .put("expirationTime",
-                            this.expirationTime.isPresent()
-                                    ? new RespInteger(this.expirationTime.get().getEpochSecond())
-                                    : RespNull.NULL)
+                    .put("lru", instantToType(Optional.of(this.lru)))
+                    .put("ttl", durationToType(this.ttl))
+                    .put("expirationTime", instantToType(expirationTime))
                     .put("memoryInBytes", this.memoryInBytes);
         }
 
@@ -477,25 +472,51 @@ public class RedisCache implements IRespBuilder {
             var map = data.arrayToMap();
             this.key = map.get("key").get().getString();
             this.value = map.get("value").get();
+            this.lru = typeToInstant(map.get("lru")).get();
             this.lastOperation = Operation.valueOf(map.get("operation").get().getString());
+            this.ttl = typeToDuration(map.get("ttl"));
+            this.expirationTime = typeToInstant(map.get("expirationTime"));
+            this.memoryInBytes = map.get("memoryInBytes").get().getInteger();
+        }
 
-            var tmpTtl = map.get("ttl");
-            if (tmpTtl.isPresent() && !tmpTtl.get().equals(RespNull.NULL)) {
-                var ttlMap = ((RespArray) tmpTtl.get()).arrayToMap();
+        private Optional<Duration> typeToDuration(Optional<RespType> type) throws RespException {
+            if (type.isPresent() && !type.get().equals(RespNull.NULL)) {
+                var ttlMap = ((RespArray) type.get()).arrayToMap();
                 var s = ttlMap.get("seconds").get().getLong();
                 var nanos = ttlMap.get("nanos").get().getInteger();
-                ttl = Optional.of(Duration.ofSeconds(s, nanos));
+                return Optional.of(Duration.ofSeconds(s, nanos));
             } else {
-                ttl = Optional.empty();
+                return Optional.empty();
             }
-            var tmpExpirationTime = map.get("expirationTime");
-            if (tmpExpirationTime.isPresent() && !tmpExpirationTime.get().equals(RespNull.NULL)) {
-                this.expirationTime = Optional.of(Instant.ofEpochMilli(tmpExpirationTime.get().getLong()));
-            } else {
-                this.expirationTime = Optional.empty();
-            }
+        }
 
-            this.memoryInBytes = map.get("memoryInBytes").get().getInteger();
+        private Optional<Instant> typeToInstant(Optional<RespType> type) throws RespException {
+            if (type.isPresent() && !type.get().equals(RespNull.NULL)) {
+                var ttlMap = ((RespArray) type.get()).arrayToMap();
+                var s = ttlMap.get("epochSeconds").get().getLong();
+                var nanos = ttlMap.get("nanos").get().getInteger();
+                return Optional.of(Instant.ofEpochSecond(s, nanos));
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        private RespType instantToType(Optional<Instant> instant) {
+            return instant.isPresent()
+                    ? new RespSortedMap()
+                            .put("epochSeconds", instant.get().getEpochSecond())
+                            .put("nanos",
+                                    instant.get().getNano())
+                    : RespNull.NULL;
+        }
+
+        private RespType durationToType(Optional<Duration> duration) {
+            return duration.isPresent()
+                    ? new RespSortedMap()
+                            .put("seconds", duration.get().getSeconds())
+                            .put("nanos",
+                                    duration.get().getNano())
+                    : RespNull.NULL;
         }
     }
 
