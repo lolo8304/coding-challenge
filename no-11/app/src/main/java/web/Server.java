@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import web.http.Http11Handler;
 
 @Command(name = "webserver", mixinStandardHelpOptions = true, version = "web 1.0", description = "This challenge is to build your own webserver based on HTTP1.1")
 public class Server implements Callable<Result> {
@@ -25,7 +26,7 @@ public class Server implements Callable<Result> {
 
     @Override
     public Result call() throws Exception {
-        System.out.println("done");
+        new Listener(this.port, new Http11Handler());
         return new Result();
     }
 }
