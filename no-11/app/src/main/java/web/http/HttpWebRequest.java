@@ -22,6 +22,7 @@ public class HttpWebRequest extends java.net.http.HttpRequest {
     private String action;
     private Map<String, List<String>> headers;
     private byte[] body;
+    private HttpHeaders httpHeaders;
 
     public HttpWebRequest(InternalRequest internalRequest) {
         this.internalRequest = internalRequest;
@@ -62,9 +63,10 @@ public class HttpWebRequest extends java.net.http.HttpRequest {
 
     @Override
     public HttpHeaders headers() {
-        return HttpHeaders.of(this.headers, (key, value) -> {
-            return true;
-        });
+        if (this.httpHeaders == null) {
+            this.httpHeaders = HttpHeaders.of(this.headers, (key, value) -> true);
+        }
+        return this.httpHeaders;
     }
 
     public void addHeader(String key, String value) {
@@ -104,7 +106,7 @@ public class HttpWebRequest extends java.net.http.HttpRequest {
 
     public byte[] getBody() throws IOException {
         if (!this.internalRequest.hasBody()) {
-            this.internalRequest.getBody();
+            this.internalRequest.getBodyAndRequest();
         }
         return this.body;
     }

@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 public class InternalRequest {
     private HttpScanner scanner;
 
-    private final ByteBuffer byteBuffer;
     private final IHttpHandler handler;
     private final HttpWebRequest request;
 
@@ -15,7 +14,6 @@ public class InternalRequest {
 
     public InternalRequest(IHttpHandler handler, ByteBuffer byteBuffer) {
         this.handler = handler;
-        this.byteBuffer = byteBuffer;
         this.request = new HttpWebRequest(this);
         this.scanner = new HttpScanner(this.handler, byteBuffer);
     }
@@ -34,9 +32,17 @@ public class InternalRequest {
     }
 
     private void parseBody() throws IOException {
-        var tokenValue = scanner.nextBody();
-        if (tokenValue.isPresent()) {
-            tokenValue.get().applyToRequest(request);
+        var contentLength = this.request.headers().firstValue("Content-Length");
+        if (contentLength.isPresent()) {
+            var length = Integer.parseInt(contentLength.get());
+            var tokenValue = scanner.nextBody(length);
+            if (tokenValue.isPresent()) {
+                tokenValue.get().applyToRequest(request);
+            } else {
+                throw new IOException("Content-Length set to " + length + " but no content available");
+            }
+        } else {
+            this.request.setBody("".getBytes());
         }
         this.parsedBody = true;
     }
@@ -48,7 +54,7 @@ public class InternalRequest {
         return this.request;
     }
 
-    public HttpWebRequest getBody() throws IOException {
+    public HttpWebRequest getBodyAndRequest() throws IOException {
         if (!this.parsedBody) {
             this.getRequest();
             this.parseBody();

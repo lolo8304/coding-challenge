@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -77,9 +76,7 @@ public class Listener {
                         requestString);
             }
 
-            byte[] bytesResponse = server.handler.request(nioBufferIn);
-            ByteBuf out = Unpooled.copiedBuffer(bytesResponse);
-            ctx.write(out);
+            server.handler.request(ctx, nioBufferIn);
         }
 
         @Override

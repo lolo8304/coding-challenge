@@ -26,7 +26,7 @@ public class Server implements Callable<Result> {
 
     @Override
     public Result call() throws Exception {
-        new Listener(this.port, new Http11Handler());
+        new Listener(this.port, Http11Handler.INSTANCE);
         return new Result();
     }
 }

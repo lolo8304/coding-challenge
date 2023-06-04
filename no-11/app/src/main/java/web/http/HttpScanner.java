@@ -60,8 +60,13 @@ public class HttpScanner {
         }
     }
 
-    public Optional<BodyTokenValue> nextBody() throws IOException {
-        return Optional.of(new BodyTokenValue("Body".getBytes()));
+    public Optional<BodyTokenValue> nextBody(int contentLength) {
+        if (contentLength > 0) {
+            var bytes = readBytes(contentLength);
+            return Optional.of(new BodyTokenValue(bytes.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private Optional<TokenValue> validTokenValueLine(String line) throws IOException {
@@ -70,32 +75,47 @@ public class HttpScanner {
             var possibleAction = splitBySpace[0];
             var validAction = handler.validAction(possibleAction);
             if (validAction.isPresent()) {
-                var uri = "/";
-                var protocol = "HTTP/1.1";
-                if (splitBySpace.length > 1) {
-                    uri = splitBySpace[1];
-                }
-                if (splitBySpace.length > 2) {
-                    protocol = splitBySpace[2];
-                }
-                if (splitBySpace.length > 3) {
-                    throw new IOException("Illegal number of parameters: <= 3 exepected go " + splitBySpace.length);
-                }
-                return Optional.of(new ProtocolTokenValue(possibleAction, uri, protocol));
+                return withValidAction(splitBySpace, possibleAction);
             } else {
-                // is header: key:<space>.*
-                var headerKey = splitBySpace[0];
-                if (headerKey.endsWith(":")) {
-                    headerKey = headerKey.substring(0, headerKey.length() - 1);
-                    var headerValue = line.substring(headerKey.length() + 2, line.length() - 1)
-                            .trim();
-                    return Optional.of(new HeaderTokenValue(headerKey, headerValue));
-                } else {
-                    throw new IOException("Illegal header '" + headerKey + "'");
-                }
+                return withoutValidAction(line, splitBySpace);
             }
         }
         return Optional.empty();
+    }
+
+    private Optional<TokenValue> withoutValidAction(String line, String[] splitBySpace) throws IOException {
+        // is header: key:<space>.*
+        var headerKey = splitBySpace[0];
+        if (headerKey.endsWith(":")) {
+            headerKey = headerKey.substring(0, headerKey.length() - 1);
+            var headerValue = line.substring(headerKey.length() + 2)
+                    .trim();
+            return Optional.of(new HeaderTokenValue(headerKey, headerValue));
+        } else {
+            throw new IOException("Illegal header '" + headerKey + "'");
+        }
+    }
+
+    private Optional<TokenValue> withValidAction(String[] splitBySpace, String possibleAction) throws IOException {
+        var uri = "/";
+        var protocol = "HTTP/1.1";
+        if (splitBySpace.length > 1) {
+            uri = splitBySpace[1];
+        }
+        if (splitBySpace.length > 2) {
+            protocol = splitBySpace[2];
+        }
+        if (splitBySpace.length > 3) {
+            throw new IOException("Illegal number of parameters: <= 3 exepected go " + splitBySpace.length);
+        }
+        return Optional.of(new ProtocolTokenValue(possibleAction, uri, protocol));
+    }
+
+    private Optional<byte[]> readBytes(int length) {
+        byte[] bytes = new byte[length];
+        buffer.get(bytes, 0, length);
+        position += length;
+        return Optional.of(bytes);
     }
 
     private Optional<String> readLine() {
@@ -128,6 +148,7 @@ public class HttpScanner {
         }
 
         public void applyToRequest(HttpWebRequest request) throws IOException {
+            // default implement does not do anything
         }
     }
 
