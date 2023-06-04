@@ -24,9 +24,12 @@ public class Server implements Callable<Result> {
     @Option(names = "-p", description = "-p specifies the port - default 8080")
     int port = 8080;
 
+    @Option(names = "-webRoot", description = "-webRoot specifies the default web root folder")
+    String webRoot = "./www";
+
     @Override
     public Result call() throws Exception {
-        new Listener(this.port, Http11Handler.INSTANCE);
+        new Listener(this.port, new Http11Handler(webRoot));
         return new Result();
     }
 }

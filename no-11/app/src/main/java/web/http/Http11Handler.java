@@ -1,7 +1,6 @@
 package web.http;
 
 import java.io.IOException;
-import java.net.http.HttpClient.Version;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -9,13 +8,21 @@ import java.util.Optional;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import web.http.servlets.NoServlet;
+import web.http.servlets.Routes;
+import web.http.servlets.StaticFileServlet;
+import web.http.servlets.examples.HelloRest;
+import web.http.servlets.examples.HelloWorldRest;
 
 public class Http11Handler implements IHttpHandler {
 
-    public static final Http11Handler INSTANCE = new Http11Handler();
+    private final Routes routes;
 
-    private Http11Handler() {
-
+    public Http11Handler(String webRoot) {
+        this.routes = new Routes();
+        this.routes.add("GET", "/", new StaticFileServlet(webRoot));
+        this.routes.add("GET", "/hello", new HelloRest());
+        this.routes.add("GET", "/hello/world", new HelloWorldRest());
     }
 
     public Optional<String> validAction(String action) {
@@ -53,13 +60,14 @@ public class Http11Handler implements IHttpHandler {
         }
     }
 
-    private HttpWebResponse request(HttpWebRequest req) {
-        var v = req.version();
-        return HttpWebResponse
-                .ok()
-                .mediaType(MediaType.TEXT_HTML_TYPE)
-                .entity("Requested Path: " + req.uri())
-                .build(v.isPresent() ? v.get() : Version.HTTP_1_1, req.uri());
+    @Override
+    public HttpWebResponse request(HttpWebRequest req) {
+        var route = this.routes.match(req.method(), req.uri().toString());
+        if (route.isPresent()) {
+            return route.get().servlet.request(req);
+        } else {
+            return new NoServlet().request(req);
+        }
     }
 
     public enum Actions {

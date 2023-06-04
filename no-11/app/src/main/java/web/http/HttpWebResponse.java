@@ -69,7 +69,11 @@ public class HttpWebResponse {
             if (this.entity == null) {
                 return UnpooledByteBufAllocator.DEFAULT.buffer(0);
             } else {
-                return Unpooled.copiedBuffer(this.entity.toString(), StandardCharsets.UTF_8);
+                if (this.entity instanceof ByteBuf) {
+                    return (ByteBuf) this.entity;
+                } else {
+                    return Unpooled.copiedBuffer(this.entity.toString(), StandardCharsets.UTF_8);
+                }
             }
         } else {
             return this.content;
@@ -174,6 +178,11 @@ public class HttpWebResponse {
         public Builder setHeader(String name, Object value) {
             HttpWebResponse.setHeader(this.headers, name, value);
             return this;
+        }
+
+        public HttpWebResponse build(HttpWebRequest request) {
+            var v = request.version();
+            return this.build(v.isPresent() ? v.get() : Version.HTTP_1_1, request.uri());
         }
 
         public HttpWebResponse build(Version version, URI uri) {

@@ -9,4 +9,6 @@ public interface IHttpHandler {
     public Optional<String> validAction(String action);
 
     public void request(ChannelHandlerContext ctx, ByteBuffer byteBuffer);
+
+    public HttpWebResponse request(HttpWebRequest req);
 }
