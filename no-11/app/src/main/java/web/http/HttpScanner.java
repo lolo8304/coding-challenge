@@ -1,9 +1,13 @@
 package web.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient.Version;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -42,6 +46,25 @@ public class HttpScanner {
         this.position = buffer.position();
     }
 
+    public HttpScanner(IHttpHandler handler, InputStream stream) throws IOException {
+        this(handler, convertToByteBuffer(stream));
+    }
+
+    private static ByteBuffer convertToByteBuffer(InputStream stream) throws IOException {
+        try (ReadableByteChannel channel = Channels.newChannel(stream)) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ByteBuffer buffer = ByteBuffer.allocate(4096);
+            int bytesRead;
+            while ((bytesRead = channel.read(buffer)) != -1) {
+                buffer.flip();
+                outputStream.write(buffer.array(), buffer.arrayOffset() + buffer.position(), bytesRead);
+                buffer.clear();
+            }
+            byte[] bytes = outputStream.toByteArray();
+            return ByteBuffer.wrap(bytes);
+        }
+    }
+
     public boolean hasNext() {
         return buffer.hasRemaining() && buffer.capacity() > position;
     }
@@ -73,7 +96,7 @@ public class HttpScanner {
         var splitBySpace = line.trim().split(" ");
         if (splitBySpace.length > 0) {
             var possibleAction = splitBySpace[0];
-            var validAction = handler.validAction(possibleAction);
+            var validAction = this.handler.validAction(possibleAction);
             if (validAction.isPresent()) {
                 return withValidAction(splitBySpace, possibleAction);
             } else {
