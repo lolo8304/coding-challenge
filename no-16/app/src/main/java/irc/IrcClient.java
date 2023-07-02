@@ -35,7 +35,7 @@ public class IrcClient {
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
 
         sendRawMessage("NICK " + this.nickName);
-        sendRawMessage("USER " + this.nickName + " 0 * :" + this.nickName);
+        sendRawMessage("USER guest 0 * :" + this.nickName);
         sendRawMessage("JOIN #" + this.channel);
 
         listen();
