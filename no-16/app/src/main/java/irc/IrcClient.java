@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-public class IrcClient {
+public class IrcClient implements IIrcSenderProtocol {
 
     static final Logger _logger = Logger.getLogger(IrcClient.class.getName());
 
@@ -22,11 +22,14 @@ public class IrcClient {
     private BufferedWriter writer;
     private String channel;
 
+    private IIrcMessageProcotol handler;
+
     public IrcClient(String hostname, int port, String nickName, String channel) {
         this.hostname = hostname;
         this.port = port;
         this.nickName = nickName;
         this.channel = channel;
+        this.handler = new IrcProtocolHandler(this);
     }
 
     public void connect() throws UnknownHostException, IOException {
@@ -34,14 +37,14 @@ public class IrcClient {
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
 
-        sendRawMessage("NICK " + this.nickName);
-        sendRawMessage("USER guest 0 * :" + this.nickName);
-        sendRawMessage("JOIN #" + this.channel);
+        this.setNickName(this.nickName);
+        this.joinChannel(this.channel);
 
         listen();
     }
 
-    private void sendRawMessage(String message) throws IOException {
+    @Override
+    public void sendRawMessage(String message) throws IOException {
         this.writer.write(message + "\r\n");
         this.writer.flush();
         _logger.info("SENT: " + message);
@@ -63,20 +66,28 @@ public class IrcClient {
         while (this.isConnected()) {
             var line = this.reader.readLine();
             if (line != null && !line.isEmpty()) {
-                _logger.info("RECEIVED: " + line);
-                if (line.startsWith("PING")) {
-                    String pingKey = line.substring(5);
-                    sendRawMessage("PONG " + pingKey);
-                } else if (line.contains("PRIVMSG")) {
-                    String[] parts = line.split(" :", 2);
-                    String sender = parts[0].substring(1, parts[0].indexOf('!'));
-                    String message = parts[1];
-                    _logger.warning("[" + sender + "] " + message);
-                }
+                this.handler.receiveRawMessage(line);
             } else {
                 _logger.warning("[empty message] received");
                 this.disconnect();
             }
         }
+    }
+
+    @Override
+    public void printMessage(String message) throws IOException {
+        _logger.warning("[ msg to client ]: " + message);
+    }
+
+    @Override
+    public void setNickName(String name) throws IOException {
+        sendRawMessage("NICK " + name);
+        sendRawMessage("USER guest 0 * :" + name);
+    }
+
+    @Override
+    public void joinChannel(String channel) throws IOException {
+        sendRawMessage("JOIN #" + this.channel);
+
     }
 }
