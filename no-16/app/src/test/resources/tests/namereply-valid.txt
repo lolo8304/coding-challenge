@@ -1,0 +1,1 @@
+:*.freenode.net 353 CCIRC = #cc :@CCIRC

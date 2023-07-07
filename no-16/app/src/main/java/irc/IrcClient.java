@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import irc.handler.IrcProtocolHandler;
+
 public class IrcClient implements IIrcSenderProtocol {
 
     static final Logger _logger = Logger.getLogger(IrcClient.class.getName());
@@ -47,7 +49,7 @@ public class IrcClient implements IIrcSenderProtocol {
     public void sendRawMessage(String message) throws IOException {
         this.writer.write(message + "\r\n");
         this.writer.flush();
-        _logger.info("SENT: " + message);
+        // _logger.info("SENT: " + message);
     }
 
     public boolean isConnected() {
@@ -68,7 +70,6 @@ public class IrcClient implements IIrcSenderProtocol {
             if (line != null && !line.isEmpty()) {
                 this.handler.receiveRawMessage(line);
             } else {
-                _logger.warning("[empty message] received");
                 this.disconnect();
             }
         }
@@ -76,7 +77,7 @@ public class IrcClient implements IIrcSenderProtocol {
 
     @Override
     public void printMessage(String message) throws IOException {
-        _logger.warning("[ msg to client ]: " + message);
+        System.out.println(message);
     }
 
     @Override

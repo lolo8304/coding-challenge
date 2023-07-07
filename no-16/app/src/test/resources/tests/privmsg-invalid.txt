@@ -1,0 +1,14 @@
+:irc.example.com 200 nickname :Welcome to the IRC server!
+:irc.example.com 302 nickname :You have been invited to join #channel.
+:irc.example.com 401 nickname target :No such nick/channel.
+:irc.example.com 404 nickname #channel :Cannot send to channel.
+:irc.example.com 421 nickname :Unknown command.
+:irc.example.com 433 nickname :Nickname is already in use.
+:irc.example.com 482 :You're not channel operator.
+:irc.example.com 491 :No O-lines for your host.
+:irc.example.com 501 :Unknown MODE flag.
+:irc.example.com 709 :SSL connection failed.
+:irc.example.com 718 :SASL account disabled.
+:irc.example.com 721 :SASL account in use.
+:irc.example.com PRIVMSG user Welcome to the channel!
+:irc.example.com PRIVMSG #channel message

@@ -1,6 +1,9 @@
 package irc;
 
 import java.io.IOException;
+import java.util.Optional;
+
+import irc.message.IrcMessage;
 
 public interface IIrcMessageProcotol {
 
@@ -8,10 +11,6 @@ public interface IIrcMessageProcotol {
 
     public void receiveRawMessage(String message) throws IOException;
 
-    public void handlePing(String message) throws IOException;
-
-    public void handlePrivateMessage(String message) throws IOException;
-
-    public void handleMessage(String message) throws IOException;
+    public Optional<? extends IrcMessage> parseMessage(String message) throws IOException;
 
 }
