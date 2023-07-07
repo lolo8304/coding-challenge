@@ -9,7 +9,7 @@ import irc.IIrcSenderProtocol;
 
 public class IrcPingMessage implements IrcMessage {
 
-    private static final Pattern PING_PATTERN = Pattern.compile("^PING :(.+)$");
+    private static final Pattern PING_PATTERN = Pattern.compile("^PING :([^: ]+)$");
 
     public static Optional<? extends IrcMessage> parsePing(String message) {
         Matcher matcher = PING_PATTERN.matcher(message);

@@ -1,4 +1,4 @@
-PING :ç%&/&%ç&/()
+PING :23 23 23 23 23 23
 PING :0987654321 asdf asdf asdf
 PING :
 PING :      asdfasdf asdf asdf asd f
