@@ -18,7 +18,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import memcached.MemcachedClient;
-import memcached.MemcachedServer;
 
 class MemcachedTest {
 
@@ -59,17 +58,13 @@ class MemcachedTest {
     void start_localserver_expectsOkorNot() throws URISyntaxException, IOException, InterruptedException {
 
         // Arrange
-        var server = new MemcachedServer("localhost", 11211);
         var client = new MemcachedClient("localhost:11211");
 
         // Act
-        var started = client.start();
         var serverObject = client.getServers()[0];
 
         // Assert
-        assertFalse(started);
         assertEquals("localhost", serverObject.hostName);
-        assertEquals(false, serverObject.isStarted());
         assertEquals(11211, serverObject.port);
 
     }

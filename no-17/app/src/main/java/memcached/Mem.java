@@ -12,6 +12,8 @@ import picocli.CommandLine.Option;
 
 @Command(name = "mem", mixinStandardHelpOptions = true, version = "mem 1.0", description = "This challenge is to build your own memcached server")
 public class Mem implements Callable<Result> {
+    private static final String DEFAULT_HOSTNAME = "localhost";
+    private static final int DEFAULT_PORT = 11211;
     private static Logger _logger = Logger.getLogger(Mem.class.getName());
 
     public static void main(String[] args) {
@@ -22,13 +24,14 @@ public class Mem implements Callable<Result> {
         System.exit(exitCode);
     }
 
-    @Option(names = "-p", description = "-p specifies the port. default 11211")
-    int port = 11211;
-    @Option(names = "-n", description = "-n specifies a constant server name. default localhost")
-    String serverName = "localhost";
+    @Option(names = "-p", description = "-p specifies the port. default " + DEFAULT_PORT)
+    int port = DEFAULT_PORT;
+    @Option(names = "-n", description = "-n specifies a constant server name. default " + DEFAULT_HOSTNAME)
+    String serverName = DEFAULT_HOSTNAME;
 
-    @Option(names = "-servers", description = "-servers specifies the list of server ids separated by , and only used if client mode. default localhost:11211")
-    String serverIds = "localhost-11211";
+    @Option(names = "-servers", description = "-servers specifies the list of server ids separated by , and only used if client mode. default "
+            + DEFAULT_HOSTNAME + ":" + DEFAULT_PORT)
+    String serverIds = DEFAULT_HOSTNAME + "-" + DEFAULT_PORT;
 
     @Option(names = "-s", arity = "0..", description = "-s specifies if its a server or a client. default false means client")
     boolean isServer = false;
@@ -36,7 +39,11 @@ public class Mem implements Callable<Result> {
     @Override
     public Result call() throws Exception {
         if (isServer) {
-            _logger.info(String.format("Starting memcached server '%s' and port %d ", this.serverName, this.port));
+            if (this.port == DEFAULT_PORT) {
+                _logger.info(String.format("starting '%s' on the default port %d", this.serverName, this.port));
+            } else {
+                _logger.info(String.format("starting '%s' on port %d", this.serverName, this.port));
+            }
             new MemcachedServer(this.serverName, this.port).start();
         } else {
             _logger.info(String.format("Client connected to '%s'", this.serverIds));
