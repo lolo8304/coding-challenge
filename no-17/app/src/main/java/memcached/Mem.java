@@ -31,7 +31,7 @@ public class Mem implements Callable<Result> {
 
     @Option(names = "-servers", description = "-servers specifies the list of server ids separated by , and only used if client mode. default "
             + DEFAULT_HOSTNAME + ":" + DEFAULT_PORT)
-    String serverIds = DEFAULT_HOSTNAME + "-" + DEFAULT_PORT;
+    String serverIds = DEFAULT_HOSTNAME + ":" + DEFAULT_PORT;
 
     @Option(names = "-s", arity = "0..", description = "-s specifies if its a server or a client. default false means client")
     boolean isServer = false;
@@ -47,7 +47,9 @@ public class Mem implements Callable<Result> {
             new MemcachedServer(this.serverName, this.port).start();
         } else {
             _logger.info(String.format("Client connected to '%s'", this.serverIds));
-            new MemcachedClient(this.serverIds).start();
+            var client = new MemcachedClient(this.serverIds);
+            client.startAndInput();
+
         }
         return new Result();
     }

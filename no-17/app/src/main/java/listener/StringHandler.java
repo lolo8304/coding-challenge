@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,14 +27,16 @@ public abstract class StringHandler implements IListenerHandler {
     public void request(ChannelHandlerContext ctx, ByteBuffer nioBufferIn) throws IOException {
         var bufferedInputStream = convertByteBufferToBufferedReader(nioBufferIn);
         var response = this.request(bufferedInputStream);
-        ByteBuf out = this.stringToByteBuf(response);
-        ctx.write(out);
+        if (response.isPresent()) {
+            ByteBuf out = this.stringToByteBuf(response.get());
+            ctx.write(out);
+        }
     }
 
     private ByteBuf stringToByteBuf(String response) {
         return Unpooled.copiedBuffer(response, StandardCharsets.UTF_8);
     }
 
-    public abstract String request(BufferedReader bufferedReader) throws IOException;
+    public abstract Optional<String> request(BufferedReader bufferedReader) throws IOException;
 
 }

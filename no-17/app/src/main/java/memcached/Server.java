@@ -2,16 +2,28 @@ package memcached;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
+import memcached.commands.Command;
+import memcached.commands.CommandLine;
+import memcached.commands.Data;
+import memcached.commands.DataCommand;
+import memcached.commands.Response;
 
 public class Server {
     public final String hostName;
     public final int port;
     public final String serverId;
     private Socket socket;
-    private BufferedInputStream inputStream;
-    private BufferedOutputStream outputStream;
+    private BufferedReader reader;
+    private BufferedWriter writer;
 
     private boolean started;
 
@@ -35,8 +47,10 @@ public class Server {
 
             try {
                 this.socket = new Socket(this.hostName, this.port);
-                this.inputStream = new BufferedInputStream(socket.getInputStream());
-                this.outputStream = new BufferedOutputStream(socket.getOutputStream());
+                this.reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(socket.getInputStream()),
+                        StandardCharsets.UTF_8));
+                this.writer = new BufferedWriter(new OutputStreamWriter(
+                        new BufferedOutputStream(socket.getOutputStream()), StandardCharsets.UTF_8));
                 MemcachedClient._logger.info(String.format("Server %s connected", this.serverId));
                 this.started = true;
                 return true;
@@ -45,8 +59,8 @@ public class Server {
                         .severe(String.format("Server %s not started: %s", this.serverId, e.getMessage()));
                 this.started = false;
                 this.socket = null;
-                this.outputStream = null;
-                this.inputStream = null;
+                this.reader = null;
+                this.writer = null;
             }
         } else {
             MemcachedClient._logger.info(String.format("Server %s already connected", this.serverId));
@@ -64,13 +78,65 @@ public class Server {
         } catch (IOException e) {
         }
         try {
-            this.inputStream.close();
+            this.reader.close();
         } catch (IOException e) {
         }
         try {
-            this.outputStream.close();
+            this.writer.close();
         } catch (IOException e) {
         }
+    }
+
+    public void send(Command command) throws IOException {
+        command.write(this.writer);
+        this.writer.flush();
+    }
+
+    public Optional<Response> receive(Command command) throws IOException {
+        if (!command.noreply()) {
+            String line = this.reader.readLine();
+            var response = new Response();
+            while (line != null) {
+                if (line.startsWith("VALUE")) {
+                    response.addValue(this.receiveValue(line));
+                } else {
+                    switch (line) {
+                        case "STORED":
+                        case "NOT_STORED":
+                        case "EXISTS":
+                        case "NOT_FOUND":
+                        case "DELETED":
+                        case "ERROR":
+                        case "CLIENT_ERROR":
+                        case "SERVER_ERROR":
+                        case "END":
+                            response.finalNote = line;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                if (reader.ready()) {
+                    line = this.reader.readLine();
+                } else {
+                    line = null;
+                }
+            }
+            return Optional.of(response);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private DataCommand receiveValue(String line) throws IOException {
+        var data = this.reader.readLine();
+        return new DataCommand(new CommandLine(line), new Data(data));
+    }
+
+    public Optional<Response> sendAndReceive(Command command) throws IOException {
+        this.send(command);
+        return this.receive(command);
     }
 
 }
