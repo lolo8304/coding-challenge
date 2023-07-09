@@ -32,8 +32,8 @@ Now in 2023 I thought coming back to Java for these challenges. Unfortunatly Obe
 
 here you can find all my implementation
 
-- 1 wc tool
-    - word counter https://github.com/lolo8304/coding-challenge/tree/main/no-1
+- 1 wc tool - word counter
+    - https://github.com/lolo8304/coding-challenge/tree/main/no-1
     - very simple tool to get back with Java tooling, pipelines and arg parsing
 - 2 JSON parser
     - https://github.com/lolo8304/coding-challenge/tree/main/no-2
@@ -45,17 +45,16 @@ here you can find all my implementation
     - without testcases - no chance to solve this riddle
     - awesome experience John
 - 4 cut Tool
-    - https://github.com/lolo8304/coding-challenge/tree/main/no-4v
     - little linux tool. simple and easy
 - 5 Load Balancer
-    - https://codingchallenges.fyi/challenges/challenge-load-balancer
+    - https://github.com/lolo8304/coding-challenge/tree/main/no-4
     - documented with readme.md
     - invested quite a bit of time for fully dynamic and reliable Round Robin
     - and chaos engineering tests to kill BE servers and not to loose any message
-- 6 Sort: not implemented
+- 6 sort Tool: not implemented
 - 7 Calculator: none implemented
 - 8 Redis Server
-    - https://codingchallenges.fyi/challenges/challenge-redis
+    - https://github.com/lolo8304/coding-challenge/tree/main/no-8
     - this is by far the best challenge I have every implemented
     - learning the redis protocol step by step and implementing a fully functional server to use redis-benchmark was great
     - I extended the challenge with lots of commands incl. docu and meta data
@@ -64,7 +63,7 @@ here you can find all my implementation
     - dont look at performance - more to code redactorings and testcases
     - I implemented a lot of test cases: I used chatGPT to generate test cases for me
     - https://github.com/lolo8304/coding-challenge/tree/main/no-8/app/src/test/resources
-- 9 grep
+- 9 grep Tool
     - https://github.com/lolo8304/coding-challenge-9
     - I used just my mobile phone and javascript to implement it
     - has some headache topics with * and folders .... check it out
@@ -85,6 +84,10 @@ here you can find all my implementation
     - massive refactoring from step 2 to step 3 - as supposed
     - I tried to this not to build a scanner but use regexp for the different patterns. finally I must say - I like scanners. 
     - without https://regex101.com/ - no chance to implement this type of regexp
+- 17 memcached server:
+    - https://github.com/lolo8304/coding-challenge/tree/main/no-17
+    - just started
+    - implement a server and a client. and try to use consistent hashing for multiple servers.
 
 I wanted to thank John Cricket for this challenges and I encourage every Engineer from Junior to Principal to do this. Learn a new language or get back to language you have used to code (as me here in Java). 
 

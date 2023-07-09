@@ -1,0 +1,1 @@
+/usr/local/opt/memcached/bin/memcached -l localhost -p 11212 -vv
