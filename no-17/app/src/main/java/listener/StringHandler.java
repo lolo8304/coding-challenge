@@ -24,6 +24,12 @@ public abstract class StringHandler implements IListenerHandler {
         return newBuilder;
     }
 
+    public void deregisterBuffer(SocketChannel channel) {
+        if (this.lineBuffer.containsKey(channel)) {
+            this.lineBuffer.remove(channel);
+        }
+    }
+
     public StringBuilder getBuffer(SocketChannel channel) {
         return this.lineBuffer.get(channel);
     }

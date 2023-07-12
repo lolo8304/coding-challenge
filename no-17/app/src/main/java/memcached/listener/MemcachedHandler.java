@@ -31,6 +31,7 @@ public class MemcachedHandler extends StringHandler {
                 return this.setCommand(clientSocketChannel, cmd);
             case "quit":
                 Listener._logger.info("client closing: " + clientSocketChannel.getRemoteAddress());
+                this.deregisterBuffer(clientSocketChannel);
                 clientSocketChannel.close();
                 return Optional.empty();
 

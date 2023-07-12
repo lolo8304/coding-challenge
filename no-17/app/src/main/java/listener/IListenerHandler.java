@@ -8,6 +8,8 @@ public interface IListenerHandler {
 
     public StringBuilder registerBuffer(SocketChannel key);
 
+    public void deregisterBuffer(SocketChannel key);
+
     public StringBuilder getBuffer(SocketChannel key);
 
 }
