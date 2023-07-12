@@ -23,16 +23,24 @@ public class Command {
 
     public Command(CommandLine commandLine, String... tokens) {
         this.commandLine = commandLine;
-        this.type = tokens[0].toLowerCase();
-        this.key = tokens[1];
-        this.parameters = Arrays.copyOfRange(tokens, 2, tokens.length);
+        if (tokens.length > 0) {
+            this.type = tokens[0].toLowerCase();
+            if (tokens.length > 1) {
+                this.key = tokens[1];
+                this.parameters = Arrays.copyOfRange(tokens, 2, tokens.length);
+            } else {
+                this.key = "";
+                this.parameters = new String[0];
+            }
+        } else {
+            this.type = "";
+            this.key = "";
+            this.parameters = new String[0];
+        }
     }
 
     public Command(String... tokens) {
-        this.commandLine = new CommandLine(tokens);
-        this.type = tokens[0].toLowerCase();
-        this.key = tokens[1];
-        this.parameters = Arrays.copyOfRange(tokens, 2, tokens.length);
+        this(new CommandLine(tokens), tokens);
     }
 
     public String getLine() {

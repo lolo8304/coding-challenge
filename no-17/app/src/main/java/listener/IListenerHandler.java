@@ -1,11 +1,13 @@
 package listener;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import io.netty.channel.ChannelHandlerContext;
+import java.nio.channels.SocketChannel;
 
 public interface IListenerHandler {
-    public void request(ChannelHandlerContext ctx, ByteBuffer nioBufferIn) throws IOException;
+    public void request(SocketChannel clientSocketChannel) throws IOException;
+
+    public StringBuilder registerBuffer(SocketChannel key);
+
+    public StringBuilder getBuffer(SocketChannel key);
 
 }

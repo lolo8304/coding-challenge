@@ -1,24 +1,16 @@
 package listener;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.logging.Level;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Set;
 import java.util.logging.Logger;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-
 public class Listener {
-    static final Logger _logger = Logger.getLogger(Listener.class.getName());
+    public static final Logger _logger = Logger.getLogger(Listener.class.getName());
     private IListenerHandler handler;
 
     public Listener(int port, IListenerHandler handler) throws InterruptedException {
@@ -26,84 +18,56 @@ public class Listener {
         start(port);
     }
 
-    @SuppressWarnings("java:S2189")
-    protected void start(int port) throws InterruptedException {
-
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private void start(int port) {
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ListenerChannelInitializer(this))
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+            Selector selector = Selector.open();
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.bind(new InetSocketAddress(port));
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync();
+            _logger.info("Memcached server started on port " + port);
 
-            // Wait until the server socket is closed.
-            // This will block until the server is shut down.
-            // Start a parallel thread
-            f.channel().closeFuture().sync();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
-
-    }
-
-    public static class ListenerCommandLineHandler extends ChannelInboundHandlerAdapter {
-
-        private Listener server;
-
-        public ListenerCommandLineHandler(Listener server) {
-            this.server = server;
-
-        }
-
-        @Override
-        public void channelRead(ChannelHandlerContext ctx, Object msg) throws IOException {
-            var nettyBufferIn = (ByteBuf) msg;
-            byte[] bytes = new byte[nettyBufferIn.readableBytes()];
-            nettyBufferIn.readBytes(bytes);
-            // important to position correctly
-            var nioBufferIn = ByteBuffer.wrap(bytes);
-
-            if (_logger.isLoggable(Level.INFO)) {
-                var requestString = new String(bytes);
-                byte[] requestBytes = requestString.getBytes();
-                _logger.info("Request: " + requestBytes.length + " - " +
-                        requestString);
+            while (true) {
+                selector.select();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                for (SelectionKey key : selectedKeys) {
+                    try {
+                        if (key.isAcceptable()) {
+                            acceptConnection(key);
+                        } else if (key.isReadable()) {
+                            readCommand(key);
+                        }
+                    } catch (IOException e) {
+                        var clientSocketChannel = (SocketChannel) key.channel();
+                        _logger.info("Error: will close channel " + clientSocketChannel.getRemoteAddress());
+                        try {
+                            clientSocketChannel.close();
+                        } catch (IOException ex) {
+                            // ok if error on close
+                        }
+                    }
+                }
+                selectedKeys.clear();
             }
-
-            server.handler.request(ctx, nioBufferIn);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public void channelReadComplete(ChannelHandlerContext ctx) {
-            ctx.flush();
-        }
-
-        @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            cause.printStackTrace();
-            ctx.close();
-        }
-
     }
 
-    public static class ListenerChannelInitializer extends ChannelInitializer<SocketChannel> {
+    private void acceptConnection(SelectionKey key) throws IOException {
+        ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+        var clientSocketChannel = serverSocketChannel.accept();
+        clientSocketChannel.configureBlocking(false);
+        clientSocketChannel.register(key.selector(), SelectionKey.OP_READ);
+        this.handler.registerBuffer(clientSocketChannel);
+        _logger.info("New client connected: " + clientSocketChannel.getRemoteAddress());
+    }
 
-        private Listener server;
-
-        public ListenerChannelInitializer(Listener server) {
-            this.server = server;
-        }
-
-        @Override
-        public void initChannel(SocketChannel ch) throws Exception {
-            ch.pipeline().addLast(new ListenerCommandLineHandler(this.server));
+    private void readCommand(SelectionKey key) throws IOException {
+        var clientSocketChannel = (SocketChannel) key.channel();
+        if (clientSocketChannel.isOpen()) {
+            this.handler.request(clientSocketChannel);
         }
     }
 }
