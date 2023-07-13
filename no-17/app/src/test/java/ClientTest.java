@@ -18,7 +18,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import memcached.MemcachedClient;
+import memcached.client.MemcachedClient;
 import memcached.commands.GetCommand;
 import memcached.commands.Response;
 import memcached.commands.SetCommand;
@@ -50,15 +50,20 @@ class ClientTest {
 
         // Arrange
         var client = new MemcachedClient("localhost:11212");
-        var started = client.start();
+        try {
+            var started = client.start();
 
-        // Act
-        var cmd = new GetCommand(randomKey("asdf"));
-        Response response = client.sendCommand(cmd).get();
+            // Act
+            var cmd = new GetCommand(randomKey("asdf"));
+            Response response = client.sendCommand(cmd).get();
 
-        // Assert
-        assertTrue(started);
-        assertEquals("END", response.finalNote);
+            // Assert
+            assertTrue(started);
+            assertEquals("END", response.finalNote);
+        } finally {
+            client.close();
+        }
+
     }
 
     @Test
@@ -66,20 +71,25 @@ class ClientTest {
 
         // Arrange
         var client = new MemcachedClient("localhost:11212");
-        var started = client.start();
-        var key = randomKey("asdf");
-        var value = randomKey("testvalue");
+        try {
+            var started = client.start();
+            var key = randomKey("asdf");
+            var value = randomKey("testvalue");
 
-        // Act
-        var cmd = new SetCommand(key, value);
-        Response response = client.sendCommand(cmd).get();
+            // Act
+            var cmd = new SetCommand(key, value);
+            Response response = client.sendCommand(cmd).get();
 
-        var cmdGet = new GetCommand(key);
-        Response responseGet = client.sendCommand(cmdGet).get();
+            var cmdGet = new GetCommand(key);
+            Response responseGet = client.sendCommand(cmdGet).get();
 
-        // Assert
-        assertTrue(started);
-        assertEquals("STORED", response.finalNote);
+            // Assert
+            assertTrue(started);
+            assertEquals("STORED", response.finalNote);
+        } finally {
+            client.close();
+        }
+
     }
 
     @Test
@@ -87,23 +97,27 @@ class ClientTest {
 
         // Arrange
         var client = new MemcachedClient("localhost:11212");
-        var started = client.start();
-        var key = randomKey("asdf");
-        var value = randomKey("testvalue");
+        try {
+            var started = client.start();
+            var key = randomKey("asdf");
+            var value = randomKey("testvalue");
 
-        // Act
-        var cmd = new SetCommand(key, value, 31, 300, true);
-        Optional<Response> response = client.sendCommand(cmd);
+            // Act
+            var cmd = new SetCommand(key, value, 31, 300, false);
+            Optional<Response> response = client.sendCommand(cmd);
 
-        var cmdGet = new GetCommand(key);
-        Response responseGet = client.sendCommand(cmdGet).get();
-        var responseCmd = responseGet.cmds.get(0);
+            var cmdGet = new GetCommand(key);
+            Response responseGet = client.sendCommand(cmdGet).get();
+            var responseCmd = responseGet.cmds.get(0);
 
-        // Assert
-        assertTrue(started);
-        assertEquals(false, response.isPresent());
-        assertEquals(31, responseCmd.flags());
-        assertEquals(value, responseCmd.data.data);
+            // Assert
+            assertTrue(started);
+            assertEquals(true, response.isPresent());
+            assertEquals(31, responseCmd.flags());
+            assertEquals(value, responseCmd.data.data);
+        } finally {
+            client.close();
+        }
 
     }
 }

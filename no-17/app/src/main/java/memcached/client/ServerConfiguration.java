@@ -1,4 +1,4 @@
-package memcached;
+package memcached.client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -17,7 +17,7 @@ import memcached.commands.Data;
 import memcached.commands.DataCommand;
 import memcached.commands.Response;
 
-public class Server {
+public class ServerConfiguration {
     public final String hostName;
     public final int port;
     public final String serverId;
@@ -27,14 +27,14 @@ public class Server {
 
     private boolean started;
 
-    public Server(String hostName, int port) {
+    public ServerConfiguration(String hostName, int port) {
         this.hostName = hostName;
         this.port = port;
         this.serverId = String.format("%s:%d", this.hostName, this.port);
         this.started = false;
     }
 
-    public Server(String serverId) {
+    public ServerConfiguration(String serverId) {
         var splitted = serverId.split(":");
         this.hostName = splitted[0];
         this.port = Integer.parseInt(splitted[1]);

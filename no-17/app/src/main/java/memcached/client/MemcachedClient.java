@@ -1,4 +1,4 @@
-package memcached;
+package memcached.client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -17,8 +17,8 @@ public class MemcachedClient {
     static Logger _logger = Logger.getLogger(MemcachedClient.class.getName());
 
     private final String[] serverIds;
-    private final Server[] servers;
-    private final List<Server> validServers = new ArrayList<>();
+    private final ServerConfiguration[] servers;
+    private final List<ServerConfiguration> validServers = new ArrayList<>();
 
     public MemcachedClient(String serverIds) {
         this.serverIds = Arrays.asList(serverIds.split(",")).stream().filter((x) -> !x.isEmpty() && !x.isBlank())
@@ -31,8 +31,8 @@ public class MemcachedClient {
         this.servers = initializeServers();
     }
 
-    private Server[] initializeServers() {
-        return Arrays.asList(this.serverIds).stream().map(Server::new).toArray(Server[]::new);
+    private ServerConfiguration[] initializeServers() {
+        return Arrays.asList(this.serverIds).stream().map(ServerConfiguration::new).toArray(ServerConfiguration[]::new);
     }
 
     public String readFromConsole() {
@@ -42,7 +42,7 @@ public class MemcachedClient {
     }
 
     public boolean start() throws UnknownHostException, IOException {
-        for (Server server : this.servers) {
+        for (ServerConfiguration server : this.servers) {
             if (server.start()) {
                 validServers.add(server);
             }
@@ -51,19 +51,23 @@ public class MemcachedClient {
     }
 
     public void stop() {
-        this.validServers.forEach(Server::stop);
+        this.validServers.forEach(ServerConfiguration::stop);
     }
 
-    public Server[] getServers() {
+    public void close() {
+        this.stop();
+    }
+
+    public ServerConfiguration[] getServers() {
         return this.servers;
     }
 
-    public Server[] getValidServers() {
-        return this.validServers.toArray(Server[]::new);
+    public ServerConfiguration[] getValidServers() {
+        return this.validServers.toArray(ServerConfiguration[]::new);
     }
 
     public Optional<Response> sendCommand(Command command) {
-        for (Server server : this.validServers) {
+        for (ServerConfiguration server : this.validServers) {
             try {
                 return server.sendAndReceive(command);
             } catch (IOException e) {
@@ -71,7 +75,7 @@ public class MemcachedClient {
                 return Optional.of(new Response("ERROR"));
             }
         }
-        return Optional.of(new Response("CLIENT_ERROR"));
+        return Optional.of(new Response("NO_SERVER_CONNECTED"));
     }
 
     public Optional<Response> sendCommand(String command) {

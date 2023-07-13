@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
-import memcached.MemcachedClient;
+import memcached.client.MemcachedClient;
 
 public class Command {
     public final String type;
@@ -56,7 +56,9 @@ public class Command {
     }
 
     public String toResponseString() {
-        throw new UnsupportedOperationException("Unimplemented method 'toResponseString'");
+        var buffer = new StringBuilder();
+        buffer.append(this.commandLine.line);
+        return buffer.toString();
     }
 
     public GetCommand asGetCommand() {
@@ -73,7 +75,7 @@ public class Command {
     }
 
     public Optional<String> parameter(int index) {
-        if (this.parameters != null && index < this.parameters.length) {
+        if (this.parameters != null && index >= 0 && index < this.parameters.length) {
             return Optional.of(this.parameters[index]);
 
         } else {
@@ -112,6 +114,7 @@ public class Command {
     }
 
     public boolean noreply() {
-        return false;
+        var noreply = this.parameterLast();
+        return (noreply.isPresent() && noreply.get().equals("noreply"));
     }
 }

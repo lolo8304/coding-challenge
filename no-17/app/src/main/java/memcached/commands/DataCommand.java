@@ -35,10 +35,6 @@ public class DataCommand extends Command {
         }
     }
 
-    public boolean hasNoReply() {
-        return this.parameterLast().equals("noreply");
-    }
-
     public int length() {
         return this.data.data.length();
     }
@@ -56,7 +52,6 @@ public class DataCommand extends Command {
         var buffer = new StringBuilder();
         buffer.append(this.commandLine.line).append('\r').append('\n');
         buffer.append(this.data.data).append('\r').append('\n');
-        buffer.append("END").append('\r').append('\n');
         return buffer.toString();
     }
 
@@ -64,13 +59,4 @@ public class DataCommand extends Command {
         return new SetCommand(this.commandLine, this.data);
     }
 
-    @Override
-    public boolean noreply() {
-        var nr = this.parameterLast();
-        if (nr.isPresent()) {
-            return nr.get().equals("noreply");
-        } else {
-            return false;
-        }
-    }
 }

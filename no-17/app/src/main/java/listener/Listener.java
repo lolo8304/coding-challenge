@@ -12,13 +12,14 @@ import java.util.logging.Logger;
 public class Listener {
     public static final Logger _logger = Logger.getLogger(Listener.class.getName());
     private IListenerHandler handler;
+    private int port;
 
     public Listener(int port, IListenerHandler handler) throws InterruptedException {
+        this.port = port;
         this.handler = handler;
-        start(port);
     }
 
-    private void start(int port) {
+    public void start() {
         try {
             Selector selector = Selector.open();
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();

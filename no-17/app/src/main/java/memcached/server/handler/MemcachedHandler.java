@@ -1,8 +1,9 @@
-package memcached.listener;
+package memcached.server.handler;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import listener.Listener;
 import listener.StringHandler;
@@ -11,9 +12,13 @@ import memcached.commands.CommandLine;
 import memcached.commands.Data;
 import memcached.commands.DataCommand;
 import memcached.commands.Response;
-import memcached.listener.cache.MemCache;
+import memcached.server.cache.MemCache;
 
 public class MemcachedHandler extends StringHandler {
+
+    static Logger _logger = Logger.getLogger(MemcachedHandler.class.getName());
+    private static final String END = "END";
+    private static String STORED = "STORED" + '\r' + '\n';
 
     private MemCache cache;
 
@@ -41,6 +46,7 @@ public class MemcachedHandler extends StringHandler {
     }
 
     private Optional<String> getCommand(Command cmd) {
+        _logger.info("Request GET: " + cmd.toResponseString());
         var response = new Response();
         var getCmd = cmd.asGetCommand();
         for (String key : getCmd.keys) {
@@ -50,19 +56,24 @@ public class MemcachedHandler extends StringHandler {
                 response.addValue(dataCmd.asValueCommand());
             }
         }
-        response.finalNote = "END";
-        return Optional.of(response.toResponseString());
+        response.finalNote = END;
+        var responseString = response.toResponseString();
+        _logger.info("Response GET: " + responseString);
+        return Optional.of(responseString);
     }
 
     private Optional<String> setCommand(SocketChannel clientSocketChannel, Command cmd) throws IOException {
+        _logger.info("Request SET: " + cmd.toResponseString());
         // read data from buffer
         var data = this.readLineFromSocketChannel(clientSocketChannel);
         var dataCmd = new DataCommand(cmd.commandLine, new Data(data));
         this.cache.set(dataCmd);
-        if (dataCmd.hasNoReply()) {
+        if (dataCmd.noreply()) {
+            _logger.info("Response SET: " + "no reply");
             return Optional.empty();
         } else {
-            return Optional.of("STORED" + '\r' + '\n');
+            _logger.info("Response SET: " + STORED);
+            return Optional.of(STORED);
         }
     }
 

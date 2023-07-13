@@ -6,6 +6,8 @@ package memcached;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import memcached.client.MemcachedClient;
+import memcached.server.MemcachedServer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

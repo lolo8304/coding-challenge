@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import memcached.MemcachedClient;
+import memcached.client.MemcachedClient;
 
 class MemcachedTest {
 
@@ -41,17 +41,19 @@ class MemcachedTest {
 
         // Arrange
         var client = new MemcachedClient("anyserver:11111");
+        try {
+            // Act
+            var started = client.start();
+            var server = client.getServers()[0];
 
-        // Act
-        var started = client.start();
-        var server = client.getServers()[0];
-
-        // Assert
-        assertFalse(started);
-        assertEquals("anyserver", server.hostName);
-        assertEquals(false, server.isStarted());
-        assertEquals(11111, server.port);
-
+            // Assert
+            assertFalse(started);
+            assertEquals("anyserver", server.hostName);
+            assertEquals(false, server.isStarted());
+            assertEquals(11111, server.port);
+        } finally {
+            client.close();
+        }
     }
 
     @Test
@@ -59,14 +61,17 @@ class MemcachedTest {
 
         // Arrange
         var client = new MemcachedClient("localhost:11211");
+        try {
 
-        // Act
-        var serverObject = client.getServers()[0];
+            // Act
+            var serverObject = client.getServers()[0];
 
-        // Assert
-        assertEquals("localhost", serverObject.hostName);
-        assertEquals(11211, serverObject.port);
-
+            // Assert
+            assertEquals("localhost", serverObject.hostName);
+            assertEquals(11211, serverObject.port);
+        } finally {
+            client.close();
+        }
     }
 
 }
