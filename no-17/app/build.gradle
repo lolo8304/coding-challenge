@@ -22,6 +22,7 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     implementation 'io.netty:netty-all:4.1.92.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
     // This dependency is used by the application.
 }

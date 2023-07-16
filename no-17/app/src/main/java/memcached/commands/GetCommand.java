@@ -33,4 +33,18 @@ public class GetCommand extends Command {
         return tmpkeys.toArray(String[]::new);
     }
 
+    @Override
+    public void validate() throws ValidationException {
+        if (this.keys == null || this.keys.length == 0) {
+            throw new ValidationException("Key is mandatory, but null or empty");
+        }
+        if (this.commandLine == null) {
+            throw new ValidationException("Commandline is empty");
+        }
+        if (this.type == null || this.type.isBlank()) {
+            throw new ValidationException("Type is mandatory, but null or empty");
+        }
+
+    }
+
 }

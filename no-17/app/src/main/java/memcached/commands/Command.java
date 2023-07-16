@@ -113,8 +113,22 @@ public class Command {
         }
     }
 
+    public int bytes() {
+        var e = this.parameterInt(2);
+        if (e.isPresent()) {
+            return e.get();
+        } else {
+            return 0;
+        }
+    }
+
     public boolean noreply() {
         var noreply = this.parameterLast();
         return (noreply.isPresent() && noreply.get().equals("noreply"));
     }
+
+    public void validate() throws ValidationException {
+
+    }
+
 }
