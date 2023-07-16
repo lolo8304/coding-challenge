@@ -3,8 +3,6 @@ package memcached.server.cache;
 import java.util.ArrayList;
 import java.util.List;
 
-import memcached.commands.SetCommand;
-
 public class ExpirationPolicies extends ExpirationPolicy {
 
     private List<ExpirationPolicy> expirationPolicies;
@@ -15,11 +13,11 @@ public class ExpirationPolicies extends ExpirationPolicy {
     }
 
     @Override
-    public boolean tryApplyToCacheContext(SetCommand command) {
+    public boolean tryApplyToCacheContext(CacheContext context) {
         var result = true;
         for (ExpirationPolicy expirationPolicy : expirationPolicies) {
             // false is stronger, and must call all in the pipeline
-            result = expirationPolicy.tryApplyToCacheContext(command) && result;
+            result = expirationPolicy.tryApplyToCacheContext(context) && result;
         }
         return result;
     }

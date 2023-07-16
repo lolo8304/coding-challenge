@@ -2,8 +2,6 @@ package memcached.server.cache;
 
 import java.time.Duration;
 
-import memcached.commands.SetCommand;
-
 public class ExpireIn extends ExpirationPolicy {
 
     public final Duration duration;
@@ -17,8 +15,8 @@ public class ExpireIn extends ExpirationPolicy {
     }
 
     @Override
-    public boolean tryApplyToCacheContext(SetCommand command) {
-        return (command.isAlive());
+    public boolean tryApplyToCacheContext(CacheContext context) {
+        return (context.isAlive());
     }
 
 }

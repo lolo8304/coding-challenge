@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import memcached.commands.Command;
 import memcached.commands.GetCommand;
 import memcached.commands.SetCommand;
+import memcached.server.cache.CacheContext;
+import memcached.server.cache.MemCache;
 
 class CommandTest {
 
@@ -137,13 +139,15 @@ class CommandTest {
 
         // Arrange
         var key = randomKey("asdf");
+        var cmd = new SetCommand(key, "hello", 0, 0, false);
+        var cache = new MemCache();
 
         // Act
-        var cmd = new SetCommand(key, "hello", 0, 0, false);
+        var context = new CacheContext(cache, cmd);
 
         // Assert
-        assertEquals(true, cmd.isAlive());
-        assertEquals(false, cmd.isExpired());
+        assertEquals(true, context.isAlive());
+        assertEquals(false, context.isExpired());
     }
 
     @Test
@@ -151,14 +155,16 @@ class CommandTest {
 
         // Arrange
         var key = randomKey("asdf");
+        var cmd = new SetCommand(key, "hello", 0, 3, false);
+        var cache = new MemCache();
+        var context = new CacheContext(cache, cmd);
 
         // Act
-        var cmd = new SetCommand(key, "hello", 0, 3, false);
         Thread.currentThread().sleep(1000);
 
         // Assert
-        assertEquals(true, cmd.isAlive());
-        assertEquals(false, cmd.isExpired());
+        assertEquals(true, context.isAlive());
+        assertEquals(false, context.isExpired());
     }
 
     @Test
@@ -166,14 +172,15 @@ class CommandTest {
 
         // Arrange
         var key = randomKey("asdf");
-
-        // Act
+        var cache = new MemCache();
         var cmd = new SetCommand(key, "hello", 0, 1, false);
+        var context = new CacheContext(cache, cmd);
+        // Act
         Thread.currentThread().sleep(2000);
 
         // Assert
-        assertEquals(false, cmd.isAlive());
-        assertEquals(true, cmd.isExpired());
+        assertEquals(false, context.isAlive());
+        assertEquals(true, context.isExpired());
     }
 
 }

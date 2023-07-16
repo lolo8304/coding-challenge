@@ -6,17 +6,16 @@ import java.util.Optional;
 
 import memcached.commands.Command;
 import memcached.commands.SetCommand;
-import memcached.commands.ValidationException;
 
 public class MemCache {
-    private Dictionary<String, SetCommand> cache;
+    private Dictionary<String, CacheContext> cache;
 
     public MemCache() {
         this.cache = new Hashtable<>();
     }
 
-    public Optional<String> set(SetCommand cmd) throws ValidationException {
-        this.cache.put(cmd.key, cmd);
+    public Optional<String> set(SetCommand cmd) {
+        this.cache.put(cmd.key, new CacheContext(this, cmd));
         return Optional.of(cmd.data.data);
     }
 
@@ -24,9 +23,9 @@ public class MemCache {
         var value = this.cache.get(key);
         if (value != null) {
             if (value.isAlive()) {
-                return Optional.of(value);
+                return Optional.of(value.command());
             } else {
-                value.evict(this);
+                value.evict();
                 return Optional.empty();
             }
         } else {
@@ -39,6 +38,6 @@ public class MemCache {
     }
 
     public void delete(Command cmd) {
-        this.cache.remove(cmd);
+        this.cache.remove(cmd.key);
     }
 }
