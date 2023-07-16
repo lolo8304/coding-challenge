@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import memcached.client.MemcachedClient;
+import memcached.server.cache.MemCache;
 
 public class Command {
     public final String type;
@@ -129,6 +130,10 @@ public class Command {
 
     public void validate() throws ValidationException {
 
+    }
+
+    public boolean isValidToAddToCache(MemCache cache) {
+        return true;
     }
 
 }

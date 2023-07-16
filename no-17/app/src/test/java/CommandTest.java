@@ -17,8 +17,10 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import memcached.commands.AddCommand;
 import memcached.commands.Command;
 import memcached.commands.GetCommand;
+import memcached.commands.ReplaceCommand;
 import memcached.commands.SetCommand;
 import memcached.server.cache.CacheContext;
 import memcached.server.cache.MemCache;
@@ -181,6 +183,36 @@ class CommandTest {
         // Assert
         assertEquals(false, context.isAlive());
         assertEquals(true, context.isExpired());
+    }
+
+    @Test
+    void addcmd_empy_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmd = new AddCommand(key, "hello", 0, 0, false);
+
+        // Act
+        var dataAfterSet = cache.set(cmd);
+
+        // Assert
+        assertEquals(true, dataAfterSet.isPresent());
+    }
+
+    @Test
+    void replacecmd_empty_expectnook() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmd = new ReplaceCommand(key, "hello", 0, 0, false);
+
+        // Act
+        var dataAfterSet = cache.set(cmd);
+
+        // Assert
+        assertEquals(false, dataAfterSet.isPresent());
     }
 
 }

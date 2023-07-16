@@ -15,8 +15,12 @@ public class MemCache {
     }
 
     public Optional<String> set(SetCommand cmd) {
-        this.cache.put(cmd.key, new CacheContext(this, cmd));
-        return Optional.of(cmd.data.data);
+        if (cmd.isValidToAddToCache(this)) {
+            this.cache.put(cmd.key, new CacheContext(this, cmd));
+            return Optional.of(cmd.data.data);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Optional<SetCommand> get(String key) {

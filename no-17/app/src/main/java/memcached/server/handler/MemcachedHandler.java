@@ -21,6 +21,7 @@ public class MemcachedHandler extends StringHandler {
     private static final String CLIENT_ERROR_BAD_DATA_CHUNK = "CLIENT_ERROR bad data chunk";
     private static final String END = "END";
     private static final String STORED = "STORED" + '\r' + '\n';
+    private static final String NOT_STORED = "NOT_STORED" + '\r' + '\n';
 
     private MemCache cache;
 
@@ -36,6 +37,8 @@ public class MemcachedHandler extends StringHandler {
                 case "get":
                     return this.getCommand(cmd);
                 case "set":
+                case "add":
+                case "replace":
                     return this.setCommand(clientSocketChannel, cmd);
                 case "quit":
                     Listener._logger.info("client closing: " + clientSocketChannel.getRemoteAddress());
@@ -77,14 +80,20 @@ public class MemcachedHandler extends StringHandler {
         var dataCmd = new DataCommand(cmd.commandLine, new Data(data));
         var setCmd = dataCmd.asSetCommand();
         setCmd.validate();
-        this.cache.set(setCmd);
-        if (dataCmd.noreply()) {
-            _logger.info("Response SET: " + "no reply");
-            return Optional.empty();
+        var dataAfterSet = this.cache.set(setCmd);
+        if (dataAfterSet.isPresent()) {
+            if (dataCmd.noreply()) {
+                _logger.info("Response SET: " + "no reply");
+                return Optional.empty();
+            } else {
+                _logger.info("Response SET: " + STORED);
+                return Optional.of(STORED);
+            }
         } else {
-            _logger.info("Response SET: " + STORED);
-            return Optional.of(STORED);
+            _logger.info("Response SET: " + NOT_STORED);
+            return Optional.of(NOT_STORED);
         }
+
     }
 
 }

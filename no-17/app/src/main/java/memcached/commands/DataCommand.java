@@ -56,7 +56,17 @@ public class DataCommand extends Command {
     }
 
     public SetCommand asSetCommand() {
-        return new SetCommand(this.commandLine, this.data);
+        switch (this.type) {
+            case "set":
+                return new SetCommand(this.commandLine, this.data);
+            case "replace":
+                return new ReplaceCommand(this.commandLine, this.data);
+            case "add":
+                return new AddCommand(this.commandLine, this.data);
+
+            default:
+                throw new IllegalArgumentException(String.format("type '%s' is not valid set command", this.type));
+        }
     }
 
 }
