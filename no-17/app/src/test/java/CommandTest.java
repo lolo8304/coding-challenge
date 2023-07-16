@@ -132,4 +132,48 @@ class CommandTest {
         assertEquals("4", cmd.parameter(4).get());
     }
 
+    @Test
+    void setcmd_noexp_expectok() throws URISyntaxException, IOException {
+
+        // Arrange
+        var key = randomKey("asdf");
+
+        // Act
+        var cmd = new SetCommand(key, "hello", 0, 0, false);
+
+        // Assert
+        assertEquals(true, cmd.isAlive());
+        assertEquals(false, cmd.isExpired());
+    }
+
+    @Test
+    void setcmd_exp3s_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+
+        // Act
+        var cmd = new SetCommand(key, "hello", 0, 3, false);
+        Thread.currentThread().sleep(1000);
+
+        // Assert
+        assertEquals(true, cmd.isAlive());
+        assertEquals(false, cmd.isExpired());
+    }
+
+    @Test
+    void setcmd_exp1s_expectnotok_after2s() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+
+        // Act
+        var cmd = new SetCommand(key, "hello", 0, 1, false);
+        Thread.currentThread().sleep(2000);
+
+        // Assert
+        assertEquals(false, cmd.isAlive());
+        assertEquals(true, cmd.isExpired());
+    }
+
 }
