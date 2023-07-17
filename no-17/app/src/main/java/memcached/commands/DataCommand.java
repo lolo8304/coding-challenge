@@ -63,6 +63,8 @@ public class DataCommand extends Command {
                 return new ReplaceCommand(this.commandLine, this.data);
             case "add":
                 return new AddCommand(this.commandLine, this.data);
+            case "cas":
+                return new CasCommand(this.commandLine, this.data);
 
             default:
                 throw new IllegalArgumentException(String.format("type '%s' is not valid set command", this.type));

@@ -30,8 +30,12 @@ public class AddCommand extends SetCommand {
     }
 
     @Override
-    public boolean isValidToAddToCache(MemCache cache) {
+    public ValidationCode isValidToAddToCache(MemCache cache) {
         // allow add only if key does not exists in cache
-        return (cache.get(this.key).isEmpty());
+        if (cache.get(this.key).isEmpty()) {
+            return ValidationCode.OK;
+        } else {
+            return ValidationCode.NOT_STORED;
+        }
     }
 }

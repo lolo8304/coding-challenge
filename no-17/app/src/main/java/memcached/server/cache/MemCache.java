@@ -15,23 +15,41 @@ public class MemCache {
     }
 
     public Optional<String> set(SetCommand cmd) {
-        if (cmd.isValidToAddToCache(this)) {
-            this.cache.put(cmd.key, new CacheContext(this, cmd));
-            return Optional.of(cmd.data.data);
+        var validationResult = cmd.isValidToAddToCache(this);
+        if (validationResult.equals(Command.ValidationCode.OK)) {
+            var existingValue = this.getValidContext(cmd.key);
+            if (existingValue.isPresent()) {
+                return existingValue.get().updateAndStatus(cmd);
+            } else {
+                this.cache.put(cmd.key, new CacheContext(this, cmd));
+                return Optional.of("STORED");
+            }
         } else {
-            return Optional.empty();
+            return Optional.of(validationResult.toString());
         }
     }
 
-    public Optional<SetCommand> get(String key) {
+    private Optional<CacheContext> getValidContext(String key) {
         var value = this.cache.get(key);
         if (value != null) {
             if (value.isAlive()) {
-                return Optional.of(value.command());
+                return Optional.of(value);
             } else {
                 value.evict();
-                return Optional.empty();
             }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SetCommand> get(String key) {
+        var context = this.getValidContext(key);
+        return context.isPresent() ? Optional.of(context.get().command()) : Optional.empty();
+    }
+
+    public Optional<SetCommand> get(String key, int cas) {
+        var context = this.getValidContext(key);
+        if (context.isPresent() && context.get().validCas(cas)) {
+            return Optional.of(context.get().command());
         } else {
             return Optional.empty();
         }

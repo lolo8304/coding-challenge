@@ -1,7 +1,6 @@
 package memcached.client;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,14 +13,14 @@ import memcached.commands.DataCommand;
 import memcached.commands.Response;
 
 public class MemcachedClient {
-    static Logger _logger = Logger.getLogger(MemcachedClient.class.getName());
+    static final Logger _logger = Logger.getLogger(MemcachedClient.class.getName());
 
     private final String[] serverIds;
     private final ServerConfiguration[] servers;
     private final List<ServerConfiguration> validServers = new ArrayList<>();
 
     public MemcachedClient(String serverIds) {
-        this.serverIds = Arrays.asList(serverIds.split(",")).stream().filter((x) -> !x.isEmpty() && !x.isBlank())
+        this.serverIds = Arrays.asList(serverIds.split(",")).stream().filter(x -> !x.isEmpty() && !x.isBlank())
                 .toArray(String[]::new);
         this.servers = initializeServers();
     }
@@ -37,11 +36,12 @@ public class MemcachedClient {
 
     public String readFromConsole() {
         System.out.print("> ");
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
+        try (Scanner scanner = new Scanner(System.in);) {
+            return scanner.nextLine();
+        }
     }
 
-    public boolean start() throws UnknownHostException, IOException {
+    public boolean start() {
         for (ServerConfiguration server : this.servers) {
             if (server.start()) {
                 validServers.add(server);
@@ -86,7 +86,7 @@ public class MemcachedClient {
         return this.sendCommand(DataCommand.parse(command, data));
     }
 
-    public void startAndInput() throws UnknownHostException, IOException {
+    public void startAndInput() {
         if (this.start()) {
             var input = this.readFromConsole();
             while (input != null && !input.equalsIgnoreCase("quit")) {

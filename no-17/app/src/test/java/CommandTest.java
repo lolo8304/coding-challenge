@@ -18,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import memcached.commands.AddCommand;
+import memcached.commands.CasCommand;
 import memcached.commands.Command;
 import memcached.commands.GetCommand;
 import memcached.commands.ReplaceCommand;
@@ -162,7 +163,7 @@ class CommandTest {
         var context = new CacheContext(cache, cmd);
 
         // Act
-        Thread.currentThread().sleep(1000);
+        Thread.sleep(1000);
 
         // Assert
         assertEquals(true, context.isAlive());
@@ -178,7 +179,7 @@ class CommandTest {
         var cmd = new SetCommand(key, "hello", 0, 1, false);
         var context = new CacheContext(cache, cmd);
         // Act
-        Thread.currentThread().sleep(2000);
+        Thread.sleep(2000);
 
         // Assert
         assertEquals(false, context.isAlive());
@@ -194,10 +195,10 @@ class CommandTest {
         var cmd = new AddCommand(key, "hello", 0, 0, false);
 
         // Act
-        var dataAfterSet = cache.set(cmd);
+        var responseAfterSet = cache.set(cmd);
 
         // Assert
-        assertEquals(true, dataAfterSet.isPresent());
+        assertEquals(true, responseAfterSet.isPresent());
     }
 
     @Test
@@ -209,10 +210,87 @@ class CommandTest {
         var cmd = new ReplaceCommand(key, "hello", 0, 0, false);
 
         // Act
-        var dataAfterSet = cache.set(cmd);
+        var responseAfterSet = cache.set(cmd);
 
         // Assert
-        assertEquals(false, dataAfterSet.isPresent());
+        assertEquals(true, responseAfterSet.isPresent());
+        assertEquals("NOT_STORED", responseAfterSet.get());
     }
 
+    @Test
+    void replacecmd_withexisting_expectnook() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "hello1", 0, 0, false);
+
+        var cmdReplace = new ReplaceCommand(key, "hello-2", 0, 0, false);
+
+        // Act
+        var responseAfterSet1 = cache.set(cmdSet);
+        var responseAfterSet2 = cache.set(cmdReplace);
+
+        // Assert
+        assertEquals(true, responseAfterSet1.isPresent());
+        assertEquals(true, responseAfterSet2.isPresent());
+        assertEquals("STORED", responseAfterSet2.get());
+    }
+
+    @Test
+    void cascmd_withempty_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+
+        var cmdCas = new CasCommand(key, "hello-2", 0, 0, 1, false);
+
+        // Act
+        var responseAfterSet2 = cache.set(cmdCas);
+
+        // Assert
+        assertEquals(true, responseAfterSet2.isPresent());
+        assertEquals("NOT_FOUND", responseAfterSet2.get());
+    }
+
+    @Test
+    void cascmd_withexisting_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "hello1", 0, 0, false);
+        var responseAfterSet1 = cache.set(cmdSet);
+
+        var cmdCas = new CasCommand(key, "hello-2", 0, 0, 1, false);
+
+        // Act
+        var responseAfterSet2 = cache.set(cmdCas);
+
+        // Assert
+        assertEquals(true, responseAfterSet1.isPresent());
+        assertEquals(true, responseAfterSet2.isPresent());
+        assertEquals("STORED", responseAfterSet2.get());
+    }
+
+    @Test
+    void cascmd_withexistingcas10_expectnotok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "hello1", 0, 0, false);
+        var responseAfterSet1 = cache.set(cmdSet);
+
+        var cmdCas = new CasCommand(key, "hello-2", 0, 0, 10, false);
+
+        // Act
+        var responseAfterSet2 = cache.set(cmdCas);
+
+        // Assert
+        assertEquals(true, responseAfterSet1.isPresent());
+        assertEquals(true, responseAfterSet2.isPresent());
+        assertEquals("EXISTS", responseAfterSet2.get());
+    }
 }

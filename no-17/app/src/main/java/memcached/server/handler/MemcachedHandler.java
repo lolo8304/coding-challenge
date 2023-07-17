@@ -39,6 +39,7 @@ public class MemcachedHandler extends StringHandler {
                 case "set":
                 case "add":
                 case "replace":
+                case "cas":
                     return this.setCommand(clientSocketChannel, cmd);
                 case "quit":
                     Listener._logger.info("client closing: " + clientSocketChannel.getRemoteAddress());
@@ -80,14 +81,14 @@ public class MemcachedHandler extends StringHandler {
         var dataCmd = new DataCommand(cmd.commandLine, new Data(data));
         var setCmd = dataCmd.asSetCommand();
         setCmd.validate();
-        var dataAfterSet = this.cache.set(setCmd);
-        if (dataAfterSet.isPresent()) {
+        var responseAfterSet = this.cache.set(setCmd);
+        if (responseAfterSet.isPresent()) {
             if (dataCmd.noreply()) {
                 _logger.info("Response SET: " + "no reply");
                 return Optional.empty();
             } else {
-                _logger.info("Response SET: " + STORED);
-                return Optional.of(STORED);
+                _logger.info("Response SET: " + responseAfterSet.get());
+                return Optional.of(responseAfterSet.get());
             }
         } else {
             _logger.info("Response SET: " + NOT_STORED);

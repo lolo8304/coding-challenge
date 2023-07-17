@@ -132,8 +132,17 @@ public class Command {
 
     }
 
-    public boolean isValidToAddToCache(MemCache cache) {
-        return true;
+    public ValidationCode isValidToAddToCache(MemCache cache) {
+        return ValidationCode.OK;
+    }
+
+    public enum ValidationCode {
+        OK,
+        STORED,
+        ERROR,
+        EXISTS,
+        NOT_FOUND,
+        NOT_STORED
     }
 
 }

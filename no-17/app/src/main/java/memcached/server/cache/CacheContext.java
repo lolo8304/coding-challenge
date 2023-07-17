@@ -11,12 +11,14 @@ public class CacheContext {
     private static final Logger _logger = Logger.getLogger(CacheContext.class.getName());
     private MemCache cache;
     private SetCommand command;
+    private int cas;
     private Optional<Duration> ttl;
     private Optional<Instant> expirationTime;
 
     public CacheContext(MemCache cache, SetCommand command) {
         this.cache = cache;
         this.command = command;
+        this.cas = 1;
         initTtl();
     }
 
@@ -76,5 +78,33 @@ public class CacheContext {
 
     public SetCommand command() {
         return this.command;
+    }
+
+    public int cas() {
+        return this.cas;
+    }
+
+    public boolean validCas(int cas) {
+        return this.cas == cas;
+    }
+
+    private int incCas() {
+        return this.cas++;
+    }
+
+    public Optional<String> updateAndStatus(SetCommand command) {
+        this.command = command;
+        this.incCas();
+        return Optional.of("STORED");
+    }
+
+    public Optional<String> updateAndStatus(SetCommand command, int existingCas) {
+        if (this.cas == existingCas) {
+            return this.updateAndStatus(command);
+        } else if (this.cas > existingCas) {
+            return Optional.of("EXISTS");
+        } else {
+            return Optional.of("NOT_FOUND");
+        }
     }
 }

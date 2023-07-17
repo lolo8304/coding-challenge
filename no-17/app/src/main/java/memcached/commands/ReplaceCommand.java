@@ -9,7 +9,7 @@ public class ReplaceCommand extends SetCommand {
 
     private static CommandLine getCommandLine(String key, String value, int flags, int exptime, boolean noreply) {
         return new CommandLine(
-                String.format("add %s %d %d %d %s", key, flags, exptime, value.length(), noreply ? "noreply" : ""));
+                String.format("replace %s %d %d %d %s", key, flags, exptime, value.length(), noreply ? "noreply" : ""));
     }
 
     public ReplaceCommand(CommandLine commandLine, Data data) {
@@ -30,8 +30,12 @@ public class ReplaceCommand extends SetCommand {
     }
 
     @Override
-    public boolean isValidToAddToCache(MemCache cache) {
+    public ValidationCode isValidToAddToCache(MemCache cache) {
         // allow add only if key already exists in cache
-        return (cache.get(this.key).isPresent());
+        if (cache.get(this.key).isPresent()) {
+            return ValidationCode.OK;
+        } else {
+            return ValidationCode.NOT_STORED;
+        }
     }
 }
