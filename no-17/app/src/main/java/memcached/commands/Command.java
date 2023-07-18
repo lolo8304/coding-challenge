@@ -136,13 +136,4 @@ public class Command {
         return ValidationCode.OK;
     }
 
-    public enum ValidationCode {
-        OK,
-        STORED,
-        ERROR,
-        EXISTS,
-        NOT_FOUND,
-        NOT_STORED
-    }
-
 }

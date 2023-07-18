@@ -12,16 +12,15 @@ import memcached.commands.CommandLine;
 import memcached.commands.Data;
 import memcached.commands.DataCommand;
 import memcached.commands.Response;
+import memcached.commands.ValidationCode;
 import memcached.commands.ValidationException;
 import memcached.server.cache.MemCache;
 
 public class MemcachedHandler extends StringHandler {
 
     private static final Logger _logger = Logger.getLogger(MemcachedHandler.class.getName());
-    private static final String CLIENT_ERROR_BAD_DATA_CHUNK = "CLIENT_ERROR bad data chunk";
+    private static final String CLIENT_ERROR_BAD_DATA_CHUNK = "CLIENT_ERROR bad data chunk\r\n";
     private static final String END = "END";
-    private static final String STORED = "STORED" + '\r' + '\n';
-    private static final String NOT_STORED = "NOT_STORED" + '\r' + '\n';
 
     private MemCache cache;
 
@@ -40,7 +39,8 @@ public class MemcachedHandler extends StringHandler {
                 case "add":
                 case "replace":
                 case "cas":
-                    return this.setCommand(clientSocketChannel, cmd);
+                    var res = this.setCommand(clientSocketChannel, cmd);
+                    return res.isPresent() ? Optional.of(res.get().toString() + "\r\n") : Optional.empty();
                 case "quit":
                     Listener._logger.info("client closing: " + clientSocketChannel.getRemoteAddress());
                     this.deregisterBuffer(clientSocketChannel);
@@ -48,7 +48,7 @@ public class MemcachedHandler extends StringHandler {
                     return Optional.empty();
 
                 default:
-                    return Optional.of("ERROR - cmd '" + cmd.type + "' not implemented yet");
+                    return Optional.of("ERROR - cmd '" + cmd.type + "' not implemented yet\r\n");
             }
         } catch (ValidationException e) {
             return Optional.of(CLIENT_ERROR_BAD_DATA_CHUNK);
@@ -73,7 +73,7 @@ public class MemcachedHandler extends StringHandler {
         return Optional.of(responseString);
     }
 
-    private Optional<String> setCommand(SocketChannel clientSocketChannel, Command cmd)
+    private Optional<ValidationCode> setCommand(SocketChannel clientSocketChannel, Command cmd)
             throws IOException, ValidationException {
         _logger.info("Request SET: " + cmd.toResponseString());
         // read data from buffer
@@ -91,8 +91,8 @@ public class MemcachedHandler extends StringHandler {
                 return Optional.of(responseAfterSet.get());
             }
         } else {
-            _logger.info("Response SET: " + NOT_STORED);
-            return Optional.of(NOT_STORED);
+            _logger.info("Response SET: " + ValidationCode.NOT_STORED);
+            return Optional.of(ValidationCode.NOT_STORED);
         }
 
     }

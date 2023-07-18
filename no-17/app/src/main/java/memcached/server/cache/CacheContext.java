@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import memcached.commands.SetCommand;
+import memcached.commands.ValidationCode;
 
 public class CacheContext {
     private static final Logger _logger = Logger.getLogger(CacheContext.class.getName());
@@ -92,19 +93,19 @@ public class CacheContext {
         return this.cas++;
     }
 
-    public Optional<String> updateAndStatus(SetCommand command) {
+    public Optional<ValidationCode> updateAndStatus(SetCommand command) {
         this.command = command;
         this.incCas();
-        return Optional.of("STORED");
+        return Optional.of(ValidationCode.STORED);
     }
 
-    public Optional<String> updateAndStatus(SetCommand command, int existingCas) {
+    public Optional<ValidationCode> updateAndStatus(SetCommand command, int existingCas) {
         if (this.cas == existingCas) {
             return this.updateAndStatus(command);
         } else if (this.cas > existingCas) {
-            return Optional.of("EXISTS");
+            return Optional.of(ValidationCode.EXISTS);
         } else {
-            return Optional.of("NOT_FOUND");
+            return Optional.of(ValidationCode.NOT_FOUND);
         }
     }
 }

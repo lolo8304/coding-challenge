@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import memcached.commands.Command;
 import memcached.commands.SetCommand;
+import memcached.commands.ValidationCode;
 
 public class MemCache {
     private Dictionary<String, CacheContext> cache;
@@ -14,18 +15,18 @@ public class MemCache {
         this.cache = new Hashtable<>();
     }
 
-    public Optional<String> set(SetCommand cmd) {
+    public Optional<ValidationCode> set(SetCommand cmd) {
         var validationResult = cmd.isValidToAddToCache(this);
-        if (validationResult.equals(Command.ValidationCode.OK)) {
+        if (validationResult.equals(ValidationCode.OK)) {
             var existingValue = this.getValidContext(cmd.key);
             if (existingValue.isPresent()) {
                 return existingValue.get().updateAndStatus(cmd);
             } else {
                 this.cache.put(cmd.key, new CacheContext(this, cmd));
-                return Optional.of("STORED");
+                return Optional.of(ValidationCode.STORED);
             }
         } else {
-            return Optional.of(validationResult.toString());
+            return Optional.of(validationResult);
         }
     }
 

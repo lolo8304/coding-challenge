@@ -23,6 +23,7 @@ import memcached.commands.Command;
 import memcached.commands.GetCommand;
 import memcached.commands.ReplaceCommand;
 import memcached.commands.SetCommand;
+import memcached.commands.ValidationCode;
 import memcached.server.cache.CacheContext;
 import memcached.server.cache.MemCache;
 
@@ -199,6 +200,24 @@ class CommandTest {
 
         // Assert
         assertEquals(true, responseAfterSet.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterSet.get());
+    }
+
+    @Test
+    void addcmd_exists_expectnotok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmd = new AddCommand(key, "hello", 0, 0, false);
+        var responseAfterSet = cache.set(cmd);
+
+        // Act
+        var responseAfterSet2 = cache.set(cmd);
+
+        // Assert
+        assertEquals(true, responseAfterSet2.isPresent());
+        assertEquals(ValidationCode.NOT_STORED, responseAfterSet2.get());
     }
 
     @Test
@@ -214,7 +233,7 @@ class CommandTest {
 
         // Assert
         assertEquals(true, responseAfterSet.isPresent());
-        assertEquals("NOT_STORED", responseAfterSet.get());
+        assertEquals(ValidationCode.NOT_STORED, responseAfterSet.get());
     }
 
     @Test
@@ -234,7 +253,7 @@ class CommandTest {
         // Assert
         assertEquals(true, responseAfterSet1.isPresent());
         assertEquals(true, responseAfterSet2.isPresent());
-        assertEquals("STORED", responseAfterSet2.get());
+        assertEquals(ValidationCode.STORED, responseAfterSet2.get());
     }
 
     @Test
@@ -251,7 +270,7 @@ class CommandTest {
 
         // Assert
         assertEquals(true, responseAfterSet2.isPresent());
-        assertEquals("NOT_FOUND", responseAfterSet2.get());
+        assertEquals(ValidationCode.NOT_FOUND, responseAfterSet2.get());
     }
 
     @Test
@@ -271,7 +290,7 @@ class CommandTest {
         // Assert
         assertEquals(true, responseAfterSet1.isPresent());
         assertEquals(true, responseAfterSet2.isPresent());
-        assertEquals("STORED", responseAfterSet2.get());
+        assertEquals(ValidationCode.STORED, responseAfterSet2.get());
     }
 
     @Test
@@ -291,6 +310,6 @@ class CommandTest {
         // Assert
         assertEquals(true, responseAfterSet1.isPresent());
         assertEquals(true, responseAfterSet2.isPresent());
-        assertEquals("EXISTS", responseAfterSet2.get());
+        assertEquals(ValidationCode.EXISTS, responseAfterSet2.get());
     }
 }
