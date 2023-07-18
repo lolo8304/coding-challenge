@@ -1,5 +1,9 @@
 package memcached.commands;
 
+import java.util.Optional;
+
+import memcached.server.cache.CacheContext;
+
 public class SetCommand extends DataCommand {
 
     private static CommandLine getCommandLine(String key, String value) {
@@ -53,6 +57,10 @@ public class SetCommand extends DataCommand {
             throw new ValidationException(String.format("bytes must be length of data (expected '%d', received '%d')",
                     this.data.data.length(), b));
         }
+    }
+
+    public Optional<ValidationCode> setToContext(CacheContext cacheContext) {
+        return cacheContext.updateAndStatus(this);
     }
 
 }

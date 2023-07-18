@@ -99,13 +99,14 @@ public class CacheContext {
         return Optional.of(ValidationCode.STORED);
     }
 
-    public Optional<ValidationCode> updateAndStatus(SetCommand command, int existingCas) {
-        if (this.cas == existingCas) {
-            return this.updateAndStatus(command);
-        } else if (this.cas > existingCas) {
-            return Optional.of(ValidationCode.EXISTS);
-        } else {
-            return Optional.of(ValidationCode.NOT_FOUND);
-        }
-    }
+    // public Optional<ValidationCode> updateAndStatus(SetCommand command, int
+    // existingCas) {
+    // if (this.cas == existingCas) {
+    // return this.updateAndStatus(command);
+    // } else if (this.cas > existingCas) {
+    // return Optional.of(ValidationCode.EXISTS);
+    // } else {
+    // return Optional.of(ValidationCode.NOT_FOUND);
+    // }
+    // }
 }

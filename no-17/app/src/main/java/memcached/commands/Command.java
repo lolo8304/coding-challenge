@@ -75,12 +75,24 @@ public class Command {
         }
     }
 
+    public void parameterInt(int index, int value) {
+        this.parameter(index, String.valueOf(value));
+    }
+
     public Optional<String> parameter(int index) {
         if (this.parameters != null && index >= 0 && index < this.parameters.length) {
             return Optional.of(this.parameters[index]);
 
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void parameter(int index, String value) {
+        if (this.parameters != null && index >= 0 && index < this.parameters.length) {
+            this.parameters[index] = value;
+        } else {
+            throw new ArrayIndexOutOfBoundsException(index);
         }
     }
 
@@ -121,6 +133,10 @@ public class Command {
         } else {
             return 0;
         }
+    }
+
+    public void bytes(int len) {
+        this.parameterInt(2, len);
     }
 
     public boolean noreply() {

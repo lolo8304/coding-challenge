@@ -20,7 +20,7 @@ public class MemCache {
         if (validationResult.equals(ValidationCode.OK)) {
             var existingValue = this.getValidContext(cmd.key);
             if (existingValue.isPresent()) {
-                return existingValue.get().updateAndStatus(cmd);
+                return cmd.setToContext(existingValue.get());
             } else {
                 this.cache.put(cmd.key, new CacheContext(this, cmd));
                 return Optional.of(ValidationCode.STORED);

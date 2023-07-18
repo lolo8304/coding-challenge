@@ -65,10 +65,23 @@ public class DataCommand extends Command {
                 return new AddCommand(this.commandLine, this.data);
             case "cas":
                 return new CasCommand(this.commandLine, this.data);
+            case "append":
+                return new AppendCommand(this.commandLine, this.data);
+            case "prepend":
+                return new PrependCommand(this.commandLine, this.data);
 
             default:
                 throw new IllegalArgumentException(String.format("type '%s' is not valid set command", this.type));
         }
     }
 
+    public void append(String appendData) {
+        this.data.append(appendData);
+        this.bytes(this.data.length());
+    }
+
+    public void prepend(String prependData) {
+        this.data.prepend(prependData);
+        this.bytes(this.data.length());
+    }
 }

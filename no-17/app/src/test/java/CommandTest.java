@@ -18,9 +18,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import memcached.commands.AddCommand;
+import memcached.commands.AppendCommand;
 import memcached.commands.CasCommand;
 import memcached.commands.Command;
 import memcached.commands.GetCommand;
+import memcached.commands.PrependCommand;
 import memcached.commands.ReplaceCommand;
 import memcached.commands.SetCommand;
 import memcached.commands.ValidationCode;
@@ -311,5 +313,89 @@ class CommandTest {
         assertEquals(true, responseAfterSet1.isPresent());
         assertEquals(true, responseAfterSet2.isPresent());
         assertEquals(ValidationCode.EXISTS, responseAfterSet2.get());
+    }
+
+    @Test
+    void appendcmd_empty_expectnotok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmd = new AppendCommand(key, "hello", 0, 0, false);
+
+        // Act
+        var responseAfterSet = cache.set(cmd);
+
+        // Assert
+        assertEquals(true, responseAfterSet.isPresent());
+        assertEquals(ValidationCode.NOT_STORED, responseAfterSet.get());
+    }
+
+    @Test
+    void appendcmd_withexisting_expectnook() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "1234", 0, 0, false);
+
+        var cmdAppend = new AppendCommand(key, "567890", 0, 0, false);
+        var cmdGet = new GetCommand(key);
+
+        // Act
+        var responseAfterSet1 = cache.set(cmdSet);
+        var responseAfterAppend2 = cache.set(cmdAppend);
+        var responseAfterGet3 = cache.get(cmdGet);
+
+        // Assert
+        assertEquals(true, responseAfterSet1.isPresent());
+
+        assertEquals(true, responseAfterAppend2.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterAppend2.get());
+
+        assertEquals(true, responseAfterGet3.isPresent());
+        assertEquals("1234567890", responseAfterGet3.get().data.data);
+    }
+
+    @Test
+    void prependcmd_empty_expectnotok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmd = new PrependCommand(key, "hello", 0, 0, false);
+
+        // Act
+        var responseAfterSet = cache.set(cmd);
+
+        // Assert
+        assertEquals(true, responseAfterSet.isPresent());
+        assertEquals(ValidationCode.NOT_STORED, responseAfterSet.get());
+    }
+
+    @Test
+    void prependcmd_withexisting_expectnook() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "1234", 0, 0, false);
+
+        var cmdAppend = new PrependCommand(key, "567890", 0, 0, false);
+        var cmdGet = new GetCommand(key);
+
+        // Act
+        var responseAfterSet1 = cache.set(cmdSet);
+        var responseAfterAppend2 = cache.set(cmdAppend);
+        var responseAfterGet3 = cache.get(cmdGet);
+
+        // Assert
+        assertEquals(true, responseAfterSet1.isPresent());
+
+        assertEquals(true, responseAfterAppend2.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterAppend2.get());
+
+        assertEquals(true, responseAfterGet3.isPresent());
+        assertEquals("5678901234", responseAfterGet3.get().data.data);
     }
 }
