@@ -1,2 +1,1 @@
-./app/build/install/app/bin/app -s
-
+./app/build/install/app/bin/app -s -p 11212

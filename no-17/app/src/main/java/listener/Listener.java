@@ -42,7 +42,8 @@ public class Listener {
                     } catch (IOException e) {
                         var clientSocketChannel = (SocketChannel) key.channel();
                         this.handler.deregisterBuffer(clientSocketChannel);
-                        _logger.info("Error: will close channel " + clientSocketChannel.getRemoteAddress());
+                        // _logger.info("Error: will close channel " +
+                        // clientSocketChannel.getRemoteAddress());
                         try {
                             clientSocketChannel.close();
                         } catch (IOException ex) {

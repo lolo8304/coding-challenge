@@ -55,6 +55,18 @@
                 "11212"
             ],
             "projectName": "app"
+        },
+        {
+            "type": "java",
+            "name": "Mem-server 11211",
+            "request": "launch",
+            "mainClass": "memcached.Mem",
+            "args": [
+                "-s",
+                "-p",
+                "11211"
+            ],
+            "projectName": "app"
         }
     ]
 }
