@@ -44,6 +44,7 @@ class MemcachedTest {
         try {
             // Act
             var started = client.start();
+            started = client.start();
             var server = client.getServers()[0];
 
             // Assert

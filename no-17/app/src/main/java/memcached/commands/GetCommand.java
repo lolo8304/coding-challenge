@@ -30,7 +30,7 @@ public class GetCommand extends Command {
         var tmpkeys = new ArrayList<String>();
         tmpkeys.add(key);
         tmpkeys.addAll(Arrays.asList(this.parameters));
-        return tmpkeys.toArray(String[]::new);
+        return tmpkeys.stream().filter((x)-> !x.isBlank()).toArray(String[]::new);
     }
 
     @Override

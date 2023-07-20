@@ -5,7 +5,12 @@
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
  * User Manual available at https://docs.gradle.org/7.3/userguide/building_java_projects.html
  */
-apply plugin: "application"
+
+plugins {
+    id 'application'
+    id 'jacoco'
+}
+
 
 mainClassName = "memcached.Mem"
 
@@ -32,7 +37,15 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
 
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
+

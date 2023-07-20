@@ -27,13 +27,6 @@ public class ServerConfiguration {
 
     private boolean started;
 
-    public ServerConfiguration(String hostName, int port) {
-        this.hostName = hostName;
-        this.port = port;
-        this.serverId = String.format("%s:%d", this.hostName, this.port);
-        this.started = false;
-    }
-
     public ServerConfiguration(String serverId) {
         var splitted = serverId.split(":");
         this.hostName = splitted[0];

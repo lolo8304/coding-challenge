@@ -4,12 +4,16 @@
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -21,11 +25,15 @@ import memcached.commands.AddCommand;
 import memcached.commands.AppendCommand;
 import memcached.commands.CasCommand;
 import memcached.commands.Command;
+import memcached.commands.CommandLine;
+import memcached.commands.Data;
+import memcached.commands.DataCommand;
 import memcached.commands.GetCommand;
 import memcached.commands.PrependCommand;
 import memcached.commands.ReplaceCommand;
 import memcached.commands.SetCommand;
 import memcached.commands.ValidationCode;
+import memcached.commands.ValidationException;
 import memcached.server.cache.CacheContext;
 import memcached.server.cache.MemCache;
 
@@ -398,4 +406,210 @@ class CommandTest {
         assertEquals(true, responseAfterGet3.isPresent());
         assertEquals("5678901234", responseAfterGet3.get().data.data);
     }
+
+    @Test
+    void asSetCommand_set_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("set key 0 0 5"), new Data("hello"));
+        var cmd1 = new DataCommand(new CommandLine("replace key 0 0 5"), new Data("hello"));
+        var cmd2 = new DataCommand(new CommandLine("add key 0 0 5"), new Data("hello"));
+        var cmd3 = new DataCommand(new CommandLine("append key 0 0 5"), new Data("hello"));
+        var cmd4 = new DataCommand(new CommandLine("prepend key 0 0 5"), new Data("hello"));
+        var cmd5 = new DataCommand(new CommandLine("cas key 0 0 5 47"), new Data("hello"));
+
+        // Act
+        var setCmd0 = cmd0.asSetCommand();
+        var setCmd1 = cmd1.asSetCommand();
+        var setCmd2 = cmd2.asSetCommand();
+        var setCmd3 = cmd3.asSetCommand();
+        var setCmd4 = cmd4.asSetCommand();
+        var setCmd5 = cmd5.asSetCommand();
+
+        // Assert
+        assertEquals(setCmd0.type, "set");
+        assertEquals(setCmd1.type, "replace");
+        assertEquals(setCmd2.type, "add");
+        assertEquals(setCmd3.type, "append");
+        assertEquals(setCmd4.type, "prepend");
+        assertEquals(setCmd5.type, "cas");
+    }
+
+    @Test
+    void write_DataCmd_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = DataCommand.parse("set key 0 0 5", "hello");
+        var w = new StringWriter();
+        var buf = new BufferedWriter(w);
+        // Act
+        cmd0.write(buf);
+        buf.flush();
+
+        // Assert
+        assertEquals("set key 0 0 5\r\nhello\r\n", w.toString());
+    }
+
+    @Test
+    void write_DataCmdDataEmpty_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("set key 0 0 5"), (Data) null);
+        var w = new StringWriter();
+        var buf = new BufferedWriter(w);
+        // Act
+        cmd0.write(buf);
+        buf.flush();
+
+        // Assert
+        assertEquals("set key 0 0 5\r\n", w.toString());
+    }
+
+    @Test
+    void commandParse_set_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+
+        // Act
+        var cmd0 = DataCommand.parse("set key 0 0 5", "hello");
+
+        // Assert
+        assertEquals("set", cmd0.type);
+    }
+
+    @Test
+    void newWithTokens_set_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var line = new CommandLine("set key 0 0 5 hello");
+
+        // Act
+        var cmd0 = new DataCommand(line, line.getTokens());
+
+        // Assert
+        assertEquals("set", cmd0.type);
+        assertEquals("hello", cmd0.data.data);
+
+    }
+
+    @Test
+    void asSetCommand_set_expectnotok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("illegal key 0 0 5"), new Data("hello"));
+
+        // Act
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            var setCmd0 = cmd0.asSetCommand();
+        });
+
+        assertTrue(exception.getMessage().contains("is not valid"));
+
+    }
+
+    @Test
+    void toResponseString_setCmd_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("set key 0 0 5"), new Data("hello"));
+
+        // Act
+        var string = cmd0.toResponseString();
+        // Assert
+        assertEquals("set key 0 0 5\r\nhello\r\n", string);
+    }
+
+    @Test
+    void asValueCommand_set_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("set key 1 300 5"), new Data("hello"));
+        // Act
+        var valueCmd = cmd0.asValueCommand();
+        // Assert
+        assertEquals("VALUE key 1 5", valueCmd.commandLine.line);
+        assertEquals("hello", valueCmd.data.data);
+        assertEquals("VALUE key 1 5\r\nhello\r\n", valueCmd.toResponseString());
+    }
+
+    @Test
+    void length_setCmd_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var cmd0 = new DataCommand(new CommandLine("set key 1 300 8"), new Data("hello123"));
+        // Act
+        var len = cmd0.length();
+
+        // Assert
+        assertEquals(8, len);
+    }
+
+    @Test
+    void validationExceptioon_getcmd_expectexception() throws URISyntaxException, IOException, ValidationException {
+
+        // Arrange
+        var cmd = new GetCommand("");
+        // Act
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            cmd.validate();
+        });
+
+        assertTrue(exception.getMessage().contains("Key is mandatory, but null or empty"));
+    }
+
+    @Test
+    void asCommand_cmdLine_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var line = new CommandLine("get key");
+        // Act
+        var cmd = line.asCommand();
+        // Assert
+        assertEquals("get", cmd.type);
+        assertEquals("key", cmd.key);
+    }
+
+    @Test
+    void asDataCommand_cmdLine_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var line = new CommandLine("set key 0 0 5 hello");
+        // Act
+        var cmd = (DataCommand) line.asDataCommand();
+        // Assert
+        assertEquals("set", cmd.type);
+        assertEquals("key", cmd.key);
+        assertEquals("hello", cmd.data.data);
+    }
+
+    @Test
+    void getTokens_cmdLineWithEmpty_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var line = new CommandLine("set      key     0   0      5     hello");
+        // Act
+        var tokens = line.getTokens();
+        // Assert
+        assertEquals("hello", tokens[tokens.length - 1]);
+    }
+
+    @Test
+    void getTokens_cmdLine_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var line = new CommandLine("set key 0 0 5 hello");
+        // Act
+        var tokens = line.getTokens();
+        // Assert
+        assertEquals("hello", tokens[tokens.length - 1]);
+    }
+
+    @Test
+    void asCommand_T_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        // Act
+        // Assert
+    }
+
 }
