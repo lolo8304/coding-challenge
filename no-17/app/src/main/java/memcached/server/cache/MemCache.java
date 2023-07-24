@@ -42,6 +42,16 @@ public class MemCache {
         return Optional.empty();
     }
 
+    public Optional<ValidationCode> delete(String key) {
+        var context = this.getValidContext(key);
+        if (context.isPresent()) {
+            context.get().evict();
+            return Optional.of(ValidationCode.DELETED);
+        } else {
+            return Optional.of(ValidationCode.NOT_FOUND);
+        }
+    }
+
     public Optional<SetCommand> get(String key) {
         var context = this.getValidContext(key);
         return context.isPresent() ? Optional.of(context.get().command()) : Optional.empty();

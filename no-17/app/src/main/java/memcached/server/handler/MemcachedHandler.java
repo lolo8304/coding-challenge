@@ -35,6 +35,8 @@ public class MemcachedHandler extends StringHandler {
             switch (cmd.type) {
                 case "get":
                     return this.getCommand(cmd);
+                case "delete":
+                    return this.deleteCommand(cmd);
                 case "set":
                 case "add":
                 case "replace":
@@ -70,6 +72,15 @@ public class MemcachedHandler extends StringHandler {
         response.finalNote = END;
         var responseString = response.toResponseString();
         _logger.info("Response GET: " + responseString);
+        return Optional.of(responseString);
+    }
+
+    private Optional<String> deleteCommand(Command cmd) throws ValidationException {
+        _logger.info("Request DELETE: " + cmd.toResponseString());
+        var response = new Response();
+        response.finalNote = this.cache.delete(cmd.key).get().toString();
+        var responseString = response.toResponseString();
+        _logger.info("Response DELETE: " + responseString);
         return Optional.of(responseString);
     }
 

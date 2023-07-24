@@ -28,6 +28,7 @@ import memcached.commands.Command;
 import memcached.commands.CommandLine;
 import memcached.commands.Data;
 import memcached.commands.DataCommand;
+import memcached.commands.DeleteCommand;
 import memcached.commands.GetCommand;
 import memcached.commands.PrependCommand;
 import memcached.commands.ReplaceCommand;
@@ -605,9 +606,65 @@ class CommandTest {
     }
 
     @Test
+    void delete_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "1234", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        var cmdDelete = new DeleteCommand(key);
+
+        // Act
+        var responseAfterDelete = cache.delete(cmdDelete.key);
+
+        // Assert
+        assertEquals(true, responseAfterDelete.isPresent());
+        assertEquals(ValidationCode.DELETED, responseAfterDelete.get());
+    }
+
+    @Test
+    void delete_notexists_expectnotfound() throws URISyntaxException, IOException, InterruptedException {
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+
+        var cmdDelete = new DeleteCommand(key);
+
+        // Act
+        var responseAfterDelete = cache.delete(cmdDelete.key);
+
+        // Assert
+        assertEquals(true, responseAfterDelete.isPresent());
+        assertEquals(ValidationCode.NOT_FOUND, responseAfterDelete.get());
+    }
+
+    @Test
+    void getAfterDelete_exists_expectokAndThenNotFound() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "1234", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        var cmdDelete = new DeleteCommand(key);
+        var responseAfterDelete = cache.delete(cmdDelete.key);
+
+        // Act
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdDelete.key);
+
+        // Assert
+        assertEquals(false, responseAfterGet.isPresent());
+    }
+
+    @Test
     void asCommand_T_expectok() throws URISyntaxException, IOException, InterruptedException {
 
         // Arrange
+
         // Act
         // Assert
     }
