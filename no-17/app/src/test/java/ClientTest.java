@@ -81,11 +81,12 @@ class ClientTest {
             Response response = client.sendCommand(cmd).get();
 
             var cmdGet = new GetCommand(key);
-            Response responseGet = client.sendCommand(cmdGet).get();
+            var responseGet = client.sendCommand(cmdGet);
 
             // Assert
             assertTrue(started);
             assertEquals("STORED", response.finalNote);
+            assertEquals(true, responseGet.isPresent());
         } finally {
             client.close();
         }

@@ -3,6 +3,7 @@ package memcached.server.handler;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import listener.Listener;
@@ -19,6 +20,7 @@ import memcached.server.cache.MemCache;
 
 public class MemcachedHandler extends StringHandler {
 
+    private static final String RESPONSE_SET = "Response SET: ";
     private static final Logger _logger = Logger.getLogger(MemcachedHandler.class.getName());
     private static final String CLIENT_ERROR_BAD_DATA_CHUNK = "CLIENT_ERROR bad data chunk\r\n";
     private static final String END = "END";
@@ -63,7 +65,9 @@ public class MemcachedHandler extends StringHandler {
     }
 
     private Optional<String> getCommand(Command cmd) throws ValidationException {
-        _logger.info("Request GET: " + cmd.toResponseString());
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Request GET: " + cmd.toResponseString());
+        }
         var response = new Response();
         var getCmd = cmd.asGetCommand();
         getCmd.validate();
@@ -76,16 +80,23 @@ public class MemcachedHandler extends StringHandler {
         }
         response.finalNote = END;
         var responseString = response.toResponseString();
-        _logger.info("Response GET: " + responseString);
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Response GET: " + responseString);
+        }
         return Optional.of(responseString);
     }
 
-    private Optional<String> deleteCommand(Command cmd) throws ValidationException {
-        _logger.info("Request DELETE: " + cmd.toResponseString());
+    private Optional<String> deleteCommand(Command cmd) {
+        if (_logger.isLoggable(Level.INFO)) {
+
+            _logger.info("Request DELETE: " + cmd.toResponseString());
+        }
         var response = new Response();
-        response.finalNote = this.cache.delete(cmd.key).get().toString();
+        response.finalNote = this.cache.deleteKey(cmd.key).toString();
         var responseString = response.toResponseString();
-        _logger.info("Response DELETE: " + responseString);
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Response DELETE: " + responseString);
+        }
         return Optional.of(responseString);
     }
 
@@ -94,9 +105,11 @@ public class MemcachedHandler extends StringHandler {
         return this.setCommand(clientSocketChannel, cmd, true);
     }
 
-    private Optional<ValidationCode> setCommand(SocketChannel clientSocketChannel, Command cmd, Boolean isReadingData)
+    private Optional<ValidationCode> setCommand(SocketChannel clientSocketChannel, Command cmd, boolean isReadingData)
             throws IOException, ValidationException {
-        _logger.info("Request SET: " + cmd.toResponseString());
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Request SET: " + cmd.toResponseString());
+        }
         // read data from buffer
         SetCommand setCmd;
         if (isReadingData) {
@@ -109,19 +122,30 @@ public class MemcachedHandler extends StringHandler {
         }
         setCmd.validate();
         var responseAfterSet = this.cache.set(setCmd);
+        return getResultFromResponse(cmd, responseAfterSet);
+    }
+
+    private Optional<ValidationCode> getResultFromResponse(Command cmd, Optional<ValidationCode> responseAfterSet) {
+        Optional<ValidationCode> result;
         if (responseAfterSet.isPresent()) {
             if (cmd.noreply()) {
-                _logger.info("Response SET: " + "no reply");
-                return Optional.empty();
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info(RESPONSE_SET + "no reply");
+                }
+                result = Optional.empty();
             } else {
-                _logger.info("Response SET: " + responseAfterSet.get());
-                return Optional.of(responseAfterSet.get());
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info(RESPONSE_SET + responseAfterSet.get());
+                }
+                result = Optional.of(responseAfterSet.get());
             }
         } else {
-            _logger.info("Response SET: " + ValidationCode.NOT_STORED);
-            return Optional.of(ValidationCode.NOT_STORED);
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info(RESPONSE_SET + ValidationCode.NOT_STORED);
+            }
+            result = Optional.of(ValidationCode.NOT_STORED);
         }
-
+        return result;
     }
 
 }

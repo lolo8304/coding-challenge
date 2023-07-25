@@ -99,6 +99,10 @@ public class CacheContext {
         return Optional.of(ValidationCode.STORED);
     }
 
+    public int bytes() {
+        return this.command.bytes();
+    }
+
     // public Optional<ValidationCode> updateAndStatus(SetCommand command, int
     // existingCas) {
     // if (this.cas == existingCas) {

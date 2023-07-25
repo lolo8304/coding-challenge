@@ -625,11 +625,10 @@ class CommandTest {
         var cmdDelete = new DeleteCommand(key);
 
         // Act
-        var responseAfterDelete = cache.delete(cmdDelete.key);
+        var responseAfterDelete = cache.deleteKey(cmdDelete.key);
 
         // Assert
-        assertEquals(true, responseAfterDelete.isPresent());
-        assertEquals(ValidationCode.DELETED, responseAfterDelete.get());
+        assertEquals(ValidationCode.DELETED, responseAfterDelete);
     }
 
     @Test
@@ -641,11 +640,10 @@ class CommandTest {
         var cmdDelete = new DeleteCommand(key);
 
         // Act
-        var responseAfterDelete = cache.delete(cmdDelete.key);
+        var responseAfterDelete = cache.deleteKey(cmdDelete.key);
 
         // Assert
-        assertEquals(true, responseAfterDelete.isPresent());
-        assertEquals(ValidationCode.NOT_FOUND, responseAfterDelete.get());
+        assertEquals(ValidationCode.NOT_FOUND, responseAfterDelete);
     }
 
     @Test
@@ -658,7 +656,7 @@ class CommandTest {
         var responseAfterSet = cache.set(cmdSet);
 
         var cmdDelete = new DeleteCommand(key);
-        var responseAfterDelete = cache.delete(cmdDelete.key);
+        var responseAfterDelete = cache.deleteKey(cmdDelete.key);
 
         // Act
         var cmdGet = new GetCommand(key);

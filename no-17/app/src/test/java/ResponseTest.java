@@ -29,11 +29,6 @@ class ResponseTest {
         reader = new FileReader(file);
     }
 
-    private String randomKey(String prefix) {
-        var rnd = ((int) Math.floor(Math.random() * 10000));
-        return String.format("%s%d", prefix, rnd);
-    }
-
     @AfterEach
     void CloseReader() throws IOException {
         if (reader != null) {
