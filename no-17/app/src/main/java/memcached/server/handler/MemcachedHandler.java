@@ -12,6 +12,7 @@ import memcached.commands.CommandLine;
 import memcached.commands.Data;
 import memcached.commands.DataCommand;
 import memcached.commands.Response;
+import memcached.commands.SetCommand;
 import memcached.commands.ValidationCode;
 import memcached.commands.ValidationException;
 import memcached.server.cache.MemCache;
@@ -43,6 +44,10 @@ public class MemcachedHandler extends StringHandler {
                 case "cas":
                     var res = this.setCommand(clientSocketChannel, cmd);
                     return res.isPresent() ? Optional.of(res.get().toString() + "\r\n") : Optional.empty();
+                case "incr":
+                case "decr":
+                    var res2 = this.setCommand(clientSocketChannel, cmd, false);
+                    return res2.isPresent() ? Optional.of(res2.get().toString() + "\r\n") : Optional.empty();
                 case "quit":
                     Listener._logger.info("client closing: " + clientSocketChannel.getRemoteAddress());
                     this.deregisterBuffer(clientSocketChannel);
@@ -86,15 +91,26 @@ public class MemcachedHandler extends StringHandler {
 
     private Optional<ValidationCode> setCommand(SocketChannel clientSocketChannel, Command cmd)
             throws IOException, ValidationException {
+        return this.setCommand(clientSocketChannel, cmd, true);
+    }
+
+    private Optional<ValidationCode> setCommand(SocketChannel clientSocketChannel, Command cmd, Boolean isReadingData)
+            throws IOException, ValidationException {
         _logger.info("Request SET: " + cmd.toResponseString());
         // read data from buffer
-        var data = this.readLineFromSocketChannel(clientSocketChannel);
-        var dataCmd = new DataCommand(cmd.commandLine, new Data(data));
-        var setCmd = dataCmd.asSetCommand();
+        SetCommand setCmd;
+        if (isReadingData) {
+            var data = this.readLineFromSocketChannel(clientSocketChannel);
+            var dataCmd = new DataCommand(cmd.commandLine, new Data(data));
+            setCmd = dataCmd.asSetCommand();
+        } else {
+            var dataCmd = new DataCommand(cmd.commandLine, (Data) null);
+            setCmd = dataCmd.asSetCommand();
+        }
         setCmd.validate();
         var responseAfterSet = this.cache.set(setCmd);
         if (responseAfterSet.isPresent()) {
-            if (dataCmd.noreply()) {
+            if (cmd.noreply()) {
                 _logger.info("Response SET: " + "no reply");
                 return Optional.empty();
             } else {

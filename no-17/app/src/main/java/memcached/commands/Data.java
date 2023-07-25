@@ -18,4 +18,18 @@ public class Data {
     public int length() {
         return this.data.length();
     }
+
+    public void incr(String incrData) {
+        var newValue = String.valueOf(Integer.parseInt(this.data) + Integer.parseInt(incrData));
+        this.data = newValue;
+    }
+
+    public void decr(String decrData) {
+        var newValue = String.valueOf(Integer.parseInt(this.data) - Integer.parseInt(decrData));
+        this.data = newValue;
+    }
+
+    public int dataInt() {
+        return Integer.parseInt(this.data);
+    }
 }

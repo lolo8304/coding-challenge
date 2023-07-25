@@ -28,8 +28,10 @@ import memcached.commands.Command;
 import memcached.commands.CommandLine;
 import memcached.commands.Data;
 import memcached.commands.DataCommand;
+import memcached.commands.DecrCommand;
 import memcached.commands.DeleteCommand;
 import memcached.commands.GetCommand;
+import memcached.commands.IncrCommand;
 import memcached.commands.PrependCommand;
 import memcached.commands.ReplaceCommand;
 import memcached.commands.SetCommand;
@@ -418,6 +420,8 @@ class CommandTest {
         var cmd3 = new DataCommand(new CommandLine("append key 0 0 5"), new Data("hello"));
         var cmd4 = new DataCommand(new CommandLine("prepend key 0 0 5"), new Data("hello"));
         var cmd5 = new DataCommand(new CommandLine("cas key 0 0 5 47"), new Data("hello"));
+        var cmd6 = new DataCommand(new CommandLine("incr key"), new Data("1"));
+        var cmd7 = new DataCommand(new CommandLine("decr key"), new Data("1"));
 
         // Act
         var setCmd0 = cmd0.asSetCommand();
@@ -426,6 +430,8 @@ class CommandTest {
         var setCmd3 = cmd3.asSetCommand();
         var setCmd4 = cmd4.asSetCommand();
         var setCmd5 = cmd5.asSetCommand();
+        var setCmd6 = cmd6.asSetCommand();
+        var setCmd7 = cmd7.asSetCommand();
 
         // Assert
         assertEquals(setCmd0.type, "set");
@@ -434,6 +440,8 @@ class CommandTest {
         assertEquals(setCmd3.type, "append");
         assertEquals(setCmd4.type, "prepend");
         assertEquals(setCmd5.type, "cas");
+        assertEquals(setCmd6.type, "incr");
+        assertEquals(setCmd7.type, "decr");
     }
 
     @Test
@@ -654,10 +662,349 @@ class CommandTest {
 
         // Act
         var cmdGet = new GetCommand(key);
-        var responseAfterGet = cache.get(cmdDelete.key);
+        var responseAfterGet = cache.get(cmdGet.key);
 
         // Assert
         assertEquals(false, responseAfterGet.isPresent());
+    }
+
+    @Test
+    void incr_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "1");
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(101, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void incrnoreply_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "1", true);
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(101, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void incr_notexists_expectnotfound() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "1");
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.NOT_FOUND, responseAfterIncr.get());
+    }
+
+    @Test
+    void incr_nointeger_expecterror() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "abc", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "1");
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.CLIENT_ERROR_CANNOT_INCREMENT_OR_DECREMENT_NON_NUMERIC_VALUE,
+                responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals("abc", responseAfterGet.get().data.data); // Arrange
+
+    }
+
+    @Test
+    void incr_novalue_expecterror() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(new CommandLine("incr " + key));
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.ERROR,
+                responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals("100", responseAfterGet.get().data.data); // Arrange
+
+    }
+
+    @Test
+    void incrMinus101_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "-101");
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(-1, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void incr101_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new IncrCommand(key, "101");
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(201, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void decr_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "1");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(99, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void decr200_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "200");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(-100, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void decrnoreply_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdIncr = new DecrCommand(key, "1", true);
+        var responseAfterIncr = cache.set(cmdIncr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterIncr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterIncr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(99, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void decr_notexists_expectnotfound() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "1");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.NOT_FOUND, responseAfterDecr.get());
+    }
+
+    @Test
+    void decr_nointeger_expecterror() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "abc", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "1");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.CLIENT_ERROR_CANNOT_INCREMENT_OR_DECREMENT_NON_NUMERIC_VALUE,
+                responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals("abc", responseAfterGet.get().data.data); // Arrange
+
+    }
+
+    @Test
+    void decr_novalue_expecterror() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(new CommandLine("incr " + key));
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.ERROR,
+                responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals("100", responseAfterGet.get().data.data); // Arrange
+
+    }
+
+    @Test
+    void decrMinus101_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "-101");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(201, responseAfterGet.get().data.dataInt());
+    }
+
+    @Test
+    void decr101_exists_expectok() throws URISyntaxException, IOException, InterruptedException {
+
+        // Arrange
+        var key = randomKey("asdf");
+        var cache = new MemCache();
+        var cmdSet = new SetCommand(key, "100", 0, 0, false);
+        var responseAfterSet = cache.set(cmdSet);
+
+        // Act
+        var cmdDecr = new DecrCommand(key, "101");
+        var responseAfterDecr = cache.set(cmdDecr);
+
+        var cmdGet = new GetCommand(key);
+        var responseAfterGet = cache.get(cmdGet.key);
+
+        // Assert
+        assertEquals(true, responseAfterDecr.isPresent());
+        assertEquals(ValidationCode.STORED, responseAfterDecr.get());
+        assertEquals(true, responseAfterGet.isPresent());
+        assertEquals(-1, responseAfterGet.get().data.dataInt());
     }
 
     @Test

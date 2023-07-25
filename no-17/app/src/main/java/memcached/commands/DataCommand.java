@@ -69,6 +69,10 @@ public class DataCommand extends Command {
                 return new AppendCommand(this.commandLine, this.data);
             case "prepend":
                 return new PrependCommand(this.commandLine, this.data);
+            case "incr":
+                return new IncrCommand(this.commandLine);
+            case "decr":
+                return new DecrCommand(this.commandLine);
 
             default:
                 throw new IllegalArgumentException(String.format("type '%s' is not valid set command", this.type));
@@ -77,6 +81,16 @@ public class DataCommand extends Command {
 
     public void append(String appendData) {
         this.data.append(appendData);
+        this.bytes(this.data.length());
+    }
+
+    public void incr(String incrData) {
+        this.data.incr(incrData);
+        this.bytes(this.data.length());
+    }
+
+    public void decr(String decrData) {
+        this.data.decr(decrData);
         this.bytes(this.data.length());
     }
 

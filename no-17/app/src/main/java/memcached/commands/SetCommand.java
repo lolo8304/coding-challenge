@@ -53,9 +53,12 @@ public class SetCommand extends DataCommand {
         if (b < 0) {
             throw new ValidationException("bytes must be >= 0");
         }
-        if (b != this.data.data.length()) {
-            throw new ValidationException(String.format("bytes must be length of data (expected '%d', received '%d')",
-                    this.data.data.length(), b));
+        if (this.data != null) {
+            if (b != this.data.data.length()) {
+                throw new ValidationException(
+                        String.format("bytes must be length of data (expected '%d', received '%d')",
+                                this.data.data.length(), b));
+            }
         }
     }
 
