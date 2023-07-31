@@ -14,12 +14,12 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-class CompressTest {
+class BotTest {
 
     private Reader reader;
 
     void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = Test.class.getResource("tests/" + testfile);
+        URL resource = BotTest.class.getResource("tests/" + testfile);
         File file = Paths.get(resource.toURI()).toFile();
         reader = new FileReader(file);
     }

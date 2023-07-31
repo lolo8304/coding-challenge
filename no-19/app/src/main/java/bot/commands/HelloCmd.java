@@ -2,16 +2,16 @@ package bot.commands;
 
 import discord4j.core.object.entity.Message;
 
-public class PingCmd implements Cmd {
+public class HelloCmd implements Cmd {
 
     @Override
     public String commandPrefix() {
-        return "!ping";
+        return "!hello";
     }
 
     @Override
     public void onMessage(Message message, BotResponse response) {
-        response.sendTextMessage("Pong!");
+        response.sendTextMessage("Hello, world!");
     }
 
 }

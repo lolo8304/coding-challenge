@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bot.commands.BotResponse;
 import bot.commands.Cmd;
+import bot.commands.HelloCmd;
 import bot.commands.PingCmd;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
@@ -39,30 +41,41 @@ public class Bot {
 
     private void registerCommands() {
         this.registerCommand(new PingCmd());
+        this.registerCommand(new HelloCmd());
+    }
+
+    private boolean isRealMessageFromAuthor(Message message) {
+        var author = message.getAuthor();
+        return (author.isPresent() && !(author.get().isBot()));
+
     }
 
     private Optional<Cmd> getCommandByMessage(Message message) {
-        var entries = this.commands.entrySet();
-        var content = message.getContent();
-        var contentLower = content.toLowerCase();
-        for (Map.Entry<String, Cmd> cmdEntry : entries) {
-            if (contentLower.startsWith(cmdEntry.getKey())) {
-                return Optional.of(cmdEntry.getValue());
+        if (this.isRealMessageFromAuthor(message)) {
+            var entries = this.commands.entrySet();
+            var content = message.getContent();
+            var contentLower = content.toLowerCase();
+            for (Map.Entry<String, Cmd> cmdEntry : entries) {
+                if (contentLower.startsWith(cmdEntry.getKey())) {
+                    return Optional.of(cmdEntry.getValue());
+                }
             }
         }
         return Optional.empty();
+
     }
 
     private void registerEvents(GatewayDiscordClient gateway) {
         gateway.on(MessageCreateEvent.class).subscribe(event -> {
             Message message = event.getMessage();
+            var response = new BotResponse(message);
 
             var cmd = this.getCommandByMessage(message);
             if (cmd.isPresent()) {
                 if (_logger.isLoggable(Level.INFO)) {
                     _logger.info(String.format("Message for '%s' arrived", cmd.get().commandPrefix()));
                 }
-                cmd.get().onMessage(message);
+                cmd.get().onMessage(message, response);
             }
 
         });
