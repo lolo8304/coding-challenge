@@ -25,3 +25,6 @@ hs_err_pid*
 no-3/app/src/test/resources/tests/135-0.txt
 template/**
 **/dump*.*
+
+## due to env. varable for TOKEN
+no-19/.vscode/launch.json
