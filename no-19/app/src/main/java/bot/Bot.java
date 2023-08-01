@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bot.commands.BotRequest;
 import bot.commands.BotResponse;
 import bot.commands.Cmd;
 import bot.commands.HelloCmd;
@@ -44,13 +45,8 @@ public class Bot {
         this.registerCommand(new HelloCmd());
     }
 
-    private boolean isRealMessageFromAuthor(Message message) {
-        var author = message.getAuthor();
-        return (author.isPresent() && !(author.get().isBot()));
-
-    }
-
-    private Optional<Cmd> getCommandByMessage(Message message) {
+    private Optional<Cmd> getCommandBy(BotRequest request) {
+        var message = request.message();
         if (this.isRealMessageFromAuthor(message)) {
             var entries = this.commands.entrySet();
             var content = message.getContent();
@@ -68,9 +64,10 @@ public class Bot {
     private void registerEvents(GatewayDiscordClient gateway) {
         gateway.on(MessageCreateEvent.class).subscribe(event -> {
             Message message = event.getMessage();
+            var request = new BotRequest(message);
             var response = new BotResponse(message);
 
-            var cmd = this.getCommandByMessage(message);
+            var cmd = this.getCommandBy(request);
             if (cmd.isPresent()) {
                 if (_logger.isLoggable(Level.INFO)) {
                     _logger.info(String.format("Message for '%s' arrived", cmd.get().commandPrefix()));
