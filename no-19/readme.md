@@ -25,3 +25,19 @@ prepare your bot as described in the challenge and follow the instructions. http
 and you should see
 
 ![successfull after triggering !ping](images/bot-step1-success.png)
+
+
+# Implementation
+
+## Step 1
+
+implement a simple bot and register a pluggable Cmd already to implement later different intents
+
+```java
+public interface Cmd {
+    String commandPrefix();
+    void onMessage(Message message, BotResponse response);
+}
+```
+
+get the content from message and send back to response. I will add some more message-types. So far only String
