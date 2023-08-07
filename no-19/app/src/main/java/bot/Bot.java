@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import bot.commands.BotRequest;
 import bot.commands.BotResponse;
+import bot.commands.ChallengeCmd;
 import bot.commands.Cmd;
 import bot.commands.HelloCmd;
 import bot.commands.PingCmd;
@@ -45,6 +46,7 @@ public class Bot {
         this.registerCommand(new PingCmd());
         this.registerCommand(new HelloCmd());
         this.registerCommand(new QuotesCmd());
+        this.registerCommand(new ChallengeCmd());
     }
 
     private Optional<Cmd> getCommandBy(BotRequest request) {
@@ -52,10 +54,13 @@ public class Bot {
         if (this.isRealMessageFromAuthor(message)) {
             var entries = this.commands.entrySet();
             var content = message.getContent();
-            var contentLower = content.toLowerCase();
             for (Map.Entry<String, Cmd> cmdEntry : entries) {
-                if (contentLower.startsWith(cmdEntry.getKey())) {
+                if (content.equals(cmdEntry.getKey())) {
                     return Optional.of(cmdEntry.getValue());
+                }
+                var splittedContent = content.split("\\s");
+                if (splittedContent.length > 0 && splittedContent[0].equalsIgnoreCase(cmdEntry.getKey())) {
+                    return Optional.of(cmdEntry.getValue());                    
                 }
             }
         }
