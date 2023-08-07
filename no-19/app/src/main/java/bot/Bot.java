@@ -11,6 +11,7 @@ import bot.commands.BotResponse;
 import bot.commands.Cmd;
 import bot.commands.HelloCmd;
 import bot.commands.PingCmd;
+import bot.commands.QuotesCmd;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -43,6 +44,7 @@ public class Bot {
     private void registerCommands() {
         this.registerCommand(new PingCmd());
         this.registerCommand(new HelloCmd());
+        this.registerCommand(new QuotesCmd());
     }
 
     private Optional<Cmd> getCommandBy(BotRequest request) {
@@ -58,6 +60,12 @@ public class Bot {
             }
         }
         return Optional.empty();
+
+    }
+
+    private boolean isRealMessageFromAuthor(Message message) {
+        var author = message.getAuthor();
+        return (author.isPresent() && !(author.get().isBot()));
 
     }
 
