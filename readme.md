@@ -52,8 +52,8 @@ here you can find all my implementation
     - documented with readme.md
     - invested quite a bit of time for fully dynamic and reliable Round Robin
     - and chaos engineering tests to kill BE servers and not to loose any message
-- 6 sort Tool: not implemented
-- 7 Calculator: none implemented
+- 6 sort Tool: not implemented yet
+- 7 Calculator: none implemented yet
 - 8 Redis Server
     - https://github.com/lolo8304/coding-challenge/tree/main/no-8
     - this is by far the best challenge I have every implemented
@@ -68,7 +68,7 @@ here you can find all my implementation
     - https://github.com/lolo8304/coding-challenge-9
     - I used just my mobile phone and javascript to implement it
     - has some headache topics with * and folders .... check it out
-- 10 uniq Tool: not implemented
+- 10 uniq Tool: not implemented yet
 - 11 WebServer
     - https://github.com/lolo8304/coding-challenge/tree/main/no-11
     - cool to learn the HTTP1.1 protocol and implement it without support libraries
@@ -76,9 +76,9 @@ here you can find all my implementation
     - at the end I realized that maybe the scanner is a bit an overkill
     - but funny to solve
 - 12 UrlShortener: not implement, we implemented this just some months ago in my company :-)
-- 13 diff Tool: not implemented
-- 14 shell: not implemented
-- 15 cat Tool: not implemented
+- 13 diff Tool: not implemented yet
+- 14 shell: not implemented yet
+- 15 cat Tool: not implemented yet
 - 16 IRC Client:
     - https://github.com/lolo8304/coding-challenge/tree/main/no-16
     - great to learn the protocol of IRC from the client perspective
@@ -87,10 +87,22 @@ here you can find all my implementation
     - without https://regex101.com/ - no chance to implement this type of regexp
 - 17 memcached server:
     - https://github.com/lolo8304/coding-challenge/tree/main/no-17
-    - just started
-    - implement a server and a client. and try to use consistent hashing for multiple servers.
+    - fully functional server with many commands, memory mgmt
+    - cmd pattern to plugin mire if interested
+    - lots of testcases 
+    - additional memcache client test
+    - implement a server and a client.
+    - Later: try to use consistent hashing for multiple servers.
+- 18 spotify client: not implemented yet
+- 19 discort bot: 
+    - https://github.com/lolo8304/coding-challenge/tree/main/no-19
+    - configured my own discort server
+    - implemented a pluggable cmds
+    - not deloyed on a server 
+- 20 LinkedIn carousel generator: not implemented
+- 21 sed-tool: not implemented yet
 
-I wanted to thank John Cricket for this challenges and I encourage every Engineer from Junior to Principal to do this. Learn a new language or get back to language you have used to code (as me here in Java). 
+I wanted to thank John Cricket for these challenges and I encourage every Engineer from Junior to Principal to do this. Learn a new language or get back to language you have used to code (as me here in Java). 
 
 And also learn to understand real-world applications while writing your own version of it. 
 
