@@ -6,6 +6,6 @@ public interface Cmd {
 
     String commandPrefix();
 
-    void onMessage(Message message, BotResponse response);
+    void onMessage(BotRequest request, BotResponse response);
 
 }

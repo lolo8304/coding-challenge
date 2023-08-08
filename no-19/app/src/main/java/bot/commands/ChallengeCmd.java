@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,11 +15,11 @@ import discord4j.core.object.entity.Message;
 
 public class ChallengeCmd implements Cmd {
 
-    private JSONObject quotes;
+    private Challenge[] challenges;
 
     public ChallengeCmd() {
-        this.quotes = readFrom("/challenges.json");
-
+        var quotes = readFrom("/challenges.json");
+        this.challenges = Challenge.fromArray(quotes.getJSONArray("challenges"));
     }
     private JSONObject readFrom(String fileName) {
         try {
@@ -39,26 +40,53 @@ public class ChallengeCmd implements Cmd {
     }
 
     @Override
-    public void onMessage(Message message, BotResponse response) {
-        var challenge = this.randomChallenge();
-        response.sendTextMessage(String.format("%s: %s", challenge.name, challenge.url));
+    public void onMessage(BotRequest request, BotResponse response) {
+        var parameters = request.getParameters();
+        if (parameters.length == 1 && parameters[0].equalsIgnoreCase("list")){
+            var buffer = new StringBuilder();
+            for (var challenge : this.challenges) {
+                buffer
+                    .append(challenge.toString())
+                    .append("\n");
+            }
+            response.sendTextMessage(buffer.toString());
+        } else {
+            var challenge = this.randomChallenge();
+            response.sendTextMessage(challenge.toString());
+        }
     }
 
     private Challenge randomChallenge() {
-        var arr = this.quotes.getJSONArray("challenges");
-        var challenge = arr.getJSONObject((int)(Math.random()*arr.length()));
-        return new Challenge(challenge.getString("name"), challenge.getString("url"));
+        return this.challenges[(int)(Math.random()*this.challenges.length)];
     }
 
     public static class Challenge {
         public String name;
         public String url;
 
+
+        public static Challenge[] fromArray(JSONArray array) {
+            var list = new ArrayList<Challenge>();
+            for (int i = 0; i < array.length(); i++) {
+                var challenge = array.getJSONObject(i);
+                list.add(new Challenge(challenge.getString("name"), challenge.getString("url")));
+            }
+            return list.toArray(Challenge[]::new);
+        }
+
         public Challenge(String name, String url){
             this.name = name;
-            this.url
- = url
-;}
+            this.url = url;
+        }
+        public Challenge(JSONObject challenge){
+            this.name = challenge.getString("name");
+            this.url = challenge.getString("url");
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s: %s", this.name, this.url);
+        }
     }
 
 }

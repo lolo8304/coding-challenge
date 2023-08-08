@@ -40,7 +40,7 @@ public class QuotesCmd implements Cmd {
     }
 
     @Override
-    public void onMessage(Message message, BotResponse response) {
+    public void onMessage(BotRequest request, BotResponse response) {
         var quote = this.randomQuote();
         response.sendTextMessage(String.format("%s says: '%s'", quote.author, quote.quote));
     }

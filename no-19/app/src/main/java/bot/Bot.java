@@ -85,7 +85,7 @@ public class Bot {
                 if (_logger.isLoggable(Level.INFO)) {
                     _logger.info(String.format("Message for '%s' arrived", cmd.get().commandPrefix()));
                 }
-                cmd.get().onMessage(message, response);
+                cmd.get().onMessage(request, response);
             }
 
         });

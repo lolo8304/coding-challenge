@@ -1,5 +1,8 @@
 package bot.commands;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import discord4j.core.object.entity.Message;
 
 public class BotRequest {
@@ -31,6 +34,20 @@ public class BotRequest {
         var author = message.getAuthor();
         return (author.isPresent() && !(author.get().isBot()));
 
+    }
+
+    public String[] getTokens() {
+        return this.content().split("\\s");
+    }
+
+    public String getCommand() {
+        return getTokens()[0];
+    }
+
+    public String[] getParameters() {
+        var tokens = this.getTokens();
+        return Arrays.copyOfRange(tokens, 1, tokens.length);
+        
     }
 
 }

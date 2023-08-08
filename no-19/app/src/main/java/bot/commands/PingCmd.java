@@ -10,7 +10,7 @@ public class PingCmd implements Cmd {
     }
 
     @Override
-    public void onMessage(Message message, BotResponse response) {
+    public void onMessage(BotRequest request, BotResponse response) {
         response.sendTextMessage("Pong!");
     }
 
