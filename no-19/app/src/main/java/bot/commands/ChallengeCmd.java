@@ -3,9 +3,16 @@ package bot.commands;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,7 +22,7 @@ import discord4j.core.object.entity.Message;
 
 public class ChallengeCmd implements Cmd {
 
-    private Challenge[] challenges;
+    private List<Challenge> challenges;
 
     public ChallengeCmd() {
         var quotes = readFrom("/challenges.json");
@@ -43,21 +50,71 @@ public class ChallengeCmd implements Cmd {
     public void onMessage(BotRequest request, BotResponse response) {
         var parameters = request.getParameters();
         if (parameters.length == 1 && parameters[0].equalsIgnoreCase("list")){
-            var buffer = new StringBuilder();
-            for (var challenge : this.challenges) {
-                buffer
-                    .append(challenge.toString())
-                    .append("\n");
-            }
-            response.sendTextMessage(buffer.toString());
+            processList(response);
+        } else if (parameters[0].equalsIgnoreCase("add")) {
+            processAdd(request, response);
         } else {
-            var challenge = this.randomChallenge();
-            response.sendTextMessage(challenge.toString());
+            processRandom(response);
         }
     }
 
+
+    private Optional<Challenge> getChallengeFromUrl(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            InputStream is = url.openStream();
+            try (var reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));) {
+                final String regex = "<title.*>(.*)<\\/title>";        
+                final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                String line = reader.readLine();
+                while (line != null) {
+                    var matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        return Optional.of(new Challenge(matcher.group(1), urlString)) ;
+                    }
+                    line = reader.readLine();
+                }
+            }
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+        return Optional.empty();
+    } 
+
+
+    private void processAdd(BotRequest request, BotResponse response) {
+        var args = request.getParameters();
+        if (args.length > 1) {
+            var url = args[1].toLowerCase();
+            if (url.startsWith("https://codingchallenges.fyi")) {
+                var challenge = this.getChallengeFromUrl(url);
+                if (challenge.isPresent()) {
+                    this.challenges.add(challenge.get());
+                    response.sendTextMessage(challenge.get().toString());
+                    return;
+                }
+            }
+            response.sendTextMessage("Unable to add: "+url+" check if it is a valid coding challenge");
+        } else {
+            response.sendTextMessage("Unable to add: no url passed");
+        }
+    }
+    private void processRandom(BotResponse response) {
+        var challenge = this.randomChallenge();
+        response.sendTextMessage(challenge.toString());
+    }
+    private void processList(BotResponse response) {
+        var buffer = new StringBuilder();
+        for (var challenge : this.challenges) {
+            buffer
+                .append(challenge.toString())
+                .append("\n");
+        }
+        response.sendTextMessage(buffer.toString());
+    }
+
     private Challenge randomChallenge() {
-        return this.challenges[(int)(Math.random()*this.challenges.length)];
+        return this.challenges.get((int)(Math.random()*this.challenges.size()));
     }
 
     public static class Challenge {
@@ -65,13 +122,13 @@ public class ChallengeCmd implements Cmd {
         public String url;
 
 
-        public static Challenge[] fromArray(JSONArray array) {
+        public static List<Challenge> fromArray(JSONArray array) {
             var list = new ArrayList<Challenge>();
             for (int i = 0; i < array.length(); i++) {
                 var challenge = array.getJSONObject(i);
                 list.add(new Challenge(challenge.getString("name"), challenge.getString("url")));
             }
-            return list.toArray(Challenge[]::new);
+            return list;
         }
 
         public Challenge(String name, String url){
