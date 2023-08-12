@@ -51,7 +51,7 @@ public class ChallengeCmd implements Cmd {
         var parameters = request.getParameters();
         if (parameters.length == 1 && parameters[0].equalsIgnoreCase("list")){
             processList(response);
-        } else if (parameters[0].equalsIgnoreCase("add")) {
+        } else if (parameters.length == 1 && parameters[0].equalsIgnoreCase("add")) {
             processAdd(request, response);
         } else {
             processRandom(response);

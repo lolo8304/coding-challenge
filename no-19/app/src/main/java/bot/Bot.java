@@ -51,7 +51,7 @@ public class Bot {
 
     private Optional<Cmd> getCommandBy(BotRequest request) {
         var message = request.message();
-        if (this.isRealMessageFromAuthor(message)) {
+        if (request.isRealMessageFromAuthor()) {
             var entries = this.commands.entrySet();
             var content = message.getContent();
             for (Map.Entry<String, Cmd> cmdEntry : entries) {
@@ -65,12 +65,6 @@ public class Bot {
             }
         }
         return Optional.empty();
-
-    }
-
-    private boolean isRealMessageFromAuthor(Message message) {
-        var author = message.getAuthor();
-        return (author.isPresent() && !(author.get().isBot()));
 
     }
 

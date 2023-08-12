@@ -30,8 +30,8 @@ public class BotRequest {
         return this.content;
     }
 
-    public boolean isRealMessageFromAuthor(Message message) {
-        var author = message.getAuthor();
+    public boolean isRealMessageFromAuthor() {
+        var author = this.message().getAuthor();
         return (author.isPresent() && !(author.get().isBot()));
 
     }

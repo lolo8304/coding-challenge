@@ -36,7 +36,7 @@ implement a simple bot and register a pluggable Cmd already to implement later d
 ```java
 public interface Cmd {
     String commandPrefix();
-    void onMessage(Message message, BotResponse response);
+    void onMessage(BotResponse request, BotResponse response);
 }
 ```
 
