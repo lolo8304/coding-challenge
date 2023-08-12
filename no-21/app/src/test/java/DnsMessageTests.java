@@ -38,6 +38,10 @@ class DnsMessageTests {
         }
     }
 
+    private String nospace(String str) {
+        return str.replace(" ", "").toUpperCase();
+    }
+
     @Test
     void header_22rec_expectsok() {
         // Arrange
@@ -48,7 +52,7 @@ class DnsMessageTests {
         msg.buildHeader(builder);
 
         // Assert
-        assertEquals("001601000000000000000000", builder.toString());
+        assertEquals(nospace("0016 0100 0000 0000 0000 0000"), builder.toString());
 
     }
 
@@ -62,7 +66,7 @@ class DnsMessageTests {
         msg.buildHeader(builder);
 
         // Assert
-        assertEquals("FFFFFFFF0000000000000000", builder.toString());
+        assertEquals(nospace("FFFF FFFF 0000 0000 0000 0000"), builder.toString());
 
     }
 
@@ -79,16 +83,29 @@ class DnsMessageTests {
     }
 
     @Test
+    void encodedNameHex_com_expectsok() {
+        // Arrange
+
+        // Act
+        var q = new DnsQuestion("com");
+
+        // Assert
+
+        assertEquals(nospace("03 636F6D 00"), q.encodedNameToHex());
+
+    }
+
+    @Test
     void question_default_expectsok() {
         // Arrange
 
         // Act
-        var q = new DnsQuestion("www.google.com");
+        var q = new DnsQuestion("dns.google.com");
 
         // Assert
         assertEquals(HeaderFlags.QCLASS_INTERNET, q.getClazz());
         assertEquals(HeaderFlags.QTYPE_A, q.getType());
-        assertEquals("3www6google3com0", q.encodedName());
+        assertEquals(nospace("03 646E73 06 676F6F676C65 03 636F6D 00"), q.encodedNameToHex());
 
     }
 
@@ -102,7 +119,7 @@ class DnsMessageTests {
         q.buildHeader(builder);
 
         // Assert
-        assertEquals("3377777736676F6F676C6533636F6D3000010001", builder.toString());
+        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), builder.toString());
 
     }
 
@@ -118,15 +135,15 @@ class DnsMessageTests {
         q.buildHeader(builder);
 
         // Assert
-        assertEquals("3377777736676F6F676C6533636F6D3000010001", builder.toString());
+        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), builder.toString());
 
     }
 
     @Test
     void fullmsg_default_expectsok() {
         // Arrange
-        var msg = new DnsMessage(22, Flags.QR_QUERY);
-        var q = new DnsQuestion("www.google.com");
+        var msg = new DnsMessage(22, Flags.QR_QUERY | Flags.RECURSION_DESIRED);
+        var q = new DnsQuestion("dns.google.com");
         msg.setQuestion(q);
         var builder = new StringBuilder();
 
@@ -134,7 +151,7 @@ class DnsMessageTests {
         msg.build(builder);
 
         // Assert
-        assertEquals("00160000000100000000000003646e7306676f6f676c6503636f6d0000010001", builder.toString());
+        assertEquals(nospace("0016 0100 0001 0000 0000 0000 03 646e73 06 676f6f676c65 03 636f6d 00 0001 0001"), builder.toString());
 
     }
 }

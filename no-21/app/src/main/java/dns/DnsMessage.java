@@ -136,10 +136,34 @@ public class DnsMessage {
         }
 
         public static int binaryToInt(String binaryString, String toFill) {
-            return Integer.parseInt(binaryString.replace(fill(toFill.length()), toFill), 2);
+            var bitStream0Frist = binaryString.replace(fill(toFill.length()), toFill);
+            return Integer.parseInt(bitStream0Frist, 2);
+        }
+
+        public static int binaryToIntReversed(String binaryString, String toFill) {
+            var bitStream0Frist = binaryString.replace(fill(toFill.length()), toFill);
+            var bitStream0Last = new StringBuilder(bitStream0Frist).reverse().toString();
+            return Integer.parseInt(bitStream0Last, 2);
         }
 
         public static final int QR_QUERY = 0;
+        // based on docu
+        /* 
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |                      ID                       |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |                    QDCOUNT                    |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |                    ANCOUNT                    |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |                    NSCOUNT                    |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        |                    ARCOUNT                    |
+        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+ */
         public static final int QR_RESPONSE = /*     */ binaryToInt("_000000000000000", "1");
         public static final int OPCODE_QUERY = /*    */ binaryToInt("0____00000000000", "0000");
         public static final int OPCODE_IQUERY = /*   */ binaryToInt("0____00000000000", "0001");
