@@ -1,5 +1,6 @@
 package dns;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +10,15 @@ public class DnsMessage {
     private static final Random random = new SecureRandom();
     private int id;
 
-    private int flags;
+    private final int flags;
 
-    private List<DnsQuestion> questions = new ArrayList<>();
+    private final List<DnsQuestion> questions = new ArrayList<>();
 
-    private List<DnsResourceRecord> answers = new ArrayList<>();
+    private final List<DnsResourceRecord> answers = new ArrayList<>();
 
-    private List<DnsResourceRecord> authorities = new ArrayList<>();
+    private final List<DnsResourceRecord> authorities = new ArrayList<>();
 
-    private List<DnsResourceRecord> additionalRecords = new ArrayList<>();
+    private final List<DnsResourceRecord> additionalRecords = new ArrayList<>();
 
     public static int generate16BitIdentifier() {
         return random.nextInt(1 << 16);
@@ -119,6 +120,17 @@ public class DnsMessage {
             x.buildHeader(builder);
         });
         return builder;
+    }
+
+    public String send(String dnsServer, int port) throws IOException {
+        var hexMessageToSend = this.build(new StringBuilder()).toString();
+        return transfer(dnsServer, port, hexMessageToSend).build(new StringBuilder()).toString();
+    }
+
+    private DnsMessage transfer(String dnsServer, int port, String hexMessageToSend) throws IOException {
+        var server = new DnsServer(dnsServer, port);
+        var hexMessageReceived = server.sendAndReceive(hexMessageToSend);
+        return new DnsResponseMessage(this, hexMessageReceived);
     }
 
     public static class Flags {

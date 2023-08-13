@@ -38,7 +38,7 @@ class DnsMessageTests {
         }
     }
 
-    private String nospace(String str) {
+    public static String nospace(String str) {
         return str.replace(" ", "").toUpperCase();
     }
 

@@ -23,10 +23,15 @@ public class DnsResolver implements Callable<Result<String>> {
     @Option(names = "-d", description = "-d specifies the domain name")
     String domain = null;
 
+    @Option(names = "-dns", description = "-dns specifies the DNS server")
+    String dnsServer = "8.8.8.8";
+    @Option(names = "-p", description = "-p specifies the port of the dns server")
+    int port = 53;
+
     @Override
     public Result<String> call() throws Exception {
         var msg = new DnsMessage();
-        msg.setQuestion(new DnsQuestion("www.google.com"));
-        return new Result<String>(msg.build(new StringBuilder()).toString());
+        msg.setQuestion(new DnsQuestion(this.domain));
+        return new Result<String>(msg.send(this.dnsServer, this.port));
     }
 }
