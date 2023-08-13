@@ -45,6 +45,22 @@ public class DnsMessage {
         return hexStringBuilder.toString();
     }
 
+    public static String hexToString(String hex) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < hex.length(); i += 2) {
+            String pair = hex.substring(i, i + 2);
+            int charCode = Integer.parseInt(pair, 16);
+            stringBuilder.append((char) charCode);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public static int hexToInteger(String hex) {
+        return Integer.parseInt(hex, 16);
+    }
+
     public DnsMessage() {
         this(generate16BitIdentifier(), Flags.QR_QUERY);
     }

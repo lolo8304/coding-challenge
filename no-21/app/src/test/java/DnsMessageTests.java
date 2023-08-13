@@ -91,7 +91,7 @@ class DnsMessageTests {
 
         // Assert
 
-        assertEquals(nospace("03 636F6D 00"), q.encodedNameToHex());
+        assertEquals(nospace("03 636F6D 00"), q.getOctetString());
 
     }
 
@@ -105,7 +105,7 @@ class DnsMessageTests {
         // Assert
         assertEquals(HeaderFlags.QCLASS_INTERNET, q.getClazz());
         assertEquals(HeaderFlags.QTYPE_A, q.getType());
-        assertEquals(nospace("03 646E73 06 676F6F676C65 03 636F6D 00"), q.encodedNameToHex());
+        assertEquals(nospace("03 646E73 06 676F6F676C65 03 636F6D 00"), q.getOctetString());
 
     }
 

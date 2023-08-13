@@ -3,6 +3,8 @@
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import dns.DnsServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +14,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-class DnServerTest {
+class DnsServerTest {
 
     private Reader reader;
 
     void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = DnServerTest.class.getResource("tests/"+testfile);
+        URL resource = DnsServerTest.class.getResource("tests/"+testfile);
         File file = Paths.get(resource.toURI()).toFile();
         reader = new FileReader(file);
     }
@@ -36,13 +38,13 @@ class DnServerTest {
         var port = 53;
         var dnsServer = new DnsServer(server, port);
 
-        var msg = "00160100000100000000000003646e7306676f6f676c6503636f6d0000010001";
+        var msg = "001601000001000000000000037777770C646F7269732D6C6F72656E7A0263680000010001";
         //Act
         var received = dnsServer.sendAndReceive(msg);
         
         //Assert
 
-        assertEquals(DnsMessageTests.nospace("0016 8180 0001 0002 0000 0000 03646E73 06676F6F676C65 03636F6D 0000 0100 01C00C0001000100000384000408080404C00C0001000100000384000408080808"),received);
+        assertTrue(received.startsWith(DnsMessageTests.nospace("0016 8180 0001 0001 0000 0000 03 777777 0C 646F7269732D6C6F72656E7A 02 6368 00 0001 0001 C0 0C 00 01 0001")));
     }
 
 

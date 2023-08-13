@@ -47,18 +47,14 @@ public class DnsQuestion {
     }
 
     public StringBuilder buildHeader(StringBuilder builder) {
-        builder.append(this.encodedNameToHex());
+        builder.append(this.getOctetString());
         builder.append(DnsMessage.intToHexWithLeadingZeros(this.getType(), 2));
         builder.append(DnsMessage.intToHexWithLeadingZeros(this.getClazz(), 2));
         return builder;
     }
 
-    // split by . and add size as byte per element int front and conert to hex and finalize with 0 byte
-    public String encodedNameToHex() {
-        var list = Arrays.asList(this.name.split("\\.")).stream().map(
-                (x) -> DnsMessage.intToHexWithLeadingZeros(x.length(), 1)
-                        + DnsMessage.stringToHex(x))
-                .toList();
-        return String.join("", list) + DnsMessage.intToHexWithLeadingZeros(0, 1);
+    public String getOctetString() {
+        return Name.fromDomainName(this.name).octetString;
     }
+
 }
