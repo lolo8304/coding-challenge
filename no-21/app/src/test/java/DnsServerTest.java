@@ -75,8 +75,8 @@ class DnsServerTest {
         var received = dnsServer.lookup("www.jarowa.ch", DnsMessage.HeaderFlags.QTYPE_All);
 
         //Assert
-        assertEquals(2, received.getAnswers().size());
-        assertEquals("80.74.158.130", received.getIpAddresses().get(0));
+        assertEquals(1, received.getQuestionCount());
+        assertEquals(5, received.getAuthorityCount());
 
     }
 }

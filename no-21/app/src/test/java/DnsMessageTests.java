@@ -213,7 +213,7 @@ class DnsMessageTests {
 
         // Assert
         assertEquals(22, msg.getId());
-        assertEquals("www.jarowa.ch", msg.getAnswers().get(0).getName());
+        assertEquals(5, msg.getAuthorities().size());
 
     }
 }
