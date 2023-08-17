@@ -7,30 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dns.DnsServer;
 import dns.HeaderFlags;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
+
 
 class DnsServerTest {
-
-    private Reader reader;
-
-    void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = DnsServerTest.class.getResource("tests/"+testfile);
-        File file = Paths.get(resource.toURI()).toFile();
-        reader = new FileReader(file);
-    }
-
-    @AfterEach
-    void CloseReader() throws IOException {
-        if (reader != null) {
-            reader.close();
-        }
-    }
 
     @Test
     void sendDns8888_dnsgooglecom_expect() throws IOException {
@@ -72,6 +54,7 @@ class DnsServerTest {
         var received = dnsServer.lookup("www.jarowa.ch", HeaderFlags.QTYPE_All);
 
         //Assert
+        assertTrue(received.isPresent());
         assertEquals(1, received.get().getQuestionCount());
         assertEquals(5, received.get().getAuthorityCount());
 
