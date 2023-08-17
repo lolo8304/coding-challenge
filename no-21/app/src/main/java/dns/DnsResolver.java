@@ -31,7 +31,7 @@ public class DnsResolver implements Callable<Result<String>> {
     @Override
     public Result<String> call() throws Exception {
         var msg = new DnsMessage();
-        msg.setQuestion(new DnsQuestion(this.domain));
+        msg.addQuestion(new DnsQuestion(this.domain));
         return new Result<String>(msg.send(this.dnsServer, this.port));
     }
 }

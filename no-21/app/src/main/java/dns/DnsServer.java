@@ -46,4 +46,21 @@ public class DnsServer {
             return byteArrayToHexString(responseData, responseLength);
         }
     }
+
+    public String lookup(DnsMessage message) throws IOException {
+        return sendAndReceive(message.build(new StringBuilder()).toString());
+    }
+    public DnsMessage lookup(String domainName) throws IOException {
+        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_All);
+    }
+    public DnsMessage lookup(String domainName, int type) throws IOException {
+        var message = new DnsMessage().addQuestion(new DnsQuestion(domainName, type));
+        return new DnsMessage(new OctetReader(sendAndReceive(message.build(new StringBuilder()).toString())));
+    }
+    public DnsMessage lookupCNameRecord(String domainName) throws IOException {
+        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_CNAME);
+    }
+    public DnsMessage lookupARecord(String domainName) throws IOException {
+        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_A);
+    }
 }

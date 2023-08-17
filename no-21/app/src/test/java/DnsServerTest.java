@@ -5,6 +5,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dns.DnsMessage;
 import dns.DnsServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,36 @@ class DnsServerTest {
 
         assertTrue(received.startsWith(DnsMessageTests.nospace("0016 8180 0001 0001 0000 0000 03 777777 0C 646F7269732D6C6F72656E7A 02 6368 00 0001 0001 C0 0C 00 01 0001")));
     }
+    @Test
+    void sendDns8888_wwwdorislorenzch_expect() throws IOException {
+        //Arrange
+        var server = "8.8.8.8";
+        var port = 53;
+        var dnsServer = new DnsServer(server, port);
+
+        //Act
+        var received = dnsServer.lookup("www.doris-lorenz.ch");
+
+        //Assert
+        assertEquals(2, received.getAnswers().size());
+        assertEquals("80.74.158.130", received.getIpAddresses().get(0));
+
+    }
 
 
+    @Test
+    void sendDns8888_jarowach_expect() throws IOException {
+        //Arrange
+        var server = "8.8.8.8";
+        var port = 53;
+        var dnsServer = new DnsServer(server, port);
+
+        //Act
+        var received = dnsServer.lookup("www.jarowa.ch", DnsMessage.HeaderFlags.QTYPE_All);
+
+        //Assert
+        assertEquals(2, received.getAnswers().size());
+        assertEquals("80.74.158.130", received.getIpAddresses().get(0));
+
+    }
 }

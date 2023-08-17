@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class DnsMessage {
@@ -75,6 +76,29 @@ public class DnsMessage {
         this.id = request.getId();
     }
 
+    public DnsMessage(OctetReader reader) throws IOException {
+        this.id = reader.readInt16().get();
+        this.flags = reader.readInt16().get();
+
+        var questionsCount = reader.readInt16().get();
+        var answersCount = reader.readInt16().get();
+        var authoritiesCount = reader.readInt16().get();
+        var additionalsCount = reader.readInt16().get();
+
+        for (int i = 0; i < questionsCount; i++) {
+            this.questions.add(new DnsQuestion(reader));
+        }
+        for (int i = 0; i < answersCount; i++) {
+            this.answers.add(new DnsResourceRecord(reader));
+        }
+        for (int i = 0; i < authoritiesCount; i++) {
+            this.authorities.add(new DnsResourceRecord(reader));
+        }
+        for (int i = 0; i < additionalsCount; i++) {
+            this.additionalRecords.add(new DnsResourceRecord(reader));
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -99,9 +123,10 @@ public class DnsMessage {
         return this.additionalRecords.size();
     }
 
-    public void setQuestion(DnsQuestion question) {
+    public DnsMessage addQuestion(DnsQuestion question) {
         this.questions.clear();
         this.questions.add(question);
+        return this;
     }
 
     public List<DnsQuestion> getQuestions() {
@@ -110,6 +135,14 @@ public class DnsMessage {
 
     public List<DnsResourceRecord> getAnswers() {
         return answers;
+    }
+
+    public List<String> getIpAddresses() {
+        var list = new ArrayList<>(this.answers);
+        list.sort( (x,y) -> {
+            return Long.compare(x.getIpAddressLong(), y.getIpAddressLong());
+        });
+        return list.stream().map(DnsResourceRecord::getIpAddress).filter(Optional::isPresent).map(Optional::get).toList();
     }
 
     public List<DnsResourceRecord> getAuthorities() {
@@ -130,11 +163,11 @@ public class DnsMessage {
         return builder;
     }
 
-    public StringBuilder build(StringBuilder builder) {
+    public StringBuilder build(StringBuilder builder) throws IOException {
         this.buildHeader(builder);
-        this.questions.forEach((x) -> {
-            x.buildHeader(builder);
-        });
+        for (int i = 0; i < this.questions.size(); i++) {
+            this.questions.get(i).buildHeader(builder);
+        }
         return builder;
     }
 
@@ -220,5 +253,12 @@ public class DnsMessage {
         public static final int QTYPE_A = 1;
         public static final int QTYPE_NS = 2;
         public static final int QTYPE_CNAME = 5;
+        public static final int QTYPE_SOA = 6;
+        public static final int QTYPE_WKS = 11;
+        public static final int QTYPE_PTR = 12;
+        public static final int QTYPE_HINFO = 13;
+        public static final int QTYPE_MX = 15;
+        public static final int QTYPE_TXT = 16;
+        public static final int QTYPE_All = 255;
     }
 }

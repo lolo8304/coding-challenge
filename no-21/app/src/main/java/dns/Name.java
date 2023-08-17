@@ -1,5 +1,8 @@
 package dns;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Arrays;
 
 public class Name {
@@ -7,40 +10,52 @@ public class Name {
     public final String domainName;
     public final String octetString;
 
-    public static Name fromDomainName(String domainName){
-        return new Name(domainName);
-    }
-
-    public static Name fromOctetName(String octetName) {
+    public static Name fromOctetName(String octetName) throws IOException {
         return new Name(octetName, true);
     }
 
-    public Name(String domainName) {
+    public static Name fromDomainName(String domainName) throws IOException {
+        return new Name(domainName, false);
+    }
+
+    public Name(String domainName) throws IOException {
         this(domainName, false);
     }
-    public Name(String name, boolean isOctetString) {
+    public Name(String name, boolean isOctetString) throws IOException {
         this.octetString = isOctetString ? name : toOctetString(name);
         this.domainName = isOctetString ? fromOctetString(name): name;
     }
 
-    public static String fromOctetString(String octetString) {
+    public static String fromOctetStream(OctetReader reader) throws IOException {
         var builder = new StringBuilder();
-        int i = 0;
-        while (i < octetString.length()) {
-            int count = DnsMessage.hexToInteger(octetString.substring(i, i +2));
+        var hex = reader.readHex(1);
+        while (hex.isPresent()) {
+            int count = DnsMessage.hexToInteger(hex.get());
             if (count == 0) {
                 return builder.toString();
             }
-            i += 2;
-            var octets = octetString.substring(i, i + count*2);
-            if (!builder.isEmpty()) {
-                builder.append('.');
+            var label = reader.readString(count);
+            if (label.isPresent()) {
+                if (!builder.isEmpty()) {
+                    builder.append('.');
+                }
+                builder.append(label.get());
+                hex = reader.readHex(1);
+            } else {
+                throw new IOException("error in parsing octet string from stream");
             }
-            builder.append(DnsMessage.hexToString(octets));
-            i = i + count * 2;
         }
-        throw new IllegalStateException(String.format("octetString '%s' is not valid format.", octetString));
+        throw new IOException("error in parsing octet string from stream");
     }
+
+    public static String fromOctetString(String octetString) throws IOException {
+        return fromOctetStream(new OctetReader(octetString));
+    }
+
+    public static String fromOctetBytes(byte[] octetBytes) throws IOException {
+        return fromOctetStream(new OctetReader(octetBytes));
+    }
+
     public static String toOctetString(String name) {
         var list = Arrays.stream(name.split("\\.")).map(
             (x) -> DnsMessage.intToHexWithLeadingZeros(x.length(), 1)
