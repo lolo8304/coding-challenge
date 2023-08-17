@@ -1,10 +1,6 @@
 package dns;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.util.Arrays;
-
-import dns.DnsMessage.HeaderFlags;
 
 public class DnsQuestion {
     private String name;
@@ -15,7 +11,7 @@ public class DnsQuestion {
     }
 
     public DnsQuestion(String name) {
-        this(name, HeaderFlags.QTYPE_All);
+        this(name, dns.HeaderFlags.QTYPE_All);
     }
 
     public DnsQuestion(String name, int clazz, int type) {
@@ -29,7 +25,7 @@ public class DnsQuestion {
     }
 
     public DnsQuestion(OctetReader reader) throws IOException {
-        this.name = Name.fromOctetStream(reader);
+        this.name = reader.readQName().get();
         this.type = reader.readInt16().get();
         this.clazz = reader.readInt16().get();
     }
@@ -58,15 +54,11 @@ public class DnsQuestion {
         this.clazz = clazz;
     }
 
-    public StringBuilder buildHeader(StringBuilder builder) throws IOException {
-        builder.append(this.getOctetString());
-        builder.append(DnsMessage.intToHexWithLeadingZeros(this.getType(), 2));
-        builder.append(DnsMessage.intToHexWithLeadingZeros(this.getClazz(), 2));
-        return builder;
-    }
-
-    public String getOctetString() throws IOException {
-        return new Name(this.name).octetString;
+    public OctetWriter write(OctetWriter writer) throws IOException {
+        writer.appendQName(this.name);
+        writer.appendInt16(this.getType());
+        writer.appendInt16(this.getClazz());
+        return writer;
     }
 
 }

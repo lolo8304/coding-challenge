@@ -2,10 +2,14 @@ package dns;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.logging.Logger;
 
 public class DnsServer {
+
+    private static final Logger _logger = Logger.getLogger(DnsServer.class.getName());
     private final String dnsServer;
     private final int port;
+    private final boolean verbose;
 
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -25,11 +29,19 @@ public class DnsServer {
         return hex.toString();
     }
     public DnsServer(String dnsServer, int port) {
+        this(dnsServer, port, false);
+    }
+
+    public DnsServer(String dnsServer, int port, boolean verbose) {
         this.dnsServer = dnsServer;
         this.port = port;
+        this.verbose = verbose;
     }
 
     public String sendAndReceive(String packageString) throws IOException {
+        if (verbose) {
+            _logger.info(String.format("DNS Request: %s", packageString));
+        }
         var dnsRequestData = hexStringToByteArray(packageString);
         try(var socket = new DatagramSocket()) {
 
@@ -43,24 +55,28 @@ public class DnsServer {
 
             byte[] responseData = receivePacket.getData();
             int responseLength = receivePacket.getLength();
-            return byteArrayToHexString(responseData, responseLength);
+            var hexResult = byteArrayToHexString(responseData, responseLength);
+            if (verbose) {
+                _logger.info(String.format("DNS Response: %s", hexResult));
+            }
+            return hexResult;
         }
     }
 
     public String lookup(DnsMessage message) throws IOException {
-        return sendAndReceive(message.build(new StringBuilder()).toString());
+        return sendAndReceive(message.write(new OctetWriter()).toString());
     }
     public DnsMessage lookup(String domainName) throws IOException {
-        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_All);
+        return this.lookup(domainName, HeaderFlags.QTYPE_All);
     }
     public DnsMessage lookup(String domainName, int type) throws IOException {
         var message = new DnsMessage().addQuestion(new DnsQuestion(domainName, type));
-        return new DnsMessage(new OctetReader(sendAndReceive(message.build(new StringBuilder()).toString())));
+        return new DnsMessage(new OctetReader(sendAndReceive(message.write(new OctetWriter()).toString())));
     }
     public DnsMessage lookupCNameRecord(String domainName) throws IOException {
-        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_CNAME);
+        return this.lookup(domainName, HeaderFlags.QTYPE_CNAME);
     }
     public DnsMessage lookupARecord(String domainName) throws IOException {
-        return this.lookup(domainName, DnsMessage.HeaderFlags.QTYPE_A);
+        return this.lookup(domainName, HeaderFlags.QTYPE_A);
     }
 }

@@ -46,7 +46,7 @@ public class OctetReader {
     }
 
     public Optional<Integer> readByte() throws IOException {
-        return this.readHex().map(DnsMessage::hexToInteger);
+        return this.readHex().map(OctetHelper::hexToInteger);
     }
     public Optional<String> readIpAddress() throws IOException {
         var ipPart1 = this.readByte().get();
@@ -63,15 +63,15 @@ public class OctetReader {
 
 
     public Optional<Integer> readInt16() throws IOException {
-        return this.readHex(2).map(DnsMessage::hexToInteger);
+        return this.readHex(2).map(OctetHelper::hexToInteger);
     }
 
     public Optional<Integer> readInt32() throws IOException {
-        return this.readHex(4).map(DnsMessage::hexToInteger);
+        return this.readHex(4).map(OctetHelper::hexToInteger);
     }
 
     public Optional<String> readString(int count) throws IOException {
-        return this.readHex(count).map(DnsMessage::hexToString);
+        return this.readHex(count).map(OctetHelper::hexToString);
     }
 
     public Optional<String> readHex(int count) throws IOException {
@@ -94,7 +94,7 @@ public class OctetReader {
         var builder = new StringBuilder();
         var hex = this.readHex(1);
         while (hex.isPresent()) {
-            int count = DnsMessage.hexToInteger(hex.get());
+            int count = OctetHelper.hexToInteger(hex.get());
             if (count == 0) { // final entry
                 return Optional.of(builder.toString());
             }
@@ -102,7 +102,7 @@ public class OctetReader {
             var hasOffsetMask = (count & POINTER_MASK8) > 0;
             if (hasOffsetMask) { // cache entry
                 hex = this.readHex(1);
-                var ptrIndex = DnsMessage.hexToInteger(hex.get());
+                var ptrIndex = OctetHelper.hexToInteger(hex.get());
                 var offsetInside = ((count << 8) + ptrIndex) & OFFSET_MASK16;
                 var topReader = this.topParentReader();
                 if (topReader != null) {

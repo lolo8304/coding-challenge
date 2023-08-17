@@ -9,8 +9,8 @@ public class DnsResponseMessage extends DnsMessage {
     }
 
     @Override
-    public StringBuilder buildHeader(StringBuilder builder) {
-        builder.append(this.responseHexString);
-        return builder;
+    public OctetWriter write(OctetWriter writer) {
+        writer.append(this.responseHexString);
+        return writer;
     }
 }

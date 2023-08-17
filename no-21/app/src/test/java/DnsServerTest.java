@@ -5,8 +5,8 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dns.DnsMessage;
 import dns.DnsServer;
+import dns.HeaderFlags;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ class DnsServerTest {
         //Arrange
         var server = "8.8.8.8";
         var port = 53;
-        var dnsServer = new DnsServer(server, port);
+        var dnsServer = new DnsServer(server, port, true);
 
         var msg = "001601000001000000000000037777770C646F7269732D6C6F72656E7A0263680000010001";
         //Act
@@ -52,13 +52,13 @@ class DnsServerTest {
         //Arrange
         var server = "8.8.8.8";
         var port = 53;
-        var dnsServer = new DnsServer(server, port);
+        var dnsServer = new DnsServer(server, port, true);
 
         //Act
-        var received = dnsServer.lookup("www.doris-lorenz.ch");
+        var received = dnsServer.lookup("www.doris-lorenz.ch", HeaderFlags.QTYPE_A);
 
         //Assert
-        assertEquals(2, received.getAnswers().size());
+        assertEquals(1, received.getAnswers().size());
         assertEquals("80.74.158.130", received.getIpAddresses().get(0));
 
     }
@@ -69,10 +69,10 @@ class DnsServerTest {
         //Arrange
         var server = "8.8.8.8";
         var port = 53;
-        var dnsServer = new DnsServer(server, port);
+        var dnsServer = new DnsServer(server, port, true);
 
         //Act
-        var received = dnsServer.lookup("www.jarowa.ch", DnsMessage.HeaderFlags.QTYPE_All);
+        var received = dnsServer.lookup("www.jarowa.ch", HeaderFlags.QTYPE_All);
 
         //Assert
         assertEquals(1, received.getQuestionCount());

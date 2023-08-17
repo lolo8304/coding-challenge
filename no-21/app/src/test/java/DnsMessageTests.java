@@ -9,14 +9,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import dns.OctetReader;
+import dns.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import dns.DnsMessage;
-import dns.DnsMessage.Flags;
-import dns.DnsMessage.HeaderFlags;
-import dns.DnsQuestion;
 
 class DnsMessageTests {
 
@@ -40,30 +35,30 @@ class DnsMessageTests {
     }
 
     @Test
-    void header_22rec_expectsok() {
+    void header_22rec_expectsok() throws IOException {
         // Arrange
-        var msg = new DnsMessage(22, Flags.RECURSION_DESIRED);
-        var builder = new StringBuilder();
+        var msg = new DnsMessage(22, dns.Flags.RECURSION_DESIRED);
+        var writer = new OctetWriter();
 
         // Act
-        msg.buildHeader(builder);
+        msg.write(writer);
 
         // Assert
-        assertEquals(nospace("0016 0100 0000 0000 0000 0000"), builder.toString());
+        assertEquals(nospace("0016 0100 0000 0000 0000 0000"), writer.toString());
 
     }
 
     @Test
-    void header_65535rec_expectsok() {
+    void header_65535rec_expectsok() throws IOException {
         // Arrange
         var msg = new DnsMessage(65535, 65535);
-        var builder = new StringBuilder();
+        var writer = new OctetWriter();
 
         // Act
-        msg.buildHeader(builder);
+        msg.write(writer);
 
         // Assert
-        assertEquals(nospace("FFFF FFFF 0000 0000 0000 0000"), builder.toString());
+        assertEquals(nospace("FFFF FFFF 0000 0000 0000 0000"), writer.toString());
 
     }
 
@@ -72,7 +67,7 @@ class DnsMessageTests {
         // Arrange
 
         // Act
-        var flag = Flags.RECURSION_DESIRED;
+        var flag = dns.Flags.RECURSION_DESIRED;
 
         // Assert
         assertEquals(256, flag);
@@ -82,27 +77,29 @@ class DnsMessageTests {
     @Test
     void encodedNameHex_com_expectsok() throws IOException {
         // Arrange
+        var tld = "com";
 
         // Act
-        var q = new DnsQuestion("com");
+        var msg = new OctetWriter().appendQName(tld).toString();
 
         // Assert
 
-        assertEquals(nospace("03 636F6D 00"), q.getOctetString());
+        assertEquals(nospace("03 636F6D 00"), msg);
 
     }
 
     @Test
     void question_default_expectsok() throws IOException {
         // Arrange
+        var domain = "dns.google.com";
 
         // Act
-        var q = new DnsQuestion("dns.google.com", HeaderFlags.QTYPE_A);
+        var q = new DnsQuestion(domain, dns.HeaderFlags.QTYPE_A);
 
         // Assert
-        assertEquals(HeaderFlags.QCLASS_INTERNET, q.getClazz());
-        assertEquals(HeaderFlags.QTYPE_A, q.getType());
-        assertEquals(nospace("03 646E73 06 676F6F676C65 03 636F6D 00"), q.getOctetString());
+        assertEquals(dns.HeaderFlags.QCLASS_INTERNET, q.getClazz());
+        assertEquals(dns.HeaderFlags.QTYPE_A, q.getType());
+        assertEquals(domain, q.getName());
 
     }
 
@@ -117,8 +114,8 @@ class DnsMessageTests {
         var q = new DnsQuestion(stream);
 
         // Assert
-        assertEquals(HeaderFlags.QCLASS_INTERNET, q.getClazz());
-        assertEquals(HeaderFlags.QTYPE_A, q.getType());
+        assertEquals(dns.HeaderFlags.QCLASS_INTERNET, q.getClazz());
+        assertEquals(dns.HeaderFlags.QTYPE_A, q.getType());
         assertEquals(msg, q.getName());
 
     }
@@ -126,14 +123,14 @@ class DnsMessageTests {
     @Test
     void questionencoded_default_expectsok() throws IOException {
         // Arrange
-        var q = new DnsQuestion("www.google.com", HeaderFlags.QTYPE_A);
-        var builder = new StringBuilder();
+        var q = new DnsQuestion("www.google.com", dns.HeaderFlags.QTYPE_A);
+        var writer = new OctetWriter();
 
         // Act
-        q.buildHeader(builder);
+        q.write(writer);
 
         // Assert
-        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), builder.toString());
+        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), writer.toString());
 
     }
 
@@ -141,31 +138,31 @@ class DnsMessageTests {
     void fullquestion_default_expectsok() throws IOException {
         // Arrange
         var msg = new DnsMessage(65535, 65535);
-        var q = new DnsQuestion("www.google.com", HeaderFlags.QTYPE_A);
+        var q = new DnsQuestion("www.google.com", dns.HeaderFlags.QTYPE_A);
         msg.addQuestion(q);
-        var builder = new StringBuilder();
+        var writer = new OctetWriter();
 
         // Act
-        q.buildHeader(builder);
+        q.write(writer);
 
         // Assert
-        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), builder.toString());
+        assertEquals(nospace("03 777777 06 676F6F676C65 03 636F6D 00 0001 0001"), writer.toString());
 
     }
 
     @Test
     void fullmsg_default_expectsok() throws IOException {
         // Arrange
-        var msg = new DnsMessage(22, Flags.QR_QUERY | Flags.RECURSION_DESIRED);
+        var msg = new DnsMessage(22, dns.Flags.QR_QUERY | dns.Flags.RECURSION_DESIRED);
         var q = new DnsQuestion("dns.google.com", HeaderFlags.QTYPE_A);
         msg.addQuestion(q);
-        var builder = new StringBuilder();
+        var writer = new OctetWriter();
 
         // Act
-        msg.build(builder);
+        msg.write(writer);
 
         // Assert
-        assertEquals(nospace("0016 0100 0001 0000 0000 0000 03 646e73 06 676f6f676c65 03 636f6d 00 0001 0001"), builder.toString());
+        assertEquals(nospace("0016 0100 0001 0000 0000 0000 03 646e73 06 676f6f676c65 03 636f6d 00 0001 0001"), writer.toString());
 
     }
 
@@ -179,7 +176,7 @@ class DnsMessageTests {
 
         // Assert
         assertEquals(22, msg.getId());
-        assertEquals(Flags.QR_QUERY | Flags.RECURSION_DESIRED, msg.getFlags());
+        assertEquals(dns.Flags.QR_QUERY | Flags.RECURSION_DESIRED, msg.getFlags());
         assertEquals(1, msg.getQuestionCount());
         assertEquals("dns.google.com", msg.getQuestions().get(0).getName());
 
@@ -216,4 +213,22 @@ class DnsMessageTests {
         assertEquals(5, msg.getAuthorities().size());
 
     }
+
+    @Test
+    void fullResponse_dorislorenz2ndcall_expectok() throws IOException {
+        // Arrange
+        var octet = nospace("001680800001000000030004037777770C646F7269732D6C6F72656E7A0263680000010001C010000200010000049C000B0263680370726F02696F00C010000200010000049C0005026E6CC034C010000200010000049C000B017003646E68036E657400C048000100010000878500049750C558C03100010001000087850004504A8FA9C048001C0001000087850010200141D000081C8D0000000000000000C031001C00010000878500102A001128000100010000000001430169");
+
+        // Act
+        var msg = new DnsMessage(new OctetReader(octet));
+        var ipAddresses = msg.getIpAddresses();
+
+        // Assert
+        assertEquals(22, msg.getId());
+        assertEquals(2, ipAddresses.size());
+
+    }
+
+
+
 }

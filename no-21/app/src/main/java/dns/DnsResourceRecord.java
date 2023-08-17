@@ -48,14 +48,15 @@ public class DnsResourceRecord {
             switch (this.type) {
                 /* A <domain-name> which specifies the canonical or primary
                 name for the owner.  The owner name is an alias.*/
-                case DnsMessage.HeaderFlags.QTYPE_CNAME -> {
-                    var cName = Name.fromOctetBytes(this.rData);
+                case HeaderFlags.QTYPE_CNAME -> {
+                    var reader = new OctetReader(this.rData, topReader);
+                    var cName = reader.readQName().get();
                     this.setRDataString(cName);
                     this.rDataValues.put("CNAME", cName);
                 }
                 /* CPU             A <character-string> which specifies the CPU type.
                    OS              A <character-string> which specifies the operating system type. */
-                case DnsMessage.HeaderFlags.QTYPE_HINFO -> {
+                case HeaderFlags.QTYPE_HINFO -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var cpu = reader.readName().get();
                     var os = reader.readName().get();
@@ -63,7 +64,7 @@ public class DnsResourceRecord {
                     this.rDataValues.put("OS", os);
                     this.setRDataString(String.format("%s / %s", cpu, os));
                 }
-                case DnsMessage.HeaderFlags.QTYPE_NS -> {
+                case HeaderFlags.QTYPE_NS -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var nsDName = reader.readQName().get();
                     this.setRDataString(nsDName);
@@ -74,7 +75,7 @@ public class DnsResourceRecord {
                 are preferred.
                 EXCHANGE        A <domain-name> which specifies a host willing to act as
                 a mail exchange for the owner name. */
-                case DnsMessage.HeaderFlags.QTYPE_MX -> {
+                case HeaderFlags.QTYPE_MX -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var preference = reader.readInt16().get();
                     var exchange = reader.readQName().get();
@@ -84,7 +85,7 @@ public class DnsResourceRecord {
                 }
                 /* PTRDNAME        A <domain-name> which points to some location in the
                     domain name space. */
-                case DnsMessage.HeaderFlags.QTYPE_PTR -> {
+                case HeaderFlags.QTYPE_PTR -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var ptrDName = reader.readQName().get();
                     this.setRDataString(ptrDName);
@@ -113,7 +114,7 @@ public class DnsResourceRecord {
                                 the time interval that can elapse before the zone is no
                                 longer authoritative.
                  */
-                case DnsMessage.HeaderFlags.QTYPE_SOA -> {
+                case HeaderFlags.QTYPE_SOA -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var mName = reader.readQName().get();
                     var rName = reader.readQName().get();
@@ -132,7 +133,7 @@ public class DnsResourceRecord {
                 /*
                 TXT-DATA        One or more <character-string>s.
                  */
-                case DnsMessage.HeaderFlags.QTYPE_TXT -> {
+                case HeaderFlags.QTYPE_TXT -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var txtList = new ArrayList<String>();
                     var name = reader.readName();
@@ -154,7 +155,7 @@ public class DnsResourceRecord {
                                 decimal numbers separated by dots without any embedded spaces (e.g.,
                                 "10.2.0.52" or "192.0.5.6").
                  */
-                case DnsMessage.HeaderFlags.QTYPE_A -> {
+                case HeaderFlags.QTYPE_A -> {
                     var reader = new OctetReader(this.rData, topReader);
                     var ip = reader.readIpAddress().get();
                     this.setRDataString(ip);
@@ -182,7 +183,7 @@ public class DnsResourceRecord {
     }
 
     public Optional<String> getIpAddress() {
-        if (this.type == DnsMessage.HeaderFlags.QTYPE_A) {
+        if (this.type == HeaderFlags.QTYPE_A) {
             return Optional.of(this.getRDataString());
         } else {
             return Optional.empty();
