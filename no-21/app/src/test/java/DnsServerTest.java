@@ -50,16 +50,15 @@ class DnsServerTest {
     @Test
     void sendDns8888_wwwdorislorenzch_expect() throws IOException {
         //Arrange
-        var server = "8.8.8.8";
-        var port = 53;
-        var dnsServer = new DnsServer(server, port, true);
+        var dnsServer = new DnsServer(true);
 
         //Act
-        var received = dnsServer.lookup("www.doris-lorenz.ch", HeaderFlags.QTYPE_A);
+        var received = dnsServer.lookupA("www.doris-lorenz.ch");
 
         //Assert
-        assertEquals(1, received.getAnswers().size());
-        assertEquals("80.74.158.130", received.getIpAddresses().get(0));
+        assertTrue(received.isPresent());
+        assertEquals(1, received.get().getIpAddresses().size());
+        assertEquals("80.74.158.130", received.get().getIpAddresses().get(0));
 
     }
 
@@ -67,16 +66,14 @@ class DnsServerTest {
     @Test
     void sendDns8888_jarowach_expect() throws IOException {
         //Arrange
-        var server = "8.8.8.8";
-        var port = 53;
-        var dnsServer = new DnsServer(server, port, true);
+        var dnsServer = new DnsServer(true);
 
         //Act
         var received = dnsServer.lookup("www.jarowa.ch", HeaderFlags.QTYPE_All);
 
         //Assert
-        assertEquals(1, received.getQuestionCount());
-        assertEquals(5, received.getAuthorityCount());
+        assertEquals(1, received.get().getQuestionCount());
+        assertEquals(5, received.get().getAuthorityCount());
 
     }
 }

@@ -32,14 +32,5 @@ class DnsResolverTest {
         }
     }
 
-    @Test
-    void method_prepare_expect() {
-        //Arrange
-
-        //Act
-        
-        //Assert
-    }
-
 
 }

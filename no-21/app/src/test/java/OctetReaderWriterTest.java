@@ -33,7 +33,7 @@ class OctetReaderWriterTest {
     }
 
     @Test
-    void toOctet_dnsgooglecom_expect() throws IOException {
+    void toOctet_dnsgooglecom_expect() {
         //Arrange
         var dnsName = "dns.google.com";
         var msg = "03646e7306676f6f676c6503636f6d00";
@@ -44,7 +44,7 @@ class OctetReaderWriterTest {
         assertEquals(DnsMessageTests.nospace("03 646e73 06 676f6f676c6503636f6d 00"),received);
     }
     @Test
-    void toOctet_wwwdorislorenzch_expect() throws IOException {
+    void toOctet_wwwdorislorenzch_expect() {
         //Arrange
         var dnsName = "www.doris-lorenz.ch";
         var msg = "03 777777 0C 646F7269732D6C6F72656E7A 02 6368 00";
@@ -67,7 +67,7 @@ class OctetReaderWriterTest {
         assertEquals("dns.google.com",received.get());
     }
     @Test
-    void NametoOctet_dnsgooglecom_expect() throws IOException {
+    void NametoOctet_dnsgooglecom_expect() {
         //Arrange
         var dnsName = "dns.google.com";
         var msg = DnsMessageTests.nospace("03 646e73 06 676f6f676c6503636f6d 00");

@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class OctetReader {
 
     public static final int POINTER_MASK16 = 0xC000;
@@ -36,7 +37,10 @@ public class OctetReader {
         this.reader = new StringReader(octetString);
         this.parentReader = parentReader;
         if (offset > 0) {
-            this.reader.read(new char[offset*2]);
+            var readChars = this.reader.read(new char[offset*2]);
+            if (readChars != offset * 2) {
+                throw new IOException(String.format("Read only %d instead of %d chars. end of stream", readChars, offset * 2));
+            }
             this.reader.mark(0); // reader does not have real mark, just >= 0
         }
     }
@@ -48,6 +52,7 @@ public class OctetReader {
     public Optional<Integer> readByte() throws IOException {
         return this.readHex().map(OctetHelper::hexToInteger);
     }
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Optional<String> readIpAddress() throws IOException {
         var ipPart1 = this.readByte().get();
         var ipPart2 = this.readByte().get();
@@ -83,13 +88,15 @@ public class OctetReader {
         return Optional.empty();
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Optional<String> readName() throws IOException {
-        var len = this.readInt16().get();
+        int len = this.readInt16().get();
         var prefix = len & POINTER_MASK16; // first 2 bit are indicators for cached entry
         var offset = len & OFFSET_MASK16; // all the other bits are index
         return (prefix > 0) ? this.readQName(offset) : this.readHex(len);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Optional<String> readQName() throws IOException {
         var builder = new StringBuilder();
         var hex = this.readHex(1);

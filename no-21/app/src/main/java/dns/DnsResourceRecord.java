@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings({"SpellCheckingInspection", "FieldMayBeFinal", "FieldCanBeLocal", "unused"})
 public class DnsResourceRecord {
     private String name;
     private int type;
@@ -13,21 +14,18 @@ public class DnsResourceRecord {
     private long ttl;
     private int rdLength;
     private byte[] rData;
-    private Map<String, String> rDataValues;
+    private final Map<String, String> rDataValues;
 
-    public static long getIpAddressLong(Optional<String> ip) {
-        if (ip.isPresent()) {
-            var ipParts = ip.get().split("\\.");
-            return
-                    Long.parseLong(ipParts[0]) * (1L^24)
-                            + Long.parseLong(ipParts[1]) * (1L^16)
-                            + Long.parseLong(ipParts[2]) * (1L^8)
-                            + Long.parseLong(ipParts[3]);
-        } else {
-            return 0L;
-        }
+    public static long getIpAddressLong(String ip) {
+        var ipParts = ip.split("\\.");
+        return
+                Long.parseLong(ipParts[0]) * (1L^24)
+                        + Long.parseLong(ipParts[1]) * (1L^16)
+                        + Long.parseLong(ipParts[2]) * (1L^8)
+                        + Long.parseLong(ipParts[3]);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public DnsResourceRecord(OctetReader reader) throws IOException {
         this.name = reader.readName().get();
         this.type = reader.readInt16().get();
@@ -43,6 +41,14 @@ public class DnsResourceRecord {
         }
     }
 
+    public boolean isIpAddress() {
+        return this.type == HeaderFlags.QTYPE_A;
+    }
+    public boolean isNsWithIpAddress() {
+        return this.type == HeaderFlags.QTYPE_NS && this.getRDataString("ADDRESS") != null;
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRDataToValues(OctetReader topReader) throws IOException {
         if (this.rdLength > 0) {
             switch (this.type) {
@@ -70,7 +76,7 @@ public class DnsResourceRecord {
                     this.setRDataString(nsDName);
                     this.rDataValues.put("NSDNAME", nsDName);
                 }
-                /* PREFERENCE      A 16 bit integer which specifies the preference given to
+                /* PREFERENCE      A 16-bit integer which specifies the preference given to
                 this RR among others at the same owner.  Lower values
                 are preferred.
                 EXCHANGE        A <domain-name> which specifies a host willing to act as
@@ -104,10 +110,10 @@ public class DnsResourceRecord {
                                 value wraps and should be compared using sequence space
                                 arithmetic.
 
-                REFRESH         A 32 bit time interval before the zone should be
+                REFRESH         A 32-bit time interval before the zone should be
                                 refreshed.
 
-                RETRY           A 32 bit time interval that should elapse before a
+                RETRY           A 32-bit time interval that should elapse before a
                                 failed refresh should be retried.
 
                 EXPIRE          A 32 bit time value that specifies the upper limit on
@@ -171,8 +177,11 @@ public class DnsResourceRecord {
         }
     }
 
-    private void setRDataString(String data) {
+    public void setRDataString(String data) {
         this.rDataValues.put("DATA", data);
+    }
+    public void setRDataValue(String key, String data){
+        this.rDataValues.put(key, data);
     }
 
     public String getRDataString() {
@@ -191,44 +200,12 @@ public class DnsResourceRecord {
     }
 
     public long getIpAddressLong() {
-        return getIpAddressLong(this.getIpAddress());
+        var ip = this.getIpAddress();
+        return ip.map(DnsResourceRecord::getIpAddressLong).orElse(0L);
     }
 
     public String getName() {
         return name;
-    }
-    public int getType() {
-        return type;
-    }
-    public int getClazz() {
-        return clazz;
-    }
-    public long getTtl() {
-        return ttl;
-    }
-    public int getRdLength() {
-        return rdLength;
-    }
-    public byte[] getRData() {
-        return rData;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setType(int type) {
-        this.type = type;
-    }
-    public void setClazz(int clazz) {
-        this.clazz = clazz;
-    }
-    public void setTtl(long ttl) {
-        this.ttl = ttl;
-    }
-    public void setRdLength(int rdLength) {
-        this.rdLength = rdLength;
-    }
-    public void setrData(byte[] rData) {
-        this.rData = rData;
     }
 
 

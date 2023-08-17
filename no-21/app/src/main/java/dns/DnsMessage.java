@@ -1,9 +1,8 @@
 package dns;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.security.SecureRandom;
+import java.util.*;
 
 public class DnsMessage {
     private int id;
@@ -21,6 +20,9 @@ public class DnsMessage {
     public DnsMessage() {
         this(OctetHelper.generate16BitIdentifier(), dns.Flags.QR_QUERY);
     }
+    public DnsMessage(int additionalFlags) {
+        this(OctetHelper.generate16BitIdentifier(), dns.Flags.QR_QUERY | additionalFlags);
+    }
 
     public DnsMessage(int id, int flags) {
         this.id = id;
@@ -32,14 +34,15 @@ public class DnsMessage {
         this.id = request.getId();
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public DnsMessage(OctetReader reader) throws IOException {
         this.id = reader.readInt16().get();
         this.flags = reader.readInt16().get();
 
-        var questionsCount = reader.readInt16().get();
-        var answersCount = reader.readInt16().get();
-        var authoritiesCount = reader.readInt16().get();
-        var additionalCount = reader.readInt16().get();
+        int questionsCount = reader.readInt16().get();
+        int answersCount = reader.readInt16().get();
+        int authoritiesCount = reader.readInt16().get();
+        int additionalCount = reader.readInt16().get();
 
         for (int i = 0; i < questionsCount; i++) {
             this.questions.add(new DnsQuestion(reader));
@@ -51,8 +54,22 @@ public class DnsMessage {
             this.authorities.add(new DnsResourceRecord(reader));
         }
         for (int i = 0; i < additionalCount; i++) {
-            this.additionalRecords.add(new DnsResourceRecord(reader));
+            var addOn = new DnsResourceRecord(reader);
+            this.additionalRecords.add(addOn);
+            if (addOn.isIpAddress()) {
+                var authorityRecord = getAuthorityByName(addOn.getName());
+                authorityRecord.ifPresent(dnsResourceRecord -> dnsResourceRecord.setRDataValue("ADDRESS", addOn.getRDataString("ADDRESS")));
+            }
         }
+    }
+
+    private Optional<DnsResourceRecord> getAuthorityByName(String name) {
+        for(var authority : this.getAuthorities()) {
+            if (authority.getRDataString().equalsIgnoreCase(name)) {
+                return Optional.of(authority);
+            }
+        }
+        return Optional.empty();
     }
 
     public int getId() {
@@ -93,12 +110,16 @@ public class DnsMessage {
         return answers;
     }
 
+    public boolean hasIpAddress() {
+        for (var r : this.getAnswers()) {
+            if (r.isIpAddress() && r.getName().equalsIgnoreCase(this.getQuestions().get(0).getName())) return true;
+        }
+        return false;
+    }
+
     public List<String> getIpAddresses() {
-        var list = new ArrayList<>(this.answers);
-        list.addAll(this.additionalRecords);
-        list.sort( (x,y) -> {
-            return Long.compare(x.getIpAddressLong(), y.getIpAddressLong());
-        });
+        var list = new ArrayList<>(this.getAnswers());
+        list.sort(Comparator.comparingLong(DnsResourceRecord::getIpAddressLong));
         return list.stream().map(DnsResourceRecord::getIpAddress).filter(Optional::isPresent).map(Optional::get).toList();
     }
 
@@ -106,6 +127,7 @@ public class DnsMessage {
         return authorities;
     }
 
+    @SuppressWarnings("unused")
     public List<DnsResourceRecord> getAdditionalRecords() {
         return additionalRecords;
     }
@@ -119,10 +141,10 @@ public class DnsMessage {
         .appendInt16(this.getAdditionalCount());
     }
 
-    public OctetWriter write(OctetWriter writer) throws IOException {
+    public OctetWriter write(OctetWriter writer) {
         writer = this.writeHeader(writer);
-        for (int i = 0; i < this.questions.size(); i++) {
-            writer = this.questions.get(i).write(writer);
+        for (DnsQuestion question : this.questions) {
+            writer = question.write(writer);
         }
         return writer;
     }
@@ -136,6 +158,15 @@ public class DnsMessage {
         var server = new DnsServer(dnsServer, port);
         var hexMessageReceived = server.sendAndReceive(hexMessageToSend);
         return new DnsResponseMessage(this, hexMessageReceived);
+    }
+
+    @SuppressWarnings("unused")
+    public DnsResourceRecord getRandomAuthorityWithIp() {
+        var nsListWithIpAddress = this.getAuthorities().stream().filter(DnsResourceRecord::isNsWithIpAddress).toList();
+        return nsListWithIpAddress.get(new SecureRandom().nextInt(nsListWithIpAddress.size()));
+    }
+    public DnsResourceRecord getRandomAuthority() {
+        return this.getAuthorities().get(new SecureRandom().nextInt(this.getAuthorityCount()));
     }
 
 }

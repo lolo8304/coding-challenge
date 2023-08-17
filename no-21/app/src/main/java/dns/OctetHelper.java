@@ -10,6 +10,7 @@ public class OctetHelper {
         return random.nextInt(1 << 16);
     }
 
+    @SuppressWarnings("unused")
     public static String formatWithLeadingZeros(int number, int width) {
         return String.format("%0" + width + "d", number);
     }

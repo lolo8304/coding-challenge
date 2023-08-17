@@ -1,13 +1,10 @@
 package dns;
 
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class Flags {
 
     public static String fill(int n) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < n; i++) {
-            stringBuilder.append('_');
-        }
-        return stringBuilder.toString();
+        return "_".repeat(Math.max(0, n));
     }
 
     public static int binaryToInt(String binaryString) {
@@ -50,6 +47,7 @@ public class Flags {
     public static final int AUTHORITATIVE_ANSWERS = binaryToInt("00000_0000000000", "1");
     public static final int TRUNCATION = /*      */ binaryToInt("000000_000000000", "1");
     public static final int RECURSION_DESIRED = /**/binaryToInt("0000000_00000000", "1");
+    public static final int RECURSION_DESIRED_OFF = 0;
     public static final int RECURSION_AVAIL = /* */ binaryToInt("00000000_0000000", "1");
     public static final int Z_RESERVED = /*      */ binaryToInt("000000000___0000", "000");
     public static final int RC_NO_ERROR = /*     */ binaryToInt("000000000000____", "0000");

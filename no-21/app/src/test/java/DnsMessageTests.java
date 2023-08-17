@@ -75,7 +75,7 @@ class DnsMessageTests {
     }
 
     @Test
-    void encodedNameHex_com_expectsok() throws IOException {
+    void encodedNameHex_com_expectsok() {
         // Arrange
         var tld = "com";
 
@@ -89,7 +89,7 @@ class DnsMessageTests {
     }
 
     @Test
-    void question_default_expectsok() throws IOException {
+    void question_default_expectsok() {
         // Arrange
         var domain = "dns.google.com";
 
@@ -225,9 +225,24 @@ class DnsMessageTests {
 
         // Assert
         assertEquals(22, msg.getId());
-        assertEquals(2, ipAddresses.size());
+        assertEquals(0, ipAddresses.size());
 
     }
+
+    @Test
+    void fullResponse_dorislorenz3rdcall_expectok() throws IOException {
+        // Arrange
+        var octet = nospace("001680800001000000050000037777770C646F7269732D6C6F72656E7A0263680000010001C01D00020001000017D100080166036E6963C01DC01D00020001000017D100040162C033C01D00020001000017D100040161C033C01D00020001000017D100040165C033C01D00020001000017D100040164C033");
+
+        // Act
+        var msg = new DnsMessage(new OctetReader(octet));
+
+        // Assert
+        assertEquals(22, msg.getId());
+        assertEquals(5, msg.getAuthorityCount());
+
+    }
+
 
 
 

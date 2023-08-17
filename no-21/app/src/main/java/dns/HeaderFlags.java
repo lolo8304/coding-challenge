@@ -1,5 +1,6 @@
 package dns;
 
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class HeaderFlags {
 
     public static final int QCLASS_INTERNET = 1;

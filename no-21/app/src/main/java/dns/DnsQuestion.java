@@ -2,13 +2,11 @@ package dns;
 
 import java.io.IOException;
 
+@SuppressWarnings("FieldMayBeFinal")
 public class DnsQuestion {
     private String name;
     private int type;
     private int clazz;
-
-    public DnsQuestion() {
-    }
 
     public DnsQuestion(String name) {
         this(name, dns.HeaderFlags.QTYPE_All);
@@ -24,6 +22,7 @@ public class DnsQuestion {
         this(name, HeaderFlags.QCLASS_INTERNET, type);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public DnsQuestion(OctetReader reader) throws IOException {
         this.name = reader.readQName().get();
         this.type = reader.readInt16().get();
@@ -42,19 +41,7 @@ public class DnsQuestion {
         return this.clazz;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public void setClazz(int clazz) {
-        this.clazz = clazz;
-    }
-
-    public OctetWriter write(OctetWriter writer) throws IOException {
+    public OctetWriter write(OctetWriter writer) {
         writer.appendQName(this.name);
         writer.appendInt16(this.getType());
         writer.appendInt16(this.getClazz());

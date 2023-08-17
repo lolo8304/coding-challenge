@@ -3,7 +3,7 @@ package dns;
 
 public class Result<T> {
 
-    private String ip;
+    private final String ip;
 
     public Result(String ip){
         this.ip = ip;

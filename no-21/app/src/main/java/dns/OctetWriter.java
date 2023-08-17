@@ -30,6 +30,7 @@ public class OctetWriter {
     public OctetWriter appendInt16(int i){
         return this.append(OctetHelper.intToHexWithLeadingZeros(i, 2));
     }
+    @SuppressWarnings("unused")
     public OctetWriter appendInt(int i){
         i = i & 0xFF;
         return this.append(OctetHelper.intToHexWithLeadingZeros(i, 1));
