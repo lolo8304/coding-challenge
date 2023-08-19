@@ -100,9 +100,9 @@ here you can find all my implementation
   - implemented a pluggable cmds
   - not deloyed on a server
 - 20 LinkedIn carousel generator: not implemented
-- .. sed-tool: not implemented yet
-- 21 DNS resolver:
-  - https://github.com/lolo8304/coding-challenge/tree/main/no-21
+- 21 sed-tool: not implemented yet
+- 22 DNS resolver:
+  - https://github.com/lolo8304/coding-challenge/tree/main/no-22
   - implemented A, cname, mx, txt records
   - resolver does same printout as 'nslookup'
   - can be parametrized to test dns principles
