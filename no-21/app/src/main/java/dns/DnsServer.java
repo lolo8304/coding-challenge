@@ -123,7 +123,7 @@ public class DnsServer {
     public Optional<DnsMessage> lookupCNAME(String domainName) throws IOException {
         return this.lookup(domainName, HeaderFlags.QTYPE_CNAME);
     }
-    @SuppressWarnings({"unused", "SpellCheckingInspection"})
+    @SuppressWarnings({"unused"})
     public Optional<DnsMessage> lookupA(String domainName) throws IOException {
         return this.lookup(domainName, HeaderFlags.QTYPE_A, Flags.RECURSION_DESIRED_OFF);
     }
@@ -142,7 +142,7 @@ public class DnsServer {
             if (resultCNAME.isPresent()) {
                 var cname = resultCNAME.get().getCName();
                 if (cname.isPresent()) {
-                    System.out.printf("%s\tcanoncial name = %s\n", domainName, cname.get());
+                    System.out.printf("%s\tcanonical name = %s\n", domainName, cname.get());
                     return this.resolve(cname.get(), additionalFlags);
                 }
             }
@@ -203,6 +203,7 @@ public class DnsServer {
         }
     }
 
+    @SuppressWarnings("unused")
     public enum Verbose {
         NONE(0), FINE(1), FINER(2);
 

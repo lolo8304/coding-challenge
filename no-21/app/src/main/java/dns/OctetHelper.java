@@ -66,6 +66,7 @@ public class OctetHelper {
         return hex.toString();
     }
 
+    @SuppressWarnings("unused")
     public static boolean isValidIPAddress(String ipAddress) {
         try {
             InetAddress inetAddress = InetAddress.getByName(ipAddress);

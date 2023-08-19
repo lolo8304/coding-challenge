@@ -134,7 +134,7 @@ public class DnsMessage {
         for (var r : this.getAnswers()) {
             if (r.getType() == HeaderFlags.QTYPE_CNAME) {
                 return Optional.of(r.getRDataString());
-            };
+            }
         }
         return Optional.empty();
     }
@@ -165,6 +165,7 @@ public class DnsMessage {
         return writer;
     }
 
+    @SuppressWarnings("unused")
     public String send(String dnsServer, int port) throws IOException {
         var hexMessageToSend = this.write(new OctetWriter()).toString();
         return transfer(dnsServer, port, hexMessageToSend).write(new OctetWriter()).toString();

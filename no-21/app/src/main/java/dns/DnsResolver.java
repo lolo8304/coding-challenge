@@ -7,7 +7,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@SuppressWarnings("CanBeFinal")
+@SuppressWarnings({"CanBeFinal", "SpellCheckingInspection"})
 @Command(name = "DnsResolver", mixinStandardHelpOptions = true, version = "dnsResolve 1.0", description = "dns resolve a domain name to IP")
 public class DnsResolver implements Callable<Result<DnsMessage>> {
 
@@ -72,15 +72,16 @@ public class DnsResolver implements Callable<Result<DnsMessage>> {
 
     private void init() {
         switch (this.typeString.toUpperCase()) {
-            case "A": this.type = HeaderFlags.QTYPE_A;break;
-            case "CNAME": this.type = HeaderFlags.QTYPE_CNAME;break;
-            case "TXT": this.type = HeaderFlags.QTYPE_TXT;break;
-            case "NS": this.type = HeaderFlags.QTYPE_NS;break;
-            case "SOA": this.type = HeaderFlags.QTYPE_SOA;break;
-            case "ALL": this.type = HeaderFlags.QTYPE_ALL;break;
-            default:
+            case "A" -> this.type = HeaderFlags.QTYPE_A;
+            case "CNAME" -> this.type = HeaderFlags.QTYPE_CNAME;
+            case "TXT" -> this.type = HeaderFlags.QTYPE_TXT;
+            case "NS" -> this.type = HeaderFlags.QTYPE_NS;
+            case "SOA" -> this.type = HeaderFlags.QTYPE_SOA;
+            case "ALL" -> this.type = HeaderFlags.QTYPE_ALL;
+            default -> {
                 System.out.printf("Type '%s' invalid, using default A%n\n", this.typeString);
-                this.type = HeaderFlags.QTYPE_A;break;
+                this.type = HeaderFlags.QTYPE_A;
+            }
         }
 
         this.dnsServerName = DnsServer.Name.localhostDnsLoopback();

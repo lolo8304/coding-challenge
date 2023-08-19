@@ -8,6 +8,7 @@ public class DnsResponseMessage extends DnsMessage {
         this.responseHexString = responseHexString;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public OctetWriter write(OctetWriter writer) {
         writer.append(this.responseHexString);

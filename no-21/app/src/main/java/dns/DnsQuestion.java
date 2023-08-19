@@ -8,6 +8,7 @@ public class DnsQuestion {
     private int type;
     private int clazz;
 
+    @SuppressWarnings("unused")
     public DnsQuestion(String name) {
         this(name, dns.HeaderFlags.QTYPE_ALL);
     }

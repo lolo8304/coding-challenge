@@ -48,7 +48,7 @@ public class DnsResourceRecord {
         return this.type == HeaderFlags.QTYPE_NS && this.getRDataString("ADDRESS") != null;
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     private void convertRDataToValues(OctetReader topReader) throws IOException {
         if (this.rdLength > 0) {
             switch (this.type) {
@@ -130,6 +130,7 @@ public class DnsResourceRecord {
         }
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordHInfo(OctetReader topReader) throws IOException {
         var reader = new OctetReader(this.rData, topReader);
         var cpu = reader.readName().get();
@@ -139,6 +140,7 @@ public class DnsResourceRecord {
         this.setRDataString(String.format("%s / %s", cpu, os));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordMx(OctetReader topReader) throws IOException {
         var reader = new OctetReader(this.rData, topReader);
         var preference = reader.readInt16().get();
@@ -148,6 +150,7 @@ public class DnsResourceRecord {
         this.setRDataString(String.format("%d %s", preference, exchange));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordSoa(OctetReader topReader) throws IOException {
         var reader = new OctetReader(this.rData, topReader);
         var mName = reader.readQName().get();
@@ -181,6 +184,7 @@ public class DnsResourceRecord {
         this.rDataValues.put("TXTDATA", txtListString);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordIpAddress(OctetReader topReader) throws IOException {
         var reader = new OctetReader(this.rData, topReader);
         var ip = reader.readIpAddress().get();
@@ -188,6 +192,7 @@ public class DnsResourceRecord {
         this.rDataValues.put("ADDRESS", ip);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordWithName(OctetReader topReader, String nameKey) throws IOException {
         var reader = new OctetReader(this.rData, topReader);
         var qName = reader.readQName().get();
