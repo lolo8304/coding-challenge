@@ -3,94 +3,74 @@ package dns;
 import java.io.IOException;
 import java.net.*;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class DnsServer {
 
-    public static final Map<String, String> RootServers;
-    public static final List<String> RootServerNames;
+    public static final List<Name> RootServers;
 
     static {
-        RootServers = new HashMap<>();
-        RootServers.put("a.root-servers.net", "198.41.0.4");
-        RootServers.put("b.root-servers.net", "199.9.14.201");
-        RootServers.put("c.root-servers.net", "192.33.4.12");
-        RootServers.put("d.root-servers.net", "199.7.91.13");
-        RootServers.put("e.root-servers.net", "192.203.230");
-        RootServers.put("f.root-servers.net", "192.5.5.241");
-        RootServers.put("i.root-servers.net", "192.36.148.17");
-        RootServers.put("j.root-servers.net", "192.58.128.30");
-        RootServers.put("k.root-servers.net", "193.0.14.129");
-        RootServers.put("l.root-servers.net", "199.7.83.42");
-        RootServers.put("m.root-servers.net", "202.12.27.33");
-
-        RootServerNames = new java.util.ArrayList<>(RootServers.keySet().stream().toList());
-        RootServerNames.sort(String::compareTo);
+        RootServers = new ArrayList<>();
+        RootServers.add(Name.fromName("a.root-servers.net", "198.41.0.4"));
+        RootServers.add(Name.fromName("b.root-servers.net", "199.9.14.201"));
+        RootServers.add(Name.fromName("c.root-servers.net", "192.33.4.12"));
+        RootServers.add(Name.fromName("d.root-servers.net", "199.7.91.13"));
+        RootServers.add(Name.fromName("e.root-servers.net", "192.203.230"));
+        RootServers.add(Name.fromName("f.root-servers.net", "192.5.5.241"));
+        RootServers.add(Name.fromName("i.root-servers.net", "192.36.148.17"));
+        RootServers.add(Name.fromName("j.root-servers.net", "192.58.128.30"));
+        RootServers.add(Name.fromName("k.root-servers.net", "193.0.14.129"));
+        RootServers.add(Name.fromName("l.root-servers.net", "199.7.83.42"));
+        RootServers.add(Name.fromName("m.root-servers.net", "202.12.27.33"));
     }
 
     private static final Logger _logger = Logger.getLogger(DnsServer.class.getName());
-    private final String dnsServer;
+    private final Name dnsServer;
     private final int port;
-    private final boolean verbose;
+    private final DnsServer.Verbose verbose;
 
-
-    public String randomRootName() {
-        return RootServerNames.get(new SecureRandom().nextInt(RootServerNames.size()));
+    public static Name randomRootServer() {
+        return RootServers.get(new SecureRandom().nextInt(RootServers.size()));
     }
-    @SuppressWarnings("unused")
-    public String randomRootIpAddress() {
-        return RootServers.get(randomRootName());
-    }
-
-    public static byte[] hexStringToByteArray(String hex) {
-        int length = hex.length();
-        byte[] data = new byte[length / 2];
-        for (int i = 0; i < length; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4) + Character.digit(hex.charAt(i + 1), 16));
-        }
-        return data;
-    }
-
-    public static String byteArrayToHexString(byte[] data, int length) {
-        StringBuilder hex = new StringBuilder(length * 2);
-        for (int i = 0; i < length; i++) {
-            hex.append(String.format("%02X", data[i]));
-        }
-        return hex.toString();
-    }
-
     public DnsServer() {
-        this.dnsServer = randomRootName();
+        this.dnsServer = randomRootServer();
         this.port = 53;
-        this.verbose = false;
+        this.verbose = Verbose.NONE;
     }
     public DnsServer(boolean verbose) {
-        this.dnsServer = randomRootName();
+        this.dnsServer = randomRootServer();
+        this.port = 53;
+        this.verbose = Verbose.fromValue(verbose);
+    }
+    public DnsServer(Verbose verbose) {
+        this.dnsServer = randomRootServer();
         this.port = 53;
         this.verbose = verbose;
     }
     public DnsServer(String dnsServer, int port) {
-        this(dnsServer, port, false);
+        this(Name.fromName(dnsServer), port, false);
     }
 
-    public DnsServer(String dnsServer, int port, boolean verbose) {
+    public DnsServer(Name dnsServer, int port, boolean verbose) {
+        this.dnsServer = dnsServer;
+        this.port = port;
+        this.verbose = Verbose.fromValue(verbose);
+    }
+    public DnsServer(Name dnsServer, int port, Verbose verbose) {
         this.dnsServer = dnsServer;
         this.port = port;
         this.verbose = verbose;
     }
 
     public String sendAndReceive(String packageString) throws IOException {
-        if (verbose) {
+        if (verbose == Verbose.FINER) {
             _logger.info(String.format("DNS %s, Request: %s", this.dnsServer, packageString));
         }
-        var dnsRequestData = hexStringToByteArray(packageString);
+        var dnsRequestData = OctetHelper.hexStringToByteArray(packageString);
         try(var socket = new DatagramSocket()) {
 
-            var serverAddress = InetAddress.getByName(this.dnsServer);
+            var serverAddress = InetAddress.getByName(this.dnsServer.getSearchValue());
             var packet = new DatagramPacket(dnsRequestData, dnsRequestData.length, serverAddress, this.port);
             socket.send(packet);
 
@@ -100,8 +80,8 @@ public class DnsServer {
 
             byte[] responseData = receivePacket.getData();
             int responseLength = receivePacket.getLength();
-            var hexResult = byteArrayToHexString(responseData, responseLength);
-            if (verbose) {
+            var hexResult = OctetHelper.byteArrayToHexString(responseData, responseLength);
+            if (verbose == Verbose.FINER) {
                 _logger.info(String.format("DNS %s, Response: %s", this.dnsServer, hexResult));
             }
             return hexResult;
@@ -120,32 +100,132 @@ public class DnsServer {
         return this.lookup(domainName, type, 0);
     }
     public Optional<DnsMessage> lookup(String domainName, int type, int additionalFlags) throws IOException {
-        var message = new DnsMessage(additionalFlags).addQuestion(new DnsQuestion(domainName, type));
-        return Optional.of(new DnsMessage(new OctetReader(sendAndReceive(message.write(new OctetWriter()).toString()))));
+        if (verbose == Verbose.FINE || verbose == Verbose.FINER) {
+            _logger.info(String.format("Querying %s for %s", this.dnsServer, domainName));
+        }
+        var request = new DnsMessage(additionalFlags).addQuestion(new DnsQuestion(domainName, type));
+        var response = new DnsMessage(new OctetReader(sendAndReceive(request.write(new OctetWriter()).toString())));
+        if (response.hasAnswerOf(type)) {
+            return Optional.of(response);
+        } else if (response.getAuthorityCount() > 0) {
+            if (response.hasAuthority(this.dnsServer)) {
+                var nsRecord = response.getRandomAuthority();
+                return new DnsServer(nsRecord.getAuthorityName(), port, verbose).lookup(domainName, type, additionalFlags);
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
+
     @SuppressWarnings("unused")
     public Optional<DnsMessage> lookupCNAME(String domainName) throws IOException {
         return this.lookup(domainName, HeaderFlags.QTYPE_CNAME);
     }
     @SuppressWarnings({"unused", "SpellCheckingInspection"})
     public Optional<DnsMessage> lookupA(String domainName) throws IOException {
-        var dnsResponse = this.lookup(domainName, HeaderFlags.QTYPE_A, Flags.RECURSION_DESIRED);
-        if (dnsResponse.isPresent()) {
-            var dnsRecord = dnsResponse.get();
-            if (dnsRecord.hasIpAddress()) {
-                return Optional.of(dnsRecord);
-            } else if (dnsRecord.getAuthorityCount() > 0) {
-                var nsRecord = dnsRecord.getRandomAuthority();
-                if (nsRecord.getRDataString("ADDRESS")!= null) {
-                    return new DnsServer(nsRecord.getRDataString("ADDRESS"), port, verbose).lookupA(domainName);
-                } else {
-                    return new DnsServer(nsRecord.getRDataString("NSDNAME"), port, verbose).lookupA(domainName);
-                }
-            } else {
-                return Optional.empty();
+        return this.lookup(domainName, HeaderFlags.QTYPE_A, Flags.RECURSION_DESIRED_OFF);
+    }
+
+    public Optional<DnsMessage> resolve(String domainName, int additionalFlags) throws IOException {
+        var resultA = this.lookup(domainName, HeaderFlags.QTYPE_A, additionalFlags);
+        if (resultA.isPresent()) {
+            var ipAddresses = resultA.get().getIpAddresses();
+            System.out.printf("Name:  %s\n", domainName);
+            for (var ip : ipAddresses) {
+                System.out.printf("Address:  %s\n", ip);
             }
+            return resultA;
         } else {
-            return Optional.empty();
+            var resultCNAME = this.lookup(domainName, HeaderFlags.QTYPE_CNAME, additionalFlags);
+            if (resultCNAME.isPresent()) {
+                var cname = resultCNAME.get().getCName();
+                if (cname.isPresent()) {
+                    System.out.printf("%s\tcanoncial name = %s\n", domainName, cname.get());
+                    return this.resolve(cname.get(), additionalFlags);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static class Name {
+        private final String name;
+        private final String ipAddress;
+
+        public static Name fromName(String name) {
+            return new Name(name, null);
+        }
+        public static Name fromName(String name, String ipAddress) {
+            return new Name(name, ipAddress);
+        }
+        public static Name fromIpAddress(String ipAddress) {
+            return new Name(null, ipAddress);
+        }
+        private Name(String name, String ipAddress) {
+            this.name = name;
+            this.ipAddress = ipAddress;
+        }
+
+        public static Name localhostDnsLoopback() {
+            return fromIpAddress("127.0.0.53");
+        }
+
+        @Override
+        public String toString() {
+            if (this.name != null && this.ipAddress != null) {
+                return String.format("[ %s (%s) ]", this.name, this.ipAddress);
+            } else {
+                return String.format("[ %s ]", this.getSearchValue());
+            }
+        }
+
+        public String getSearchValue() {
+            return this.ipAddress != null ? this.ipAddress : this.name;
+        }
+
+        public String getCompareValue() {
+            return this.name != null ? this.name : this.ipAddress;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Name name1 = (Name) o;
+            return Objects.equals(this.getCompareValue(), name1.getCompareValue());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getCompareValue());
+        }
+    }
+
+    public enum Verbose {
+        NONE(0), FINE(1), FINER(2);
+
+        private final int value;
+
+        Verbose(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static Verbose fromValue(int value) {
+            for (Verbose level : Verbose.values()) {
+                if (level.value == value) {
+                    return level;
+                }
+            }
+            throw new IllegalArgumentException("No matching enum value for " + value);
+        }
+        public static Verbose fromValue(boolean value) {
+            return value ? FINE : NONE;
         }
     }
 }

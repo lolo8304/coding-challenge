@@ -18,6 +18,6 @@ public class HeaderFlags {
     public static final int QTYPE_HINFO = 13;
     public static final int QTYPE_MX = 15;
     public static final int QTYPE_TXT = 16;
-    public static final int QTYPE_All = 255;
+    public static final int QTYPE_ALL = 255;
 }
 

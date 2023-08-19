@@ -9,7 +9,7 @@ public class DnsQuestion {
     private int clazz;
 
     public DnsQuestion(String name) {
-        this(name, dns.HeaderFlags.QTYPE_All);
+        this(name, dns.HeaderFlags.QTYPE_ALL);
     }
 
     public DnsQuestion(String name, int clazz, int type) {

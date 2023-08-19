@@ -12,25 +12,71 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
+import dns.DnsMessage;
+import dns.DnsResolver;
+import dns.DnsServer;
+import dns.Result;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import picocli.CommandLine;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DnsResolverTest {
 
-    private Reader reader;
 
-    void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = DnsResolverTest.class.getResource("tests/"+testfile);
-        File file = Paths.get(resource.toURI()).toFile();
-        reader = new FileReader(file);
+    @Test
+    void resolvedns_dorislorenzch_expect() throws IOException {
+        //Arrange
+        var classUnderTest = new DnsResolver();
+        var cmd = new CommandLine(classUnderTest);
+        String[] args = { "-d", "www.doris-lorenz.ch", "-vv" };
+
+        //Act
+        cmd.execute(args);
+        Result<DnsMessage> result = cmd.getExecutionResult();
+
+        //Assert
+    }
+    @Test
+    void resolvedns_appenzelljarowade_expect() throws IOException {
+        //Arrange
+        var classUnderTest = new DnsResolver();
+        var cmd = new CommandLine(classUnderTest);
+        String[] args = { "-d", "www-appenzell-pool.enable.jarowa.de", "-vv" };
+
+        //Act
+        cmd.execute(args);
+        Result<DnsMessage> result = cmd.getExecutionResult();
+
+        //Assert
     }
 
-    @AfterEach
-    void CloseReader() throws IOException {
-        if (reader != null) {
-            reader.close();
-        }
+    @Test
+    void resolvedns_missing_expect() throws IOException {
+        //Arrange
+        var classUnderTest = new DnsResolver();
+        var cmd = new CommandLine(classUnderTest);
+        String[] args = { "-d", "dns-does-not-exists.de", "-vv" };
+
+        //Act
+        cmd.execute(args);
+        Result<DnsMessage> result = cmd.getExecutionResult();
+
+        //Assert
     }
 
+    @Test
+    void resolvedns_missingTlD_expect() throws IOException {
+        //Arrange
+        var classUnderTest = new DnsResolver();
+        var cmd = new CommandLine(classUnderTest);
+        String[] args = { "-d", "dns-does-not-exists.notld", "-vv" };
 
+        //Act
+        cmd.execute(args);
+        Result<DnsMessage> result = cmd.getExecutionResult();
+
+        //Assert
+    }
 }

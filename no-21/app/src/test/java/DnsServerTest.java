@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dns.DnsServer;
+import dns.Flags;
 import dns.HeaderFlags;
 import org.junit.jupiter.api.Test;
 
@@ -17,9 +18,7 @@ class DnsServerTest {
     @Test
     void sendDns8888_dnsgooglecom_expect() throws IOException {
         //Arrange
-        var server = "8.8.8.8";
-        var port = 53;
-        var dnsServer = new DnsServer(server, port, true);
+        var dnsServer = new DnsServer(true);
 
         var msg = "001601000001000000000000037777770C646F7269732D6C6F72656E7A0263680000010001";
         //Act
@@ -51,12 +50,12 @@ class DnsServerTest {
         var dnsServer = new DnsServer(true);
 
         //Act
-        var received = dnsServer.lookup("www.jarowa.ch", HeaderFlags.QTYPE_All);
+        var received = dnsServer.lookup("www.jarowa.ch", HeaderFlags.QTYPE_A);
 
         //Assert
         assertTrue(received.isPresent());
         assertEquals(1, received.get().getQuestionCount());
-        assertEquals(5, received.get().getAuthorityCount());
+        assertEquals(1, received.get().getIpAddresses().size());
 
     }
 }

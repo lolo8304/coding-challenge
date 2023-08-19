@@ -55,26 +55,15 @@ public class DnsResourceRecord {
                 /* A <domain-name> which specifies the canonical or primary
                 name for the owner.  The owner name is an alias.*/
                 case HeaderFlags.QTYPE_CNAME -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var cName = reader.readQName().get();
-                    this.setRDataString(cName);
-                    this.rDataValues.put("CNAME", cName);
+                    convertRecordWithName(topReader, "CNAME");
                 }
                 /* CPU             A <character-string> which specifies the CPU type.
                    OS              A <character-string> which specifies the operating system type. */
                 case HeaderFlags.QTYPE_HINFO -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var cpu = reader.readName().get();
-                    var os = reader.readName().get();
-                    this.rDataValues.put("CPU", cpu);
-                    this.rDataValues.put("OS", os);
-                    this.setRDataString(String.format("%s / %s", cpu, os));
+                    convertRecordHInfo(topReader);
                 }
                 case HeaderFlags.QTYPE_NS -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var nsDName = reader.readQName().get();
-                    this.setRDataString(nsDName);
-                    this.rDataValues.put("NSDNAME", nsDName);
+                    convertRecordWithName(topReader, "NSDNAME");
                 }
                 /* PREFERENCE      A 16-bit integer which specifies the preference given to
                 this RR among others at the same owner.  Lower values
@@ -82,20 +71,12 @@ public class DnsResourceRecord {
                 EXCHANGE        A <domain-name> which specifies a host willing to act as
                 a mail exchange for the owner name. */
                 case HeaderFlags.QTYPE_MX -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var preference = reader.readInt16().get();
-                    var exchange = reader.readQName().get();
-                    this.rDataValues.put("PREFERENCE", String.valueOf(preference));
-                    this.rDataValues.put("EXCHANGE", exchange);
-                    this.setRDataString(String.format("%d %s", preference, exchange));
+                    convertRecordMx(topReader);
                 }
                 /* PTRDNAME        A <domain-name> which points to some location in the
                     domain name space. */
                 case HeaderFlags.QTYPE_PTR -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var ptrDName = reader.readQName().get();
-                    this.setRDataString(ptrDName);
-                    this.rDataValues.put("PTRDNAME", ptrDName);
+                    convertRecordWithName(topReader, "PTRDNAME");
                 }
 
                 /*
@@ -121,38 +102,13 @@ public class DnsResourceRecord {
                                 longer authoritative.
                  */
                 case HeaderFlags.QTYPE_SOA -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var mName = reader.readQName().get();
-                    var rName = reader.readQName().get();
-                    var serial = reader.readInt32().get();
-                    var refresh = reader.readInt32().get();
-                    var retry = reader.readInt32().get();
-                    var expire = reader.readInt32().get();
-                    this.setRDataString(String.format("%s %s %d %d %d %d", mName, rName, serial, refresh, retry, expire));
-                    this.rDataValues.put("MNAME", mName);
-                    this.rDataValues.put("RNAME", rName);
-                    this.rDataValues.put("SERIAL", String.valueOf(serial));
-                    this.rDataValues.put("REFRESH", String.valueOf(refresh));
-                    this.rDataValues.put("RETRY", String.valueOf(retry));
-                    this.rDataValues.put("EXPIRE", String.valueOf(expire));
+                    convertRecordSoa(topReader);
                 }
                 /*
                 TXT-DATA        One or more <character-string>s.
                  */
                 case HeaderFlags.QTYPE_TXT -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var txtList = new ArrayList<String>();
-                    var name = reader.readName();
-                    var i = 0;
-                    while (name.isPresent()) {
-                        txtList.add(name.get());
-                        this.rDataValues.put(String.valueOf(i), name.get());
-                        name = reader.readName();
-                        i++;
-                    }
-                    var txtListString = String.join("; ", txtList);
-                    this.setRDataString(txtListString);
-                    this.rDataValues.put("TXTDATA", txtListString);
+                    convertRecordTxt(topReader);
                 }
                 /*
                 ADDRESS         A 32 bit Internet address.
@@ -162,10 +118,7 @@ public class DnsResourceRecord {
                                 "10.2.0.52" or "192.0.5.6").
                  */
                 case HeaderFlags.QTYPE_A -> {
-                    var reader = new OctetReader(this.rData, topReader);
-                    var ip = reader.readIpAddress().get();
-                    this.setRDataString(ip);
-                    this.rDataValues.put("ADDRESS", ip);
+                    convertRecordIpAddress(topReader);
                 }
                 default -> {
                     var reader = new OctetReader(this.rData, topReader);
@@ -175,6 +128,71 @@ public class DnsResourceRecord {
         } else {
             this.setRDataString("");
         }
+    }
+
+    private void convertRecordHInfo(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var cpu = reader.readName().get();
+        var os = reader.readName().get();
+        this.rDataValues.put("CPU", cpu);
+        this.rDataValues.put("OS", os);
+        this.setRDataString(String.format("%s / %s", cpu, os));
+    }
+
+    private void convertRecordMx(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var preference = reader.readInt16().get();
+        var exchange = reader.readQName().get();
+        this.rDataValues.put("PREFERENCE", String.valueOf(preference));
+        this.rDataValues.put("EXCHANGE", exchange);
+        this.setRDataString(String.format("%d %s", preference, exchange));
+    }
+
+    private void convertRecordSoa(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var mName = reader.readQName().get();
+        var rName = reader.readQName().get();
+        var serial = reader.readInt32().get();
+        var refresh = reader.readInt32().get();
+        var retry = reader.readInt32().get();
+        var expire = reader.readInt32().get();
+        this.setRDataString(String.format("%s %s %d %d %d %d", mName, rName, serial, refresh, retry, expire));
+        this.rDataValues.put("MNAME", mName);
+        this.rDataValues.put("RNAME", rName);
+        this.rDataValues.put("SERIAL", String.valueOf(serial));
+        this.rDataValues.put("REFRESH", String.valueOf(refresh));
+        this.rDataValues.put("RETRY", String.valueOf(retry));
+        this.rDataValues.put("EXPIRE", String.valueOf(expire));
+    }
+
+    private void convertRecordTxt(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var txtList = new ArrayList<String>();
+        var name = reader.readName();
+        var i = 0;
+        while (name.isPresent()) {
+            txtList.add(name.get());
+            this.rDataValues.put(String.valueOf(i), name.get());
+            name = reader.readName();
+            i++;
+        }
+        var txtListString = String.join("; ", txtList);
+        this.setRDataString(txtListString);
+        this.rDataValues.put("TXTDATA", txtListString);
+    }
+
+    private void convertRecordIpAddress(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var ip = reader.readIpAddress().get();
+        this.setRDataString(ip);
+        this.rDataValues.put("ADDRESS", ip);
+    }
+
+    private void convertRecordWithName(OctetReader topReader, String nameKey) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var qName = reader.readQName().get();
+        this.setRDataString(qName);
+        this.rDataValues.put(nameKey, qName);
     }
 
     public void setRDataString(String data) {
@@ -209,4 +227,14 @@ public class DnsResourceRecord {
     }
 
 
+    public int getType() { return type; }
+    public int getClazz() { return clazz; }
+
+    public boolean isAuthorityName(DnsServer.Name dnsName) {
+        return this.getAuthorityName().equals(dnsName);
+    }
+
+    public DnsServer.Name getAuthorityName() {
+        return DnsServer.Name.fromName(this.getRDataString("NSDNAME"), this.getRDataString("ADDRESS"));
+    }
 }

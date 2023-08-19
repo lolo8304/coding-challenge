@@ -117,10 +117,26 @@ public class DnsMessage {
         return false;
     }
 
+    public boolean hasAnswerOf(int type) {
+        if (type == HeaderFlags.QTYPE_A) return this.hasIpAddress();
+        for (var r : this.getAnswers()) {
+            if (r.getType() == type) return true;
+        }
+        return false;
+    }
+
     public List<String> getIpAddresses() {
         var list = new ArrayList<>(this.getAnswers());
         list.sort(Comparator.comparingLong(DnsResourceRecord::getIpAddressLong));
         return list.stream().map(DnsResourceRecord::getIpAddress).filter(Optional::isPresent).map(Optional::get).toList();
+    }
+    public Optional<String> getCName() {
+        for (var r : this.getAnswers()) {
+            if (r.getType() == HeaderFlags.QTYPE_CNAME) {
+                return Optional.of(r.getRDataString());
+            };
+        }
+        return Optional.empty();
     }
 
     public List<DnsResourceRecord> getAuthorities() {
@@ -167,6 +183,10 @@ public class DnsMessage {
     }
     public DnsResourceRecord getRandomAuthority() {
         return this.getAuthorities().get(new SecureRandom().nextInt(this.getAuthorityCount()));
+    }
+
+    public boolean hasAuthority(DnsServer.Name dnsName) {
+        return this.getAuthorities().stream().anyMatch( (x) -> x.isAuthorityName(dnsName));
     }
 
 }
