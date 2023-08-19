@@ -102,7 +102,6 @@ here you can find all my implementation
 - 20 LinkedIn carousel generator: not implemented
 - .. sed-tool: not implemented yet
 - 21 DNS resolver:
-  - https://codingchallenges.fyi/challenges/challenge-dns-resolver
   - https://github.com/lolo8304/coding-challenge/tree/main/no-21
   - implemented A, cname, mx, txt records
   - resolver does same printout as 'nslookup'
