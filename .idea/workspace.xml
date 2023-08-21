@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/no-22/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/no-22/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/no-22/app/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsResolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-22/app/src/test/java/DnsResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/test/java/DnsResolverTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
