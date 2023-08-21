@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @SuppressWarnings({"CanBeFinal", "SpellCheckingInspection"})
 @Command(name = "DnsResolver", mixinStandardHelpOptions = true, version = "dnsResolve 1.0", description = "dns resolve a domain name to IP")
@@ -26,7 +27,7 @@ public class DnsResolver implements Callable<Result<DnsMessage>> {
         System.exit(exitCode);
     }
 
-    @Option(names = "-d", arity = "1..1", description = "-d specifies the domain name")
+    @Parameters(index = "0", description = "specifies the domain name")
     String domain = null;
 
     @Option(names = "-dns", description = "-dns specifies the DNS server")
@@ -40,15 +41,13 @@ public class DnsResolver implements Callable<Result<DnsMessage>> {
     String typeString = "ALL";
     int type = HeaderFlags.QTYPE_ALL;
 
-    @Option(names = "-norecurse",  arity = "0..", description = "-norecurse specifies to not use ")
+    @Option(names = "-norecurse",  description = "-norecurse specifies to not use ")
     boolean norecurse = false;
 
-    @Option(names = "-v",  arity = "0..", description = "-v specifies to output verbose information with level FINE")
-    boolean vFlag = false;
-    @Option(names = "-vv",  arity = "0..", description = "-vv specifies to output verbose information with level FINER")
-    boolean vvFlag = false;
+    @Option(names = "-v",  description = "-v specifies vrbose mode. Helpful for troubleshooting. Multiple -v options increase the verbosity.")
+    boolean[] vFlag = new boolean[0];
 
-    @Option(names = "-root",  arity = "0..", description = "-root specifies to use a root server")
+    @Option(names = "-root", description = "-root specifies to use a root server")
     boolean useRootServer = false;
 
     DnsServer.Verbose verbose = DnsServer.Verbose.NONE;
@@ -84,7 +83,7 @@ public class DnsResolver implements Callable<Result<DnsMessage>> {
             }
         }
 
-        this.dnsServerName = DnsServer.Name.localhostDnsLoopback();
+        this.dnsServerName = DnsServer.Name.locoalDns();
         if (this.useRootServer) {
             this.dnsServerName = DnsServer.randomRootServer();
         }
@@ -95,10 +94,6 @@ public class DnsResolver implements Callable<Result<DnsMessage>> {
                 this.dnsServerName = DnsServer.Name.fromName(dnsServer);
             }
         }
-        if (vvFlag) {
-            this.verbose = DnsServer.Verbose.FINER;
-        } else {
-            this.verbose= DnsServer.Verbose.fromValue(vFlag);
-        }
+        this.verbose= DnsServer.Verbose.fromValue(vFlag.length);
     }
 }

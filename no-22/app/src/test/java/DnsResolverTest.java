@@ -30,7 +30,7 @@ class DnsResolverTest {
         //Arrange
         var classUnderTest = new DnsResolver();
         var cmd = new CommandLine(classUnderTest);
-        String[] args = { "-d", "www.doris-lorenz.ch", "-vv" };
+        String[] args = { "www.doris-lorenz.ch", "-v", "-v" };
 
         //Act
         cmd.execute(args);
@@ -43,7 +43,7 @@ class DnsResolverTest {
         //Arrange
         var classUnderTest = new DnsResolver();
         var cmd = new CommandLine(classUnderTest);
-        String[] args = { "-d", "www-appenzell-pool.enable.jarowa.de", "-vv" };
+        String[] args = { "www-appenzell-pool.enable.jarowa.de", "-v", "-v" };
 
         //Act
         cmd.execute(args);
@@ -57,7 +57,7 @@ class DnsResolverTest {
         //Arrange
         var classUnderTest = new DnsResolver();
         var cmd = new CommandLine(classUnderTest);
-        String[] args = { "-d", "dns-does-not-exists.de", "-vv" };
+        String[] args = { "dns-does-not-exists.de", "-v", "-v" };
 
         //Act
         cmd.execute(args);

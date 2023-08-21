@@ -16,7 +16,7 @@ public class OctetWriter {
     public OctetWriter appendQName(String name) {
         var list = Arrays.stream(name.split("\\.")).map(
                 (x) -> OctetHelper.intToHexWithLeadingZeros(x.length(), 1)
-                        + OctetHelper.stringToHex(x)).toList();
+                        + OctetHelper.stringToHex(x)).toArray(String[]::new);
         var encodedMessage = String.join("", list) + OctetHelper.intToHexWithLeadingZeros(0, 1);
         this.append(encodedMessage);
         return this;

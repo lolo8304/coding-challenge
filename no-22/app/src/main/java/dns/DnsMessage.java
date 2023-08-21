@@ -3,6 +3,7 @@ package dns;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DnsMessage {
     private int id;
@@ -128,7 +129,7 @@ public class DnsMessage {
     public List<String> getIpAddresses() {
         var list = new ArrayList<>(this.getAnswers());
         list.sort(Comparator.comparingLong(DnsResourceRecord::getIpAddressLong));
-        return list.stream().map(DnsResourceRecord::getIpAddress).filter(Optional::isPresent).map(Optional::get).toList();
+        return list.stream().map(DnsResourceRecord::getIpAddress).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
     public Optional<String> getCName() {
         for (var r : this.getAnswers()) {
@@ -179,7 +180,7 @@ public class DnsMessage {
 
     @SuppressWarnings("unused")
     public DnsResourceRecord getRandomAuthorityWithIp() {
-        var nsListWithIpAddress = this.getAuthorities().stream().filter(DnsResourceRecord::isNsWithIpAddress).toList();
+        var nsListWithIpAddress = this.getAuthorities().stream().filter(DnsResourceRecord::isNsWithIpAddress).collect(Collectors.toList());
         return nsListWithIpAddress.get(new SecureRandom().nextInt(nsListWithIpAddress.size()));
     }
     public DnsResourceRecord getRandomAuthority() {

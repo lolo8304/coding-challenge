@@ -126,7 +126,7 @@ public class OctetReader {
                 label = this.readString(count);
             }
             if (label.isPresent()) {
-                if (!builder.isEmpty()) {
+                if (builder.length() > 0) {
                     builder.append('.');
                 }
                 builder.append(label.get());

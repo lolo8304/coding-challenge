@@ -1,5 +1,9 @@
 package dns;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import java.io.IOException;
 import java.net.*;
 import java.security.SecureRandom;
@@ -73,6 +77,7 @@ public class DnsServer {
             var serverAddress = InetAddress.getByName(this.dnsServer.getSearchValue());
             var packet = new DatagramPacket(dnsRequestData, dnsRequestData.length, serverAddress, this.port);
             socket.send(packet);
+            socket.setSoTimeout(3000);
 
             byte[] receiveBuffer = new byte[1024];
             DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
@@ -151,11 +156,13 @@ public class DnsServer {
     }
 
     public static class Name {
+        private static final Logger _logger = Logger.getLogger(Name.class.getName());
+
         private final String name;
         private final String ipAddress;
 
         public static Name fromName(String name) {
-            return new Name(name, null);
+            return OctetHelper.isValidIPAddress(name) ? fromIpAddress(name) : new Name(name, null);
         }
         public static Name fromName(String name, String ipAddress) {
             return new Name(name, ipAddress);
@@ -170,6 +177,35 @@ public class DnsServer {
 
         public static Name localhostDnsLoopback() {
             return fromIpAddress("127.0.0.53");
+        }
+
+        public static Name locoalDns() {
+            Hashtable<String, String> env = new Hashtable<>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
+            /* https://github.com/dnsjava/dnsjava/blob/master/src/main/java/org/xbill/DNS/config/JndiContextResolverConfigProvider.java */
+            try {
+                DirContext ctx = new InitialDirContext(env);
+                String servers = (String) ctx.getEnvironment().get("java.naming.provider.url");
+                ctx.close();
+                StringTokenizer st = new StringTokenizer(servers, " ");
+                while (st.hasMoreTokens()) {
+                    String server = st.nextToken();
+                    try {
+                        URI serverUri = new URI(server);
+                        String host = serverUri.getHost();
+                        if (host == null || host.isEmpty()) {
+                            // skip the fallback server to localhost
+                            continue;
+                        }
+                        return OctetHelper.isValidIPAddress(host) ? Name.fromIpAddress(host) : Name.fromName(host);
+                    } catch (URISyntaxException e) {
+                        _logger.info(String.format("Could not parse %s as a dns server", server));
+                    }
+                }
+            } catch (NamingException e) {
+                _logger.info("Error occured while parsing DNS environment");
+            }
+            return localhostDnsLoopback();
         }
 
         @Override
