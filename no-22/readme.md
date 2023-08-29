@@ -48,6 +48,27 @@ Address:  18.67.17.95
 
 ```
 
+- or with -v -v to add more verbose output
+
+```bash
+./run.sh -d codingchallenges.fyi -v
+Server: 	62.2.17.61
+Address:	62.2.17.61#53
+
+Non-authoritative answer:
+Aug 21, 2023 9:48:18 AM dns.DnsServer lookup
+INFO: Querying [ 62.2.17.61 ] for codingchallenges.fyi
+Aug 21, 2023 9:48:18 AM dns.DnsServer sendAndReceive
+INFO: DNS [ 62.2.17.61 ], Request: 1F360100000100000000000010636F64696E676368616C6C656E676573036679690000010001
+Aug 21, 2023 9:48:18 AM dns.DnsServer sendAndReceive
+INFO: DNS [ 62.2.17.61 ], Response: 1F368180000100040000000010636F64696E676368616C6C656E676573036679690000010001C00C000100010000003200040DE06702C00C000100010000003200040DE0676EC00C000100010000003200040DE06738C00C000100010000003200040DE0670E
+Name:  codingchallenges.fyi
+Address:  13.224.103.2
+Address:  13.224.103.14
+Address:  13.224.103.56
+Address:  13.224.103.110
+```
+
 ## Options
 
 ```bash

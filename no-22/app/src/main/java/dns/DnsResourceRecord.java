@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"SpellCheckingInspection", "FieldMayBeFinal", "FieldCanBeLocal", "unused"})
 public class DnsResourceRecord {
@@ -120,6 +121,9 @@ public class DnsResourceRecord {
                 case HeaderFlags.QTYPE_A -> {
                     convertRecordIpAddress(topReader);
                 }
+                case HeaderFlags.QTYPE_AAAA -> {
+                    convertRecordIpAddress6(topReader);
+                }
                 default -> {
                     var reader = new OctetReader(this.rData, topReader);
                     this.setRDataString(String.format("Unknown %d: %s", this.type, reader.readString(this.rData.length*2)));
@@ -191,6 +195,12 @@ public class DnsResourceRecord {
         this.setRDataString(ip);
         this.rDataValues.put("ADDRESS", ip);
     }
+    private void convertRecordIpAddress6(OctetReader topReader) throws IOException {
+        var reader = new OctetReader(this.rData, topReader);
+        var ip = reader.readIpAddress6().get();
+        this.setRDataString(ip);
+        this.rDataValues.put("ADDRESS", ip);
+    }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void convertRecordWithName(OctetReader topReader, String nameKey) throws IOException {
@@ -241,5 +251,20 @@ public class DnsResourceRecord {
 
     public DnsServer.Name getAuthorityName() {
         return DnsServer.Name.fromName(this.getRDataString("NSDNAME"), this.getRDataString("ADDRESS"));
+    }
+
+    public StringBuilder debugLog(StringBuilder builder) {
+        builder.append("\nname=").append(this.name)
+                .append(" [flags: T=").append(HeaderFlags.Type.stringValueOf(this.getType()))
+                .append(", C=").append(HeaderFlags.Type.stringValueOf(this.getClazz()))
+                .append(", TTL=").append(this.ttl)
+                .append(", LEN=").append(this.rdLength)
+                .append("]").append("\n");
+        for (var e: this.rDataValues.keySet().stream().sorted().collect(Collectors.toList())) {
+            if (!e.equals("DATA")) {
+                builder.append("    - ").append(e).append("=").append(this.getRDataString(e)).append("\n");
+            }
+        }
+        return builder;
     }
 }

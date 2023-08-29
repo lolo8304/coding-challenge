@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="" />
+    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsQuestion.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsQuestion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsResourceRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsResourceRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/DnsServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/Flags.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/Flags.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/HeaderFlags.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/HeaderFlags.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/app/src/main/java/dns/OctetReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-22/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/no-22/readme.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

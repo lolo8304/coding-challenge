@@ -85,7 +85,7 @@ public class DnsMessage {
         return this.questions.size();
     }
 
-    public int getAnswerCount() {
+    public int getAnswersCount() {
         return this.answers.size();
     }
 
@@ -153,9 +153,32 @@ public class DnsMessage {
         return writer.appendInt16(this.id)
         .appendInt16(this.flags)
         .appendInt16(this.getQuestionCount())
-        .appendInt16(this.getAnswerCount())
+        .appendInt16(this.getAnswersCount())
         .appendInt16(this.getAuthorityCount())
         .appendInt16(this.getAdditionalCount());
+    }
+
+    public StringBuilder debugLog(StringBuilder builder) {
+        builder.append("ID=").append(this.id)
+                .append("flags: [").append(String.join(",", Flags.flags(this.flags))).append("]");
+        builder.append(", Count [Q:").append(this.getQuestionCount())
+                .append(", A:").append(this.getAnswersCount())
+                .append(", AUTH:").append(this.getAuthorityCount())
+                .append(", ADD:").append(this.getAdditionalCount()).append("]").append("\n");
+
+        for (var q: this.getQuestions()) {
+            q.debugLog(builder);
+        }
+        for (var a: this.getAnswers()) {
+            a.debugLog(builder);
+        }
+        for (var a: this.getAuthorities()) {
+            a.debugLog(builder);
+        }
+        for (var a: this.getAdditionalRecords()) {
+            a.debugLog(builder);
+        }
+        return builder;
     }
 
     public OctetWriter write(OctetWriter writer) {

@@ -1,5 +1,9 @@
 package dns;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class Flags {
 
@@ -44,6 +48,8 @@ public class Flags {
     public static final int OPCODE_QUERY = /*    */ binaryToInt("0____00000000000", "0000");
     public static final int OPCODE_IQUERY = /*   */ binaryToInt("0____00000000000", "0001");
     public static final int OPCODE_STATUS = /*   */ binaryToInt("0____00000000000", "0010");
+    public static final int OPCODE_MASK = /*     */ binaryToInt("0____00000000000", "1111");
+
     public static final int AUTHORITATIVE_ANSWERS = binaryToInt("00000_0000000000", "1");
     public static final int TRUNCATION = /*      */ binaryToInt("000000_000000000", "1");
     public static final int RECURSION_DESIRED = /**/binaryToInt("0000000_00000000", "1");
@@ -56,6 +62,41 @@ public class Flags {
     public static final int RC_NAME_ERROR = /*   */ binaryToInt("000000000000____", "0011");
     public static final int RC_NOT_IMPL = /*     */ binaryToInt("000000000000____", "0100");
     public static final int RC_REFUSED = /*      */ binaryToInt("000000000000____", "0101");
+    public static final int RC_MASK = /*         */ binaryToInt("000000000000____", "1111");
 
+    public static List<String> flags(int flags) {
+        var list = new ArrayList<String>();
+        flag(flags, QR_RESPONSE, "RESPONSE", "REQUEST").ifPresent(list::add);
+        flag(flags, OPCODE_MASK, OPCODE_QUERY, "Q").ifPresent(list::add);
+        flag(flags, OPCODE_MASK, OPCODE_IQUERY, "IQ").ifPresent(list::add);
+        flag(flags, OPCODE_MASK, OPCODE_STATUS, "STATUS").ifPresent(list::add);
+        flag(flags, AUTHORITATIVE_ANSWERS, "NS").ifPresent(list::add);
+        flag(flags, TRUNCATION, "TRUNC").ifPresent(list::add);
+        flag(flags, RECURSION_DESIRED, null,"NORECURSE").ifPresent(list::add);
+        flag(flags, RECURSION_AVAIL, "REC_AVAIL").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_FORMAT_ERROR, "ERR_FORMAT").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_NAME_ERROR, "ERR_NAME").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_REFUSED, "ERR_REFUSED").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_SERVER_ERROR, "ERR_SERVER").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_SERVER_ERROR, "ERR_SERVER").ifPresent(list::add);
+        flag(flags, RC_MASK, RC_NOT_IMPL, "ERR_NOT_IMPL").ifPresent(list::add);
+        return list;
+    }
+    public static Optional<String> flag(int flags, int mask, int flag, String flag1, String flag0) {
+        if ((flags & mask) == flag) {
+            return flag1 == null ? Optional.empty() : Optional.of(flag1);
+        } else {
+            return flag0 == null ? Optional.empty() : Optional.of(flag0);
+        }
+    }
+    public static Optional<String> flag(int flags, int mask, String flag1, String flag0) {
+        return flag(flags, mask, mask, flag1, flag0);
+    }
+    public static Optional<String> flag(int flags, int mask, int flag, String flag1) {
+        return flag(flags, mask, flag, flag1, null);
+    }
+    public static Optional<String> flag(int flags, int mask, String flag1) {
+        return flag(flags, mask, mask, flag1, null);
+    }
 }
 

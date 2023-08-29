@@ -49,4 +49,11 @@ public class DnsQuestion {
         return writer;
     }
 
+    public StringBuilder debugLog(StringBuilder builder) {
+        return builder.append("name=").append(this.name)
+                .append("[flags: T=").append(HeaderFlags.Type.stringValueOf(this.getType()))
+                .append(", C=").append(HeaderFlags.Type.stringValueOf(this.getClazz()))
+                .append("]");
+    }
+
 }

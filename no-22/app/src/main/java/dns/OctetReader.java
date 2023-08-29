@@ -2,6 +2,8 @@ package dns;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -60,7 +62,22 @@ public class OctetReader {
         var ipPart4 = this.readByte().get();
         return Optional.of(String.format("%d.%d.%d.%d", ipPart1, ipPart2, ipPart3, ipPart4));
     }
+    public Optional<String> readIpAddress6() throws IOException {
+        var bytes = this.readBytes(8);
+        return Optional.of(Inet6Address.getByAddress(null, bytes.get()).getHostAddress());
+    }
+    public String joinByteArray(String sep, byte[] byteArray) {
+        StringBuilder builder = new StringBuilder();
 
+        for (int i = 0; i < byteArray.length; i++) {
+            builder.append(byteArray[i]);
+            if (i < byteArray.length - 1) {
+                builder.append(sep);
+            }
+        }
+
+        return builder.toString();
+    }
     public Optional<byte[]> readBytes(int count) throws IOException {
         var str = this.readHex(count);
         return str.map(s -> s.getBytes(StandardCharsets.UTF_8));

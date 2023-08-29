@@ -20,7 +20,7 @@ public class DnsServer {
         RootServers.add(Name.fromName("b.root-servers.net", "199.9.14.201"));
         RootServers.add(Name.fromName("c.root-servers.net", "192.33.4.12"));
         RootServers.add(Name.fromName("d.root-servers.net", "199.7.91.13"));
-        RootServers.add(Name.fromName("e.root-servers.net", "192.203.230"));
+        RootServers.add(Name.fromName("e.root-servers.net", "192.203.230.10"));
         RootServers.add(Name.fromName("f.root-servers.net", "192.5.5.241"));
         RootServers.add(Name.fromName("i.root-servers.net", "192.36.148.17"));
         RootServers.add(Name.fromName("j.root-servers.net", "192.58.128.30"));
@@ -109,7 +109,13 @@ public class DnsServer {
             _logger.info(String.format("Querying %s for %s", this.dnsServer, domainName));
         }
         var request = new DnsMessage(additionalFlags).addQuestion(new DnsQuestion(domainName, type));
+        if (verbose == Verbose.FINER) {
+            _logger.info(request.debugLog(new StringBuilder()).toString());
+        }
         var response = new DnsMessage(new OctetReader(sendAndReceive(request.write(new OctetWriter()).toString())));
+        if (verbose == Verbose.FINER) {
+            _logger.info(response.debugLog(new StringBuilder()).toString());
+        }
         if (response.hasAnswerOf(type)) {
             return Optional.of(response);
         } else if (response.getAuthorityCount() > 0) {
