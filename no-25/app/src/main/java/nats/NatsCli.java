@@ -14,7 +14,7 @@ public class NatsCli {
     }
 
     public void command(String command) {
-        _logger.info(String.format("%s:%d>", this.hostname, this.port));
+        _logger.info(String.format("%s:%d> %s", this.hostname, this.port, command));
     }
 
 }
