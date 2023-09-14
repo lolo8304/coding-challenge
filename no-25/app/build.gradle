@@ -17,6 +17,7 @@ repositories {
 dependencies {
     
     implementation 'info.picocli:picocli:4.7.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.1'
 
     // Use JUnit Jupiter for testing.

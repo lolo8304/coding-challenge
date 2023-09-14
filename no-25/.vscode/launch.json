@@ -12,7 +12,7 @@
             "projectName": "app",
             "args": [
                 "-h=localhost",
-                "-p=4223",
+                "-p=4222",
                 "-s"
             ]
         },
@@ -24,7 +24,7 @@
             "projectName": "app",
             "args": [
                 "-h=localhost",
-                "-p=4223"
+                "-p=4222"
             ]
         }
     ]

@@ -1,20 +1,145 @@
 package nats;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.logging.Logger;
+
+import nats.protocol.ICmd;
 
 public class NatsCli {
     private static final Logger _logger = Logger.getLogger(NatsCli.class.getName());
 
-    private String hostname;
+    private String hostName;
     private int port;
+    private Socket socket;
+    private BufferedReader reader;
+    private BufferedWriter writer;
+    private boolean started;
 
-    public NatsCli(String hostname, int port) {
-        this.hostname = hostname;
+    private Thread readerThread;
+
+    public NatsCli(String hostName, int port) {
+        this.hostName = hostName;
         this.port = port;
+        this.started = false;
     }
 
-    public void command(String command) {
-        _logger.info(String.format("%s:%d> %s", this.hostname, this.port, command));
+    public NatsCli command(String command) {
+        _logger.info(String.format("%s:%d> %s", this.hostName, this.port, command));
+        return this;
     }
 
+    public NatsCli start() {
+        if (!this.started) {
+
+            try {
+                this.socket = new Socket(this.hostName, this.port);
+                this.reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(socket.getInputStream()),
+                        StandardCharsets.UTF_8));
+                this.writer = new BufferedWriter(new OutputStreamWriter(
+                        new BufferedOutputStream(socket.getOutputStream()), StandardCharsets.UTF_8));
+                _logger.info(String.format("Server %s:%d connected", this.hostName, this.port));
+                this.started = true;
+                return this;
+            } catch (IOException e) {
+                _logger
+                        .severe(String.format("Server %s:%d not started: %s", this.hostName, this.port,
+                                e.getMessage()));
+                this.started = false;
+                this.socket = null;
+                this.reader = null;
+                this.writer = null;
+            }
+        } else {
+            _logger.info(String.format("Server %s:%d already connected", this.hostName, this.port));
+        }
+        return this;
+    }
+
+    public void stop() {
+        if (this.readerThread != null) {
+            this.started = false;
+            this.readerThread = null;
+        }
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+        }
+        try {
+            this.reader.close();
+        } catch (IOException e) {
+        }
+        try {
+            this.writer.close();
+        } catch (IOException e) {
+        }
+    }
+
+    public void sendCommand(ICmd command) throws IOException {
+        var msgToSend = command.send();
+        if (msgToSend.isPresent()) {
+            this.sendCommand(msgToSend.get());
+        }
+    }
+
+    public void sendCommand(String command) throws IOException {
+        if (!command.endsWith(ICmd.EOL)) {
+            command = command + ICmd.EOL;
+        }
+        this.writer.append(command);
+        this.writer.flush();
+    }
+
+    public String readFromConsole() {
+        System.out.print("> ");
+        try (Scanner scanner = new Scanner(System.in);) {
+            return scanner.nextLine();
+        }
+    }
+
+    public NatsCli receive() {
+        this.readerThread = new Thread(() -> {
+            while (!this.started) {
+                try {
+                    Thread.currentThread().sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            while (this.started) {
+                try {
+                    if (this.reader.ready()) {
+                        System.out.println(this.reader.readLine());
+                    }
+                } catch (IOException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+
+        this.readerThread.start();
+        return this;
+    }
+
+    public NatsCli startAndInput() throws IOException {
+        this.receive();
+        this.start();
+        if (this.started) {
+            var input = this.readFromConsole();
+            while (input != null && !input.equalsIgnoreCase("quit")) {
+                this.sendCommand(input);
+                input = this.readFromConsole();
+            }
+        }
+        return this;
+    }
 }

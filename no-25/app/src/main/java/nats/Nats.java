@@ -32,12 +32,21 @@ public class Nats implements Callable<Result> {
     @Option(names = "-c", description = "-c specifies the command executed")
     String command = null;
 
+    boolean isInteractive = true;
+
+    private void init() {
+        this.isInteractive = this.command == null;
+    }
+
     @Override
     public Result call() throws Exception {
+        this.init();
         if (this.server) {
             new NatsServer(this.port).start();
+        } else if (this.isInteractive) {
+            new NatsCli(this.hostname, this.port).startAndInput().stop();
         } else {
-            new NatsCli(this.hostname, this.port).command(this.command);
+            new NatsCli(this.hostname, this.port).start().command(this.command).stop();
         }
         return new Result();
     }
