@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import nats.listener.Listener;
 import nats.protocol.NatsHandler;
+import nats.runtime.NatsRuntime;
 
 public class NatsServer {
     private static final Logger _logger = Logger.getLogger(NatsServer.class.getName());

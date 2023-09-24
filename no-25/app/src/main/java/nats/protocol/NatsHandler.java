@@ -5,11 +5,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
 
-import nats.NatsRuntime;
 import nats.NatsServer;
 import nats.listener.StringHandler;
 import nats.protocol.commands.ICmd;
 import nats.protocol.commands.Info;
+import nats.runtime.NatsRuntime;
 
 public class NatsHandler extends StringHandler {
 

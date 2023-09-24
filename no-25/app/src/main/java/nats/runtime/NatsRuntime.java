@@ -1,9 +1,7 @@
-package nats;
+package nats.runtime;
 
 import java.util.Hashtable;
 import java.util.Map;
-
-import nats.runtime.NatsContext;
 
 public class NatsRuntime {
     private Map<Integer, NatsContext> contexts;

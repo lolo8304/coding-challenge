@@ -1,6 +1,5 @@
 package nats.runtime;
 
-import nats.NatsRuntime;
 import nats.protocol.commands.Pub;
 import nats.protocol.commands.Sub;
 
