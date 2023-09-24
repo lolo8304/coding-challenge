@@ -1,5 +1,6 @@
 package nats;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nats.listener.Listener;
@@ -10,21 +11,24 @@ public class NatsServer {
     public final int port;
     private Listener listener;
     private NatsHandler handler;
+    private NatsRuntime runtime;
 
     public NatsServer(int port) throws InterruptedException {
         this.port = port;
-        this.handler = new NatsHandler(this);
+        this.runtime = new NatsRuntime();
+        this.handler = new NatsHandler(this, this.runtime);
         this.listener = new Listener(this.port, handler);
-
     }
 
     public void start() {
-        _logger.info("Start server on port " + this.port);
+        if (_logger.isLoggable(Level.INFO))
+            _logger.info("Start server on port " + this.port);
         this.listener.start();
     }
 
     public void stop() {
-        _logger.info("Shutdown server on port " + this.port);
+        if (_logger.isLoggable(Level.INFO))
+            _logger.info("Shutdown server on port " + this.port);
         this.listener.stop();
     }
 }

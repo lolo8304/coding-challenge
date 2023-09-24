@@ -10,9 +10,10 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nats.protocol.ICmd;
+import nats.protocol.commands.ICmd;
 
 public class NatsCli {
     private static final Logger _logger = Logger.getLogger(NatsCli.class.getName());
@@ -33,7 +34,8 @@ public class NatsCli {
     }
 
     public NatsCli command(String command) {
-        _logger.info(String.format("%s:%d> %s", this.hostName, this.port, command));
+        if (_logger.isLoggable(Level.INFO))
+            _logger.info(String.format("%s:%d> %s", this.hostName, this.port, command));
         return this;
     }
 
@@ -46,20 +48,23 @@ public class NatsCli {
                         StandardCharsets.UTF_8));
                 this.writer = new BufferedWriter(new OutputStreamWriter(
                         new BufferedOutputStream(socket.getOutputStream()), StandardCharsets.UTF_8));
-                _logger.info(String.format("Server %s:%d connected", this.hostName, this.port));
+                if (_logger.isLoggable(Level.INFO))
+                    _logger.info(String.format("Server %s:%d connected", this.hostName, this.port));
                 this.started = true;
                 return this;
             } catch (IOException e) {
-                _logger
-                        .severe(String.format("Server %s:%d not started: %s", this.hostName, this.port,
-                                e.getMessage()));
+                if (_logger.isLoggable(Level.SEVERE))
+                    _logger
+                            .severe(String.format("Server %s:%d not started: %s", this.hostName, this.port,
+                                    e.getMessage()));
                 this.started = false;
                 this.socket = null;
                 this.reader = null;
                 this.writer = null;
             }
         } else {
-            _logger.info(String.format("Server %s:%d already connected", this.hostName, this.port));
+            if (_logger.isLoggable(Level.INFO))
+                _logger.info(String.format("Server %s:%d already connected", this.hostName, this.port));
         }
         return this;
     }
@@ -84,15 +89,15 @@ public class NatsCli {
     }
 
     public void sendCommand(ICmd command) throws IOException {
-        var msgToSend = command.send();
+        var msgToSend = command.print();
         if (msgToSend.isPresent()) {
             this.sendCommand(msgToSend.get());
         }
     }
 
     public void sendCommand(String command) throws IOException {
-        if (!command.endsWith(ICmd.EOL)) {
-            command = command + ICmd.EOL;
+        if (!command.endsWith(ICmd.CRLF)) {
+            command = command + ICmd.CRLF;
         }
         this.writer.append(command);
         this.writer.flush();
@@ -109,7 +114,7 @@ public class NatsCli {
         this.readerThread = new Thread(() -> {
             while (!this.started) {
                 try {
-                    Thread.currentThread().sleep(1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

@@ -1,4 +1,4 @@
-package nats.protocol;
+package nats.protocol.commands;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -10,14 +10,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-// {"server_id\":\"NCXMJZYQEWUDJFLYLSTTE745I2WUNCVG3LJJ3NRKSFJXEG6RGK7753DJ\",\"version\":"2.0.0","proto":1,"go":"go1.11.10","host":"0.0.0.0","port":4222,"max_payload":1048576,"client_id":5089}
+import nats.runtime.NatsContext;
+
 public class Info implements ICmd {
     private static Random random;
     private static final String SECURESTRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static String SERVER_ID;
+    private static String serverIdUnique;
 
     @JsonProperty("server_id")
-    public String serverId = SERVER_ID;
+    public String serverId = serverIdUnique;
     @JsonProperty("version")
     public String version = "1.0.0";
     @JsonProperty("proto")
@@ -39,7 +40,7 @@ public class Info implements ICmd {
         } catch (NoSuchAlgorithmException e) {
             random = new Random();
         }
-        SERVER_ID = generateServerId();
+        serverIdUnique = generateServerId();
     }
 
     private static String generateServerId() {
@@ -56,18 +57,18 @@ public class Info implements ICmd {
     }
 
     @Override
-    public Optional<String> send() throws IOException {
+    public Optional<String> print() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return Optional.of("INFO " + objectMapper.writeValueAsString(this) + EOL);
+            return Optional.of("INFO " + objectMapper.writeValueAsString(this) + CRLF);
         } catch (JsonProcessingException e) {
-            return Optional.of("ERROR " + e.getMessage() + EOL);
+            return Optional.of("ERROR " + e.getMessage() + CRLF);
         }
     }
 
     @Override
-    public Optional<String> execute() throws IOException {
-        return this.send();
+    public Optional<String> executeCommand(NatsContext context) throws IOException {
+        return this.print();
     }
 
 }

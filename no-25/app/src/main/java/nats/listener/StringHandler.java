@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import nats.protocol.commands.ICmd;
+
 public abstract class StringHandler implements IListenerHandler {
     private static final int BUFFER_SIZE = 1024;
-    private static final String NEWLINE = "" + '\n';
 
     private Map<SocketChannel, StringBuilder> lineBuffer;
 
@@ -54,15 +55,15 @@ public abstract class StringHandler implements IListenerHandler {
         }
 
         String line;
-        var nextNewLine = buffer.indexOf(NEWLINE);
-        if (nextNewLine == -1) {
+        var nextCRLF = buffer.indexOf(ICmd.CRLF);
+        if (nextCRLF == -1) {
             line = buffer.toString();
             buffer.setLength(0);
         } else {
-            line = buffer.substring(0, nextNewLine + 1);
-            buffer.delete(0, nextNewLine + 1);
+            line = buffer.substring(0, nextCRLF + 2);
+            buffer.delete(0, nextCRLF + 2);
         }
-        return line.trim();
+        return line;
     }
 
     @Override
