@@ -16,11 +16,14 @@ public class Info implements ICmd {
     private static Random random;
     private static final String SECURESTRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static String serverIdUnique;
+    private static String xKeyUnique;
 
     @JsonProperty("server_id")
     public String serverId = serverIdUnique;
+    @JsonProperty("server_name")
+    public String serverName = serverIdUnique;
     @JsonProperty("version")
-    public String version = "1.0.0";
+    public String version = "2.10.1";
     @JsonProperty("proto")
     public int protocol = 1;
     @JsonProperty("go")
@@ -33,6 +36,14 @@ public class Info implements ICmd {
     public int maxPayload = 1048576;
     @JsonProperty("client_id")
     public int clientId;
+    @JsonProperty("client_ip")
+    public String clientIp;
+    @JsonProperty("auth_required")
+    public boolean authenticationRequired = false;
+    @JsonProperty("tls_required")
+    public boolean tls_required = false;
+    @JsonProperty("xkey")
+    public String xKey = xKeyUnique;
 
     static {
         try {
@@ -41,6 +52,7 @@ public class Info implements ICmd {
             random = new Random();
         }
         serverIdUnique = generateServerId();
+        xKeyUnique = generateXKey();
     }
 
     private static String generateServerId() {
@@ -51,7 +63,16 @@ public class Info implements ICmd {
         return builder.toString();
     }
 
-    public Info(int clientId, int port) {
+    private static String generateXKey() {
+        var builder = new StringBuilder();
+        for (int i = 0; i < 56; i++) {
+            builder.append(random.nextInt(SECURESTRING.length()));
+        }
+        return builder.toString();
+    }
+
+    public Info(String clientIp, int clientId, int port) {
+        this.clientIp = clientIp;
         this.clientId = clientId;
         this.port = port;
     }

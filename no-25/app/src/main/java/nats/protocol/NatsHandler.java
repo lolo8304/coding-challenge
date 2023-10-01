@@ -1,18 +1,21 @@
 package nats.protocol;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import nats.NatsServer;
 import nats.listener.StringHandler;
+import nats.protocol.commands.Err;
 import nats.protocol.commands.ICmd;
 import nats.protocol.commands.Info;
 import nats.runtime.NatsRuntime;
 
 public class NatsHandler extends StringHandler {
-
+    private static final Logger _logger = Logger.getLogger(NatsHandler.class.getName());
     private static final String SHUTDOWN_CMD = "shutdown" + ICmd.CRLF;
     private static final String QUIT_CMD = "quit" + ICmd.CRLF;
     private static final String INFO_CMD = "info" + ICmd.CRLF;
@@ -22,25 +25,33 @@ public class NatsHandler extends StringHandler {
     private final NatsServer server;
     private final NatsRuntime runtime;
 
-    public NatsHandler(NatsServer server, NatsRuntime runtime) {
+    public NatsHandler(NatsServer server) {
         this.server = server;
-        this.runtime = runtime;
+        this.runtime = new NatsRuntime(this);
         this.parser = new NatsParser();
+    }
+
+    public NatsRuntime runtime() {
+        return this.runtime;
     }
 
     @Override
     public Optional<String> accept(SocketChannel clientSocketChannel, SelectionKey key) throws IOException {
         var info = getNewInfo(clientSocketChannel);
-        this.runtime.connect(info.clientId);
+        this.runtime.connect(info.clientId, clientSocketChannel);
         return info.print();
     }
 
     private Info getNewInfo(SocketChannel clientSocketChannel) {
-        return new Info(clientSocketChannel.hashCode(), this.server.port);
+        var inetAddress = (InetSocketAddress) (clientSocketChannel.socket().getRemoteSocketAddress());
+        return new Info(inetAddress.getAddress().getHostAddress(),
+                clientSocketChannel.hashCode(), this.server.port);
     }
 
     @Override
     public Optional<String> request(SocketChannel clientSocketChannel, String line) throws IOException {
+        if (line.isEmpty())
+            return Optional.empty();
         if (line.equalsIgnoreCase(INFO_CMD)) {
             return this.getNewInfo(clientSocketChannel).print();
         }
@@ -59,16 +70,21 @@ public class NatsHandler extends StringHandler {
         }
 
         var context = this.runtime.getContext(clientSocketChannel.hashCode());
-        var command = this.parser.parse(new Request(this, clientSocketChannel), line);
-        if (command.isPresent()) {
-            var result = command.get().executeCommand(context);
-            if (context.verbose() && result.isPresent()) {
-                return Optional.of(result.get() + "[" + clientSocketChannel.hashCode() + "]" + ICmd.CRLF);
+        try {
+            var command = this.parser.parse(new Request(this, clientSocketChannel), line);
+            if (command.isPresent()) {
+                var result = command.get().executeCommand(context);
+                if (context.verbose() && result.isPresent()) {
+                    return Optional.of(result.get() + "[" + clientSocketChannel.hashCode() + "]" + ICmd.CRLF);
+                } else {
+                    return result;
+                }
             } else {
-                return result;
+                return Optional.of("-E 'Command not found'" + ICmd.CRLF);
             }
-        } else {
-            return Optional.of("-E 'Command not found'" + ICmd.CRLF);
+        } catch (Exception e) {
+            _logger.severe(String.format("Error while parsing / executing line '%s'", line));
+            return new Err(String.format("Error while parsing / executing line '%s'", line)).print();
         }
     }
 
@@ -89,6 +105,10 @@ public class NatsHandler extends StringHandler {
 
         public int clientId() {
             return this.clientSocketChannel.hashCode();
+        }
+
+        public NatsHandler handler() {
+            return this.handler;
         }
     }
 

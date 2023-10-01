@@ -8,10 +8,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import nats.protocol.commands.ICmd;
 
 public abstract class StringHandler implements IListenerHandler {
+    public static final Logger _logger = Logger.getLogger(StringHandler.class.getName());
+
     private static final int BUFFER_SIZE = 1024;
 
     private Map<SocketChannel, StringBuilder> lineBuffer;
@@ -69,9 +72,25 @@ public abstract class StringHandler implements IListenerHandler {
     @Override
     public void request(SocketChannel clientSocketChannel) throws IOException {
         var line = readLineFromSocketChannel(clientSocketChannel);
-        var response = this.request(clientSocketChannel, line);
-        if (response.isPresent()) {
-            this.write(clientSocketChannel, response.get());
+        if (line != null && !line.isEmpty()) {
+            this.log(true, clientSocketChannel.hashCode(), line);
+            var response = this.request(clientSocketChannel, line);
+            if (response.isPresent()) {
+                this.log(false, clientSocketChannel.hashCode(), response.get());
+                this.write(clientSocketChannel, response.get());
+            } else {
+                this.log(false, clientSocketChannel.hashCode(), null);
+            }
+        }
+    }
+
+    private void log(boolean inbound, int cid, String toLog) {
+        var direction = inbound ? "<<-" : "->>";
+        if (toLog != null) {
+            toLog = toLog.endsWith(ICmd.CRLF) ? toLog.substring(0, toLog.length() - 2) : toLog;
+            _logger.info(String.format("cid:%d - %s [%s]", cid, direction, toLog));
+        } else {
+            _logger.info(String.format("cid:%d - %s (none)", cid, direction));
         }
     }
 
@@ -84,6 +103,7 @@ public abstract class StringHandler implements IListenerHandler {
     public void acceptConnection(SocketChannel clientSocketChannel, SelectionKey key) throws IOException {
         var response = this.accept(clientSocketChannel, key);
         if (response.isPresent()) {
+            this.log(false, clientSocketChannel.hashCode(), response.get());
             this.write(clientSocketChannel, response.get());
         }
     }

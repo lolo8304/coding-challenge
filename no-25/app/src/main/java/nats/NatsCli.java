@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,10 +104,16 @@ public class NatsCli {
         this.writer.flush();
     }
 
-    public String readFromConsole() {
+    public Optional<String> readFromConsole() throws IOException {
+        while (System.in.available() > 0) {
+            System.in.read();
+        }
         System.out.print("> ");
-        try (Scanner scanner = new Scanner(System.in);) {
-            return scanner.nextLine();
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNext()) {
+            return Optional.of(scanner.nextLine());
+        } else {
+            return Optional.empty();
         }
     }
 
@@ -140,8 +147,8 @@ public class NatsCli {
         this.start();
         if (this.started) {
             var input = this.readFromConsole();
-            while (input != null && !input.equalsIgnoreCase("quit")) {
-                this.sendCommand(input);
+            while (input.isPresent() && !input.get().equalsIgnoreCase("quit")) {
+                this.sendCommand(input.get());
                 input = this.readFromConsole();
             }
         }

@@ -21,6 +21,10 @@ public class NatsLineParser {
         this.request = request;
     }
 
+    public NatsHandler handler() {
+        return this.request.handler();
+    }
+
     public Optional<Token> nextToken() {
         var index = pos;
         while (this.pos < line.length() && isWhitespace(this.line.charAt(this.pos))) {

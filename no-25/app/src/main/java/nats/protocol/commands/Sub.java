@@ -30,7 +30,7 @@ public class Sub implements ICmd {
         var queueGroupToken = line.nextToken();
         var sidToken = line.nextToken();
         if (queueGroupToken.isPresent()) {
-            if (sidToken.isEmpty()) { // no queue group
+            if (sidToken.isEmpty() || sidToken.get().type().equals(NatsLineParser.Type.CRLF)) { // no queue group
                 this.queueGroup = null;
                 sidToken = queueGroupToken;
             } else {
@@ -44,11 +44,16 @@ public class Sub implements ICmd {
 
     @Override
     public Optional<String> print() throws IOException {
-        return Optional.of("CONNECT {} " + CRLF);
+        if (this.queueGroup != null) {
+            return Optional.of(String.format("SUB %s %s %s%s", this.subject, this.queueGroup, this.sid, CRLF));
+        } else {
+            return Optional.of(String.format("SUB %s %s%s", this.subject, this.sid, CRLF));
+        }
     }
 
     @Override
     public Optional<String> executeCommand(NatsContext context) throws IOException {
+        context.subscribe(this);
         if (context.verbose()) {
             return Optional.of("Ok" + CRLF);
         }

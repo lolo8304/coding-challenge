@@ -5,19 +5,16 @@ import java.util.logging.Logger;
 
 import nats.listener.Listener;
 import nats.protocol.NatsHandler;
-import nats.runtime.NatsRuntime;
 
 public class NatsServer {
     private static final Logger _logger = Logger.getLogger(NatsServer.class.getName());
     public final int port;
     private Listener listener;
     private NatsHandler handler;
-    private NatsRuntime runtime;
 
     public NatsServer(int port) throws InterruptedException {
         this.port = port;
-        this.runtime = new NatsRuntime();
-        this.handler = new NatsHandler(this, this.runtime);
+        this.handler = new NatsHandler(this);
         this.listener = new Listener(this.port, handler);
     }
 

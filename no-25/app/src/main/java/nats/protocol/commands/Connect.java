@@ -39,7 +39,7 @@ public class Connect implements ICmd {
     public Optional<String> executeCommand(NatsContext context) throws IOException {
         context.verbose(this.verbose);
         if (this.verbose) {
-            return Optional.of("Ok" + CRLF);
+            return Optional.of("OK" + CRLF);
         }
         return Optional.empty();
     }

@@ -7,6 +7,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Listener {
@@ -28,7 +29,8 @@ public class Listener {
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            _logger.info("Server started on port " + port);
+            if (_logger.isLoggable(Level.INFO))
+                _logger.info("Server started on port " + port);
             this.started = true;
 
             while (this.started) {
@@ -70,7 +72,8 @@ public class Listener {
         clientSocketChannel.register(key.selector(), SelectionKey.OP_READ);
         this.handler.acceptConnection(clientSocketChannel, key);
         this.handler.registerBuffer(clientSocketChannel);
-        _logger.info("New client connected: " + clientSocketChannel.getRemoteAddress());
+        if (_logger.isLoggable(Level.INFO))
+            _logger.info("New client connected: " + clientSocketChannel.getRemoteAddress());
     }
 
     private void readCommand(SelectionKey key) throws IOException {
