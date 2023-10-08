@@ -8,6 +8,8 @@ public class TokenValue {
 
     private Token token;
     private String str;
+    private Double d;
+    private Integer i;
     private List<TokenValue> expression;
 
     public TokenValue(Token token) {
@@ -26,6 +28,16 @@ public class TokenValue {
         this.str = null;
     }
 
+    public TokenValue(Token numberDouble, String str, Double d) {
+        this.token = token;
+        this.str = str;
+        this.d = d;
+    }
+    public TokenValue(Token numberInteger, String str, int i) {
+        this.token = token;
+        this.str = str;
+        this.i = i;
+    }
     public String getValue() {
         return this.str;
     }
@@ -37,5 +49,10 @@ public class TokenValue {
     }
     public List<TokenValue> getExpression() {
         return this.expression;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Token[%s, %s]", this.token, this.str);
     }
 }

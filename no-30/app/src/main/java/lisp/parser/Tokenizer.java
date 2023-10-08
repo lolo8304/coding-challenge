@@ -3,11 +3,20 @@ package lisp.parser;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class Tokenizer {
+    private static Set<Character> SPECIAL_SYMBOL_CHARS = new HashSet<Character>();
     private Reader reader;
     private Optional<Character> last;
+    static {
+        SPECIAL_SYMBOL_CHARS.add(':');
+        SPECIAL_SYMBOL_CHARS.add('-');
+        SPECIAL_SYMBOL_CHARS.add('_');
+        SPECIAL_SYMBOL_CHARS.add('$');
+    }
 
     public Tokenizer(Reader reader) {
         this.reader = reader;
@@ -33,16 +42,23 @@ public class Tokenizer {
             case '\"':
                 return this.parseStringToken(ch);
             case ':':
-                return this.parseSymbolToken(ch);
+                return this.parseSymbolToken(ch, Token.KEYWORD);
             case '(':
-                //return Optional.of(new TokenValue(Token.OPEN_PARENTHESIS));
+                //return Optional.of(new TokenValue(Token.LPARENT));
                 return this.parseSExpression(ch);
             case ')':
-                return Optional.of(new TokenValue(Token.CLOSE_PARENTHESIS));
-        
+                return Optional.of(new TokenValue(Token.RPAREN));
+
+            case '+','-','/','=','<','>','!','$','%','&','|','?','~':
+                return Optional.of(new TokenValue(Token.BUILTIN, ""+ch));
+            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+                return this.parseNumberToken(ch);
             default:
-                if (Character.isLetterOrDigit(ch)) {
-                    return this.parseSymbolToken(ch);                    
+                if (Character.isDigit(ch)) {
+                    return this.parseSymbolToken(ch, Token.NUMBER);
+                }
+                if (isLetterAndUnderline(ch)) {
+                    return this.parseSymbolToken(ch, Token.SYMBOL);
                 }
                 if (Character.isWhitespace(ch)) {
                     return parseWhitespace(ch);
@@ -50,6 +66,37 @@ public class Tokenizer {
                 throw new IllegalStateException("Illegal character "+ch);
         }
     }
+
+    private Optional<Double> parseDouble(String str) {
+        return Optional.empty();
+    }
+
+    private Optional<TokenValue> parseNumberToken(char ch) throws IOException {
+        var buffer = new StringBuilder();
+        buffer.append(ch);
+        var nextInt = this.reader.read(); var next = (char)nextInt;
+        while (nextInt != -1 && (Character.isDigit(ch) || (ch == '.')) && !Character.isWhitespace(next)) {
+            buffer.append(next);
+            nextInt = this.reader.read(); next = (char)nextInt;
+        }
+        this.last = Optional.of((char)next);
+        var numStr = buffer.toString();
+        var doubleValue = this.parseDouble(numStr);
+        if (doubleValue.isPresent()) {
+            return Optional.of(new TokenValue(Token.NUMBER_DOUBLE, numStr, doubleValue.get()));
+        } else {
+            var i = Integer.parseInt(numStr);
+            return Optional.of(new TokenValue(Token.NUMBER_INTEGER, numStr, i));
+        }
+    }
+
+    private boolean isLetterAndUnderline(char ch) {
+        return Character.isLetter(ch) || ch == '_';
+    }
+    private boolean isLetterDigitalUnderline(char ch) {
+        return isLetterAndUnderline(ch) || Character.isDigit(ch);
+    }
+
 
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
         ch = (char)reader.read();
@@ -62,23 +109,27 @@ public class Tokenizer {
     private Optional<TokenValue> parseSExpression(char ch) throws IOException {
         var elem = this.nextToken();
         var list = new ArrayList<TokenValue>();
-        while (elem.isPresent() && (elem.get().getToken() != Token.CLOSE_PARENTHESIS)) {
+        while (elem.isPresent() && (elem.get().getToken() != Token.RPAREN)) {
             list.add(elem.get());
             elem = this.nextToken();
         }
         return Optional.of(new TokenValue(Token.S_EXPRESSION, list));
     }
 
-    private Optional<TokenValue> parseSymbolToken(char ch) throws IOException {
+    private Optional<TokenValue> parseSymbolToken(char ch, Token returnedToken) throws IOException {
         var buffer = new StringBuilder();
         buffer.append(ch);
-        var next = this.reader.read();
-        while (next != -1 && Character.isLetterOrDigit(next) && !Character.isWhitespace(ch)) {
-            buffer.append((char)next);
-            next = this.reader.read();
+        var nextInt = this.reader.read(); var next = (char)nextInt;
+        while (nextInt != -1 && (isLetterDigitalUnderline(next) || isSpecialSymbolChar(next) && !Character.isWhitespace(next))) {
+            buffer.append(next);
+            nextInt = this.reader.read(); next = (char)nextInt;
         }
         this.last = Optional.of((char)next);
-        return Optional.of(new TokenValue(Token.SYMBOL_ATOM, buffer.toString()));
+        return Optional.of(new TokenValue(returnedToken, buffer.toString()));
+    }
+
+    private boolean isSpecialSymbolChar(char next) {
+        return SPECIAL_SYMBOL_CHARS.contains(next);
     }
 
     private Optional<TokenValue> parseStringToken(char ch) throws IOException {
@@ -94,7 +145,7 @@ public class Tokenizer {
         if (next == -1) {
             return Optional.empty();
         }
-        return Optional.of(new TokenValue(Token.STRING_ATOM, buffer.toString()));
+        return Optional.of(new TokenValue(Token.STRING, buffer.toString()));
     }
 
     

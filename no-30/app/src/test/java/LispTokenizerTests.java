@@ -46,7 +46,7 @@ class LispTokenizerTests {
     void tokenize_atom_expectok() throws URISyntaxException, IOException {
         // Arrange
         ReadReader("step1/valid.atoms.txt");
-        Token[] results = {Token.ATOM, Token.SYMBOL_ATOM};
+        Token[] results = {Token.SYMBOL, Token.KEYWORD, Token.NUMBER, Token.STRING, Token.PACKAGE, Token.BUILTIN};
 
         // Action
         var line = reader.readLine();
@@ -55,9 +55,11 @@ class LispTokenizerTests {
             var token = new Tokenizer(lineReader).nextToken();
             // Assert
 
+            System.out.println("Line="+line+", "+token);
             assertNotNull(token);
             assertTrue(token.isPresent());
-            assertTrue(Arrays.asList(results).contains(token.get().getToken()));
+            assertEquals(line, token.get().getValue());
+            assertTrue(Arrays.asList(results).contains(token.get().getToken()), String.format("Line '%s' is %s", line,token.get().getToken()));
             line = reader.readLine();
         }
         
