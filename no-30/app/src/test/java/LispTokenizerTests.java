@@ -3,7 +3,6 @@
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -46,7 +44,8 @@ class LispTokenizerTests {
     void tokenize_atom_expectok() throws URISyntaxException, IOException {
         // Arrange
         ReadReader("step1/valid.atoms.txt");
-        Token[] results = {Token.SYMBOL, Token.KEYWORD, Token.NUMBER, Token.STRING, Token.PACKAGE, Token.BUILTIN};
+        Token[] results = { Token.SYMBOL, Token.KEYWORD, Token.NUMBER, Token.STRING, Token.PACKAGE, Token.BUILTIN,
+                Token.NUMBER_DOUBLE, Token.NUMBER_INTEGER };
 
         // Action
         var line = reader.readLine();
@@ -55,13 +54,60 @@ class LispTokenizerTests {
             var token = new Tokenizer(lineReader).nextToken();
             // Assert
 
-            System.out.println("Line="+line+", "+token);
+            System.out.println("Line=" + line + ", " + token);
             assertNotNull(token);
             assertTrue(token.isPresent());
             assertEquals(line, token.get().getValue());
-            assertTrue(Arrays.asList(results).contains(token.get().getToken()), String.format("Line '%s' is %s", line,token.get().getToken()));
+            assertTrue(Arrays.asList(results).contains(token.get().getToken()),
+                    String.format("Line '%s' is %s", line, token.get().getToken()));
             line = reader.readLine();
         }
-        
     }
+
+    @Test
+    void tokenize_strings_expectok() throws URISyntaxException, IOException {
+        // Arrange
+        ReadReader("step1/valid.strings.txt");
+        Token[] results = { Token.STRING };
+
+        // Action
+        var line = reader.readLine();
+        while (line != null) {
+            var lineReader = new BufferedReader(new StringReader(line));
+            var token = new Tokenizer(lineReader).nextToken();
+            // Assert
+
+            System.out.println("Line=" + line + ", " + token);
+            assertNotNull(token);
+            assertTrue(token.isPresent());
+            assertTrue(line.contains(token.get().getValue()));
+            assertTrue(Arrays.asList(results).contains(token.get().getToken()),
+                    String.format("Line '%s' is %s", line, token.get().getToken()));
+            line = reader.readLine();
+        }
+    }
+
+    @Test
+    void tokenize_keywords_expectok() throws URISyntaxException, IOException {
+        // Arrange
+        ReadReader("step1/valid.keywords.txt");
+        Token[] results = { Token.KEYWORD };
+
+        // Action
+        var line = reader.readLine();
+        while (line != null) {
+            var lineReader = new BufferedReader(new StringReader(line));
+            var token = new Tokenizer(lineReader).nextToken();
+            // Assert
+
+            System.out.println("Line=" + line + ", " + token);
+            assertNotNull(token);
+            assertTrue(token.isPresent());
+            assertEquals(line, token.get().getValue());
+            assertTrue(Arrays.asList(results).contains(token.get().getToken()),
+                    String.format("Line '%s' is %s", line, token.get().getToken()));
+            line = reader.readLine();
+        }
+    }
+
 }

@@ -29,13 +29,13 @@ public class Tokenizer {
             this.last = Optional.empty();
             return this.nextToken(ch);
         } else {
-            return this.nextToken((char)reader.read());
+            return this.nextToken((char) reader.read());
         }
     }
 
     private Optional<TokenValue> nextToken(char ch) throws IOException {
         if (ch == -1) {
-            return Optional.empty();                
+            return Optional.empty();
         }
         switch (ch) {
             case '\'':
@@ -44,13 +44,13 @@ public class Tokenizer {
             case ':':
                 return this.parseSymbolToken(ch, Token.KEYWORD);
             case '(':
-                //return Optional.of(new TokenValue(Token.LPARENT));
+                // return Optional.of(new TokenValue(Token.LPARENT));
                 return this.parseSExpression(ch);
             case ')':
                 return Optional.of(new TokenValue(Token.RPAREN));
 
-            case '+','-','/','=','<','>','!','$','%','&','|','?','~':
-                return Optional.of(new TokenValue(Token.BUILTIN, ""+ch));
+            case '+', '-', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~':
+                return this.parseSymbolToken(ch, Token.SYMBOL);
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
                 return this.parseNumberToken(ch);
             default:
@@ -63,45 +63,65 @@ public class Tokenizer {
                 if (Character.isWhitespace(ch)) {
                     return parseWhitespace(ch);
                 }
-                throw new IllegalStateException("Illegal character "+ch);
+                throw new IllegalStateException("Illegal character " + ch);
         }
     }
 
     private Optional<Double> parseDouble(String str) {
-        return Optional.empty();
+        try {
+            var d = Double.parseDouble(str);
+            return Optional.of(d);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<Integer> parseInteger(String str) {
+        try {
+            var d = Integer.parseInt(str);
+            return Optional.of(d);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private Optional<TokenValue> parseNumberToken(char ch) throws IOException {
         var buffer = new StringBuilder();
         buffer.append(ch);
-        var nextInt = this.reader.read(); var next = (char)nextInt;
+        var nextInt = this.reader.read();
+        var next = (char) nextInt;
         while (nextInt != -1 && (Character.isDigit(ch) || (ch == '.')) && !Character.isWhitespace(next)) {
             buffer.append(next);
-            nextInt = this.reader.read(); next = (char)nextInt;
+            nextInt = this.reader.read();
+            next = (char) nextInt;
         }
-        this.last = Optional.of((char)next);
+        this.last = Optional.of((char) next);
         var numStr = buffer.toString();
         var doubleValue = this.parseDouble(numStr);
         if (doubleValue.isPresent()) {
             return Optional.of(new TokenValue(Token.NUMBER_DOUBLE, numStr, doubleValue.get()));
         } else {
-            var i = Integer.parseInt(numStr);
-            return Optional.of(new TokenValue(Token.NUMBER_INTEGER, numStr, i));
+            var i = this.parseInteger(numStr);
+            if (i.isPresent()) {
+                return Optional.of(new TokenValue(Token.NUMBER_INTEGER, numStr, i.get()));
+            } else {
+                return Optional.of(new TokenValue(Token.SYMBOL, numStr));
+            }
         }
     }
 
     private boolean isLetterAndUnderline(char ch) {
         return Character.isLetter(ch) || ch == '_';
     }
+
     private boolean isLetterDigitalUnderline(char ch) {
         return isLetterAndUnderline(ch) || Character.isDigit(ch);
     }
 
-
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
-        ch = (char)reader.read();
+        ch = (char) reader.read();
         while (Character.isWhitespace(ch)) {
-            ch = (char)reader.read();
+            ch = (char) reader.read();
         }
         return this.nextToken(ch);
     }
@@ -119,12 +139,15 @@ public class Tokenizer {
     private Optional<TokenValue> parseSymbolToken(char ch, Token returnedToken) throws IOException {
         var buffer = new StringBuilder();
         buffer.append(ch);
-        var nextInt = this.reader.read(); var next = (char)nextInt;
-        while (nextInt != -1 && (isLetterDigitalUnderline(next) || isSpecialSymbolChar(next) && !Character.isWhitespace(next))) {
+        var nextInt = this.reader.read();
+        var next = (char) nextInt;
+        while (nextInt != -1
+                && (isLetterDigitalUnderline(next) || isSpecialSymbolChar(next) && !Character.isWhitespace(next))) {
             buffer.append(next);
-            nextInt = this.reader.read(); next = (char)nextInt;
+            nextInt = this.reader.read();
+            next = (char) nextInt;
         }
-        this.last = Optional.of((char)next);
+        this.last = Optional.of((char) next);
         return Optional.of(new TokenValue(returnedToken, buffer.toString()));
     }
 
@@ -136,9 +159,9 @@ public class Tokenizer {
         var buffer = new StringBuilder();
         var next = this.reader.read();
         while (next != -1 && next != ch) {
-            buffer.append((char)next);
+            buffer.append((char) next);
             if (next == '\\') { // escaping
-                buffer.append((char)this.reader.read());
+                buffer.append((char) this.reader.read());
             }
             next = this.reader.read();
         }
@@ -148,5 +171,4 @@ public class Tokenizer {
         return Optional.of(new TokenValue(Token.STRING, buffer.toString()));
     }
 
-    
 }

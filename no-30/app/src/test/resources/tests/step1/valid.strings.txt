@@ -1,0 +1,6 @@
+"asdlfkjhasdf"
+'asdfasdfasdfasdf'
+"hello \"world\""
+"hello 'world'"
+"hello \'world\'"
+"hello \'~S~\'"
