@@ -25,6 +25,7 @@ I decided to implement it back with Java. I have been working with Java since v1
 - with winning an innovation award in 2014 I started coding with Apple Objective-c for iPhone and Apple Watch Series 1 and later with Swift and SwiftUI for our winning Hackathon idea [m-clippy](https://devpost.com/software/m-clippy).
 - Coding for my beloved Hololens 1 developer edition I started with Unity and C#. Including Hackathons at Microsoft in Redmond with Principal engineers from the Hololens team. Implement 1st holographic bot called [LoloBot](https://github.com/lolo8304/LoloBot).
 - Then I arrived in the Azure Cloud and used [C#](<https://en.wikipedia.org/wiki/C_Sharp_(programming_language)>) and [powershell](https://en.wikipedia.org/wiki/PowerShell) for more than 3 years now.
+- Now back at OpenAPIs development with Nodejs (nestjs) with typescript 
 
 Now in 2023 I thought coming back to Java for these challenges. Unfortunatly Oberon and Smalltalk are almost dead.
 
