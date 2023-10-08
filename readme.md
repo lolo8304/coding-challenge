@@ -107,6 +107,21 @@ here you can find all my implementation
   - resolver does same printout as 'nslookup'
   - can be parametrized to test dns principles
   - default using localhost loopback 127.0.0.53:53
+- 23 traceroue
+- 24 realtime chat client and server
+- 25 NATS server
+  - https://github.com/lolo8304/coding-challenge/tree/main/no-25
+  - implemented NATS server and client
+  - cool challenge
+- 26 git client
+- 27 rate limiter
+- 28 ntp cluent
+- 29 scheduling automation app
+- 30 Lisp interpreter
+  - https://github.com/lolo8304/coding-challenge/tree/main/no-30
+  - just started. 
+  - love Lisp. used it to build first neuronal network with 10 own perceptron (back in 1994)
+  - additional idea: build interpreter to build this again
 
 I wanted to thank John Cricket for these challenges and I encourage every Engineer from Junior to Principal to do this. Learn a new language or get back to language you have used to code (as me here in Java).
 
