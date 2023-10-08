@@ -37,7 +37,7 @@ here you can find all my implementation
   - invested quite a bit of time for fully dynamic and reliable Round Robin
   - and chaos engineering tests to kill BE servers and not to loose any message
 - 6 sort Tool: not implemented yet
-- 7 Calculator: none implemented yet
+- 7 Calculator: not implemented yet
 - 8 Redis Server
   - https://github.com/lolo8304/coding-challenge/tree/main/no-8
   - this is by far the best challenge I have every implemented
