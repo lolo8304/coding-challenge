@@ -12,10 +12,7 @@ public class Tokenizer {
     private Reader reader;
     private Optional<Character> last;
     static {
-        SPECIAL_SYMBOL_CHARS.add(':');
-        SPECIAL_SYMBOL_CHARS.add('-');
-        SPECIAL_SYMBOL_CHARS.add('_');
-        SPECIAL_SYMBOL_CHARS.add('$');
+        SPECIAL_SYMBOL_CHARS.addAll({'+', ':', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~'});
     }
 
     public Tokenizer(Reader reader) {
@@ -49,7 +46,7 @@ public class Tokenizer {
             case ')':
                 return Optional.of(new TokenValue(Token.RPAREN));
 
-            case '+', '-', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~':
+            case '+', '-', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', ':':
                 return this.parseSymbolToken(ch, Token.SYMBOL);
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
                 return this.parseNumberToken(ch);
