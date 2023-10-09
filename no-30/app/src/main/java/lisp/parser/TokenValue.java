@@ -11,6 +11,7 @@ public class TokenValue {
     private final Double d;
     private final Integer i;
     private List<TokenValue> expression;
+    private TokenValue unary;
 
     public TokenValue(Token token) {
         this.token = token;
@@ -36,6 +37,15 @@ public class TokenValue {
         this.i = null;
     }
 
+    public TokenValue(Token token, TokenValue unary) {
+        this.token = token;
+        this.expression = EMPTY_ARRAY_LIST;
+        this.str = null;
+        this.d = null;
+        this.i = null;
+        this.unary = unary;
+    }
+
     public TokenValue(Token numberDouble, String str, Double d) {
         this.token = numberDouble;
         this.str = str;
@@ -51,7 +61,7 @@ public class TokenValue {
     }
 
     public String getValue() {
-        return this.str;
+        return this.appendTo(new StringBuilder()).toString();
     }
 
     public int getInt() {
@@ -70,9 +80,50 @@ public class TokenValue {
         return this.expression;
     }
 
+    public StringBuilder appendTo(StringBuilder builder) {
+        switch (this.token) {
+            case NUMBER_DOUBLE:
+                builder.append(this.d.toString());
+                break;
+            case NUMBER_INTEGER:
+                builder.append(this.i.toString());
+                break;
+            case S_EXPRESSION:
+                builder.append("(");
+                var first = true;
+                for (TokenValue value : this.expression) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        builder.append(" ");
+                    }
+                    value.appendTo(builder);
+                }
+                builder.append(")");
+                break;
+            case BUILTIN, KEYWORD, PACKAGE, SYMBOL:
+                builder.append(str);
+                break;
+            case STRING:
+                builder.append('"').append(str).append('"');
+                break;
+            case COMMA:
+                builder.append(',');
+                break;
+            case DOT:
+                builder.append('.');
+                break;
+            case QUOTE:
+                builder.append('\'').append(this.unary.appendTo(builder));
+                break;
+            default:
+                throw new IllegalArgumentException("Token " + this.token + " is invalid");
+        }
+        return builder;
+    }
+
     @Override
     public String toString() {
-        return String.format("Token[%s, %s]", this.token, this.token == Token.NUMBER_DOUBLE ? this.d.toString()
-                : (this.token == Token.NUMBER_INTEGER ? this.i.toString() : this.str));
+        return String.format("Token[%s, %s]", this.token, this.getValue());
     }
 }

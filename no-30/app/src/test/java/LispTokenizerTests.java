@@ -68,7 +68,7 @@ class LispTokenizerTests {
     void tokenize_strings_expectok() throws URISyntaxException, IOException {
         // Arrange
         ReadReader("step1/valid.strings.txt");
-        Token[] results = { Token.STRING };
+        Token[] results = { Token.STRING, Token.SYMBOL, Token.QUOTE };
 
         // Action
         var line = reader.readLine();
@@ -83,6 +83,10 @@ class LispTokenizerTests {
             assertTrue(line.contains(token.get().getValue()));
             assertTrue(Arrays.asList(results).contains(token.get().getToken()),
                     String.format("Line '%s' is %s", line, token.get().getToken()));
+            if (token.get().getToken() == Token.SYMBOL) {
+                assertTrue(token.get().getValue().startsWith("'"),
+                        String.format("Line '%s' is %s", line, token.get().getToken()));
+            }
             line = reader.readLine();
         }
     }
@@ -92,6 +96,29 @@ class LispTokenizerTests {
         // Arrange
         ReadReader("step1/valid.keywords.txt");
         Token[] results = { Token.KEYWORD };
+
+        // Action
+        var line = reader.readLine();
+        while (line != null) {
+            var lineReader = new BufferedReader(new StringReader(line));
+            var token = new Tokenizer(lineReader).nextToken();
+            // Assert
+
+            System.out.println("Line=" + line + ", " + token);
+            assertNotNull(token);
+            assertTrue(token.isPresent());
+            assertEquals(line, token.get().getValue());
+            assertTrue(Arrays.asList(results).contains(token.get().getToken()),
+                    String.format("Line '%s' is %s", line, token.get().getToken()));
+            line = reader.readLine();
+        }
+    }
+
+    @Test
+    void tokenize_s_expressions_expectok() throws URISyntaxException, IOException {
+        // Arrange
+        ReadReader("step1/valid.s-expressions.txt");
+        Token[] results = { Token.S_EXPRESSION };
 
         // Action
         var line = reader.readLine();

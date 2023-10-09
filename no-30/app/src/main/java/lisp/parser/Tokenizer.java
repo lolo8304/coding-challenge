@@ -3,16 +3,18 @@ package lisp.parser;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public class Tokenizer {
-    private static Set<Character> SPECIAL_SYMBOL_CHARS = new HashSet<Character>();
+    private static Set<Character> SPECIAL_SYMBOL_CHARS = new HashSet<>();
     private Reader reader;
     private Optional<Character> last;
     static {
-        SPECIAL_SYMBOL_CHARS.addAll({'+', ':', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~'});
+        Character[] chars = { '+', ':', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', '*' };
+        SPECIAL_SYMBOL_CHARS.addAll(Arrays.asList(chars));
     }
 
     public Tokenizer(Reader reader) {
@@ -35,7 +37,6 @@ public class Tokenizer {
             return Optional.empty();
         }
         switch (ch) {
-            case '\'':
             case '\"':
                 return this.parseStringToken(ch);
             case ':':
@@ -46,10 +47,14 @@ public class Tokenizer {
             case ')':
                 return Optional.of(new TokenValue(Token.RPAREN));
 
-            case '+', '-', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', ':':
+            case '+', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', '*':
                 return this.parseSymbolToken(ch, Token.SYMBOL);
+            case '\'':
+                return this.parseQuote(ch);
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
                 return this.parseNumberToken(ch);
+            case ' ', '\t':
+                return this.parseWhitespace(ch);
             default:
                 if (Character.isDigit(ch)) {
                     return this.parseSymbolToken(ch, Token.NUMBER);
@@ -61,6 +66,15 @@ public class Tokenizer {
                     return parseWhitespace(ch);
                 }
                 throw new IllegalStateException("Illegal character " + ch);
+        }
+    }
+
+    private Optional<TokenValue> parseQuote(char ch) throws IOException {
+        var elem = this.nextToken();
+        if (elem.isPresent()) {
+            return Optional.of(new TokenValue(Token.QUOTE, elem.get()));
+        } else {
+            return Optional.empty();
         }
     }
 
@@ -87,20 +101,20 @@ public class Tokenizer {
         buffer.append(ch);
         var nextInt = this.reader.read();
         var next = (char) nextInt;
-        while (nextInt != -1 && (Character.isDigit(ch) || (ch == '.')) && !Character.isWhitespace(next)) {
+        while (nextInt != -1 && (Character.isDigit(next) || (next == '.')) && !Character.isWhitespace(next)) {
             buffer.append(next);
             nextInt = this.reader.read();
             next = (char) nextInt;
         }
         this.last = Optional.of((char) next);
         var numStr = buffer.toString();
-        var doubleValue = this.parseDouble(numStr);
-        if (doubleValue.isPresent()) {
-            return Optional.of(new TokenValue(Token.NUMBER_DOUBLE, numStr, doubleValue.get()));
+        var i = this.parseInteger(numStr);
+        if (i.isPresent()) {
+            return Optional.of(new TokenValue(Token.NUMBER_INTEGER, numStr, i.get()));
         } else {
-            var i = this.parseInteger(numStr);
-            if (i.isPresent()) {
-                return Optional.of(new TokenValue(Token.NUMBER_INTEGER, numStr, i.get()));
+            var doubleValue = this.parseDouble(numStr);
+            if (doubleValue.isPresent()) {
+                return Optional.of(new TokenValue(Token.NUMBER_DOUBLE, numStr, doubleValue.get()));
             } else {
                 return Optional.of(new TokenValue(Token.SYMBOL, numStr));
             }
@@ -117,10 +131,10 @@ public class Tokenizer {
 
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
         ch = (char) reader.read();
-        while (Character.isWhitespace(ch)) {
+        while (Character.isWhitespace(ch) || ch == -1) {
             ch = (char) reader.read();
         }
-        return this.nextToken(ch);
+        return ch == -1 ? Optional.empty() : this.nextToken(ch);
     }
 
     private Optional<TokenValue> parseSExpression(char ch) throws IOException {

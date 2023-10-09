@@ -46,3 +46,14 @@ $dollar
 _
 _underscore
 :keyword
+abc
+variable123
+my-variable
+*special*
+/division
+<less-than>
+>greater-than
+my-variable
+symbol-with-a-question?
+variable?
+?predicate
