@@ -53,7 +53,7 @@ public class Tokenizer {
                 return this.parseQuote(ch);
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
                 return this.parseNumberToken(ch);
-            case ' ', '\t':
+            case ' ', '\t', '\r', '\n':
                 return this.parseWhitespace(ch);
             default:
                 if (Character.isDigit(ch)) {
@@ -131,7 +131,7 @@ public class Tokenizer {
 
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
         ch = (char) reader.read();
-        while (Character.isWhitespace(ch) || ch == -1) {
+        while (Character.isWhitespace(ch) || ch != -1 || ch == '\r' || ch == '\n') {
             ch = (char) reader.read();
         }
         return ch == -1 ? Optional.empty() : this.nextToken(ch);
