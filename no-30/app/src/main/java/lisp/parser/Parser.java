@@ -1,9 +1,10 @@
 public class Parser {
   private Tokenizer tokenizer;
-  public Parser(Tokenizer tokenizer) {
-    this.tokenizer = tokenizer:
+  public Parser(LispRuntime runtime, Tokenizer tokenizer) {
+    this.tokenizer = tokenizer;
+    
   }
-  public Parser(BufferedReader reader) {
+  public Parser(LispRuntime runtime, BufferedReader reader) {
     this.tokenizer = new Tokenizer(reader);
   }
 
@@ -14,6 +15,6 @@ public class Parser {
         expressions.add(token.get());
         token = this.tokenizer.nextToken();
     }
-    
+    return expression;
   }
 }
