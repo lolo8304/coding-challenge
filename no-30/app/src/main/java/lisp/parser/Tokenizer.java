@@ -13,7 +13,7 @@ public class Tokenizer {
     private Reader reader;
     private Optional<Character> last;
     static {
-        Character[] chars = { '+', ':', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', '*' };
+        Character[] chars = { '+', ':', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', '*', '.' };
         SPECIAL_SYMBOL_CHARS.addAll(Arrays.asList(chars));
     }
 
@@ -33,7 +33,7 @@ public class Tokenizer {
     }
 
     private Optional<TokenValue> nextToken(char ch) throws IOException {
-        if (ch == -1) {
+        if (ch == -1 || ch == 65535) {
             return Optional.empty();
         }
         switch (ch) {
@@ -51,6 +51,8 @@ public class Tokenizer {
                 return this.parseSymbolToken(ch, Token.SYMBOL);
             case '\'':
                 return this.parseQuote(ch);
+            case ',':
+                return this.parseComma(ch);
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
                 return this.parseNumberToken(ch);
             case ' ', '\t', '\r', '\n':
@@ -73,6 +75,15 @@ public class Tokenizer {
         var elem = this.nextToken();
         if (elem.isPresent()) {
             return Optional.of(new TokenValue(Token.QUOTE, elem.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<TokenValue> parseComma(char ch) throws IOException {
+        var elem = this.nextToken();
+        if (elem.isPresent()) {
+            return Optional.of(new TokenValue(Token.COMMA, elem.get()));
         } else {
             return Optional.empty();
         }
@@ -106,7 +117,12 @@ public class Tokenizer {
             nextInt = this.reader.read();
             next = (char) nextInt;
         }
-        this.last = Optional.of((char) next);
+        if (nextInt == -1) {
+            this.last = Optional.empty();
+        } else {
+            this.last = Optional.of((char) next);
+        }
+
         var numStr = buffer.toString();
         var i = this.parseInteger(numStr);
         if (i.isPresent()) {
@@ -131,10 +147,10 @@ public class Tokenizer {
 
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
         ch = (char) reader.read();
-        while (Character.isWhitespace(ch) || ch != -1 || ch == '\r' || ch == '\n') {
+        while ((Character.isWhitespace(ch) || ch == '\r' || ch == '\n') && ch != -1 && ch != 65535) {
             ch = (char) reader.read();
         }
-        return ch == -1 ? Optional.empty() : this.nextToken(ch);
+        return ch == -1 || ch == 65535 ? Optional.empty() : this.nextToken(ch);
     }
 
     private Optional<TokenValue> parseSExpression(char ch) throws IOException {
@@ -158,7 +174,11 @@ public class Tokenizer {
             nextInt = this.reader.read();
             next = (char) nextInt;
         }
-        this.last = Optional.of((char) next);
+        if (nextInt == -1) {
+            this.last = Optional.empty();
+        } else {
+            this.last = Optional.of((char) next);
+        }
         return Optional.of(new TokenValue(returnedToken, buffer.toString()));
     }
 
@@ -168,15 +188,15 @@ public class Tokenizer {
 
     private Optional<TokenValue> parseStringToken(char ch) throws IOException {
         var buffer = new StringBuilder();
-        var next = this.reader.read();
-        while (next != -1 && next != ch) {
-            buffer.append((char) next);
-            if (next == '\\') { // escaping
+        var nextInt = this.reader.read();
+        while (nextInt != -1 && nextInt != ch) {
+            buffer.append((char) nextInt);
+            if (nextInt == '\\') { // escaping
                 buffer.append((char) this.reader.read());
             }
-            next = this.reader.read();
+            nextInt = this.reader.read();
         }
-        if (next == -1) {
+        if (nextInt == -1) {
             return Optional.empty();
         }
         return Optional.of(new TokenValue(Token.STRING, buffer.toString()));

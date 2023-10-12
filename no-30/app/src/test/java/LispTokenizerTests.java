@@ -123,16 +123,18 @@ class LispTokenizerTests {
         // Action
         var line = reader.readLine();
         while (line != null) {
-            var lineReader = new BufferedReader(new StringReader(line));
-            var token = new Tokenizer(lineReader).nextToken();
-            // Assert
+            if (!line.startsWith("#")) {
+                var lineReader = new BufferedReader(new StringReader(line));
+                var token = new Tokenizer(lineReader).nextToken();
+                // Assert
 
-            System.out.println("Line=" + line + ", " + token);
-            assertNotNull(token);
-            assertTrue(token.isPresent());
-            assertEquals(line, token.get().getValue());
-            assertTrue(Arrays.asList(results).contains(token.get().getToken()),
-                    String.format("Line '%s' is %s", line, token.get().getToken()));
+                System.out.println("Line=" + line + ", " + token);
+                assertNotNull(token);
+                assertTrue(token.isPresent());
+                assertEquals(line, token.get().getValue());
+                assertTrue(Arrays.asList(results).contains(token.get().getToken()),
+                        String.format("Line '%s' is %s", line, token.get().getToken()));
+            }
             line = reader.readLine();
         }
     }

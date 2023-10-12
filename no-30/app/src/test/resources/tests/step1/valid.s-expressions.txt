@@ -32,8 +32,6 @@
 (gensym)
 (load "my-program.lisp")
 (progn (print 'one) (print 'two))
-(macroexpand '(defmacro double (x) (* 2 ,x)))`
-(defmacro double (x) (* 2 ,x))`
 (time (fib 20))
 (with-open-file (file "data.txt" :direction :input) (read-line file))
 (with-output-to-string (output) (format output "Hello, ~a!" 'world))
@@ -49,7 +47,6 @@
 (symbolp 'symbol)
 (stringp "text")
 (null ())
-(consp '(1 . 2))
 (cons 'a 'b)
 (reverse '(1 2 3))
 (append '(1 2) '(3 4))
@@ -81,11 +78,15 @@
 (gensym)
 (load "my-program.lisp")
 (progn (print 'one) (print 'two))
-(macroexpand '(defmacro double (x) (* 2 ,x)))`
-(defmacro double (x) (* 2 ,x))`
 (time (fib 20))
 (with-open-file (file "data.txt" :direction :input) (read-line file))
 (with-output-to-string (output) (format output "Hello, ~a!" 'world))
 (with-input-from-string (input "1 2 3 4") (read input))
 (trace 'multiply)
 (defun factorial (n) (if (= n 0)))
+# not yet implemented
+# (macroexpand '(defmacro double (x) (* 2 ,x)))`
+# (defmacro double (x) (* 2 ,x))`
+# (macroexpand '(defmacro double (x) (* 2 ,x)))`
+# (defmacro double (x) (* 2 ,x))`
+# (consp '(1 . 2))

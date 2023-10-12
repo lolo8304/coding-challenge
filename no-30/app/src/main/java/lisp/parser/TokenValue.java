@@ -3,7 +3,7 @@ package lisp.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenValue {
+public class TokenValue implements ILispFunction {
     private static final ArrayList<TokenValue> EMPTY_ARRAY_LIST = new ArrayList<>();
 
     private final Token token;
@@ -46,6 +46,13 @@ public class TokenValue {
         this.unary = unary;
     }
 
+    public TokenValue(Token numberDouble, Double d) {
+        this.token = numberDouble;
+        this.str = String.format("%d", d);
+        this.d = d;
+        this.i = null;
+    }
+
     public TokenValue(Token numberDouble, String str, Double d) {
         this.token = numberDouble;
         this.str = str;
@@ -66,10 +73,6 @@ public class TokenValue {
 
     public int getInt() {
         return this.i;
-    }
-
-    public double getDuble() {
-        return this.d;
     }
 
     public Token getToken() {
@@ -109,12 +112,14 @@ public class TokenValue {
                 break;
             case COMMA:
                 builder.append(',');
+                this.unary.appendTo(builder);
                 break;
             case DOT:
                 builder.append('.');
                 break;
             case QUOTE:
-                builder.append('\'').append(this.unary.appendTo(builder));
+                builder.append('\'');
+                this.unary.appendTo(builder);
                 break;
             default:
                 throw new IllegalArgumentException("Token " + this.token + " is invalid");
@@ -126,4 +131,54 @@ public class TokenValue {
     public String toString() {
         return String.format("Token[%s, %s]", this.token, this.getValue());
     }
+
+    @Override
+    public ILispFunction apply(LispRuntime runtime) {
+        switch (this.token) {
+            case S_EXPRESSION:
+                return runtime.execute(this);
+            case BUILTIN:
+            case KEYWORD:
+            case PACKAGE:
+            case SYMBOL:
+            case NUMBER_DOUBLE:
+            case NUMBER_INTEGER:
+            case STRING:
+                return this;
+
+            case QUOTE:
+                return this.unary;
+
+            default:
+                throw new IllegalArgumentException("Token " + this.token + " is invalid");
+        }
+    }
+
+    @Override
+    public Object getObject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getObject'");
+    }
+
+    @Override
+    public Double getDouble() {
+        switch (this.token) {
+            case NUMBER_DOUBLE:
+                return this.d;
+            case NUMBER_INTEGER:
+                return Double.valueOf(this.i);
+            default:
+                throw new IllegalArgumentException(
+                        "Token value " + this.getValue() + " cannot be turned into a double");
+        }
+    }
+
+    public String getExprSymbol() {
+        return this.getExpression().get(0).getValue();
+    }
+
+    public List<TokenValue> getExprParameters() {
+        return this.getExpression().subList(1, this.getExpression().size());
+    }
+
 }
