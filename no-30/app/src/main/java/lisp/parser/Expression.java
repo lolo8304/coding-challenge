@@ -21,4 +21,9 @@ public class Expression implements ILispFunction {
     public Double getDouble() {
         return this.token.getDouble();
     }
+
+    @Override
+    public Token getToken() {
+        return this.token.getToken();
+    }
 }

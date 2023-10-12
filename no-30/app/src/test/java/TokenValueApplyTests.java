@@ -3,6 +3,7 @@
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,6 +51,46 @@ class TokenValueApplyTests {
         // Assert
         assertEquals(123.0, dResult);
 
+    }
+
+    @Test
+    void apply_add() throws URISyntaxException, IOException {
+
+        // Arrange
+        var token = new Parser("(+ 1 2 3)").parse().get(0);
+        var runtime = new LispRuntime();
+
+        // Act
+        var result = token.apply(runtime);
+        var dResult = result.getDouble();
+
+        // Assert
+        assertEquals(6.0, dResult);
+
+    }
+
+    @Test
+    void tokenize_s_expressions_expectok() throws URISyntaxException, IOException {
+        // Arrange
+        ReadReader("step1/valid-builtins.txt");
+        var runtime = new LispRuntime();
+
+        // Action
+        var line = reader.readLine();
+        while (line != null) {
+            if (!line.startsWith("#")) {
+                var token = new Parser(line).parse().get(0);
+                var result = token.apply(runtime);
+
+                // Assert
+                assertNotNull(result);
+                var builder = new StringBuilder();
+                token.appendTo(builder).append("=").append(result.toString());
+                System.out.println(builder.toString());
+
+            }
+            line = reader.readLine();
+        }
     }
 
 }

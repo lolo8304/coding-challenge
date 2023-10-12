@@ -48,7 +48,7 @@ public class TokenValue implements ILispFunction {
 
     public TokenValue(Token numberDouble, Double d) {
         this.token = numberDouble;
-        this.str = String.format("%d", d);
+        this.str = String.format("%f", d);
         this.d = d;
         this.i = null;
     }
@@ -104,7 +104,7 @@ public class TokenValue implements ILispFunction {
                 }
                 builder.append(")");
                 break;
-            case BUILTIN, KEYWORD, PACKAGE, SYMBOL:
+            case BUILTIN, KEYWORD, PACKAGE, SYMBOL, T, NIL:
                 builder.append(str);
                 break;
             case STRING:
@@ -136,7 +136,11 @@ public class TokenValue implements ILispFunction {
     public ILispFunction apply(LispRuntime runtime) {
         switch (this.token) {
             case S_EXPRESSION:
-                return runtime.execute(this);
+                if (this.expression.isEmpty()) {
+                    return new TokenValue(Token.NIL, 0.0);
+                } else {
+                    return runtime.execute(this);
+                }
             case BUILTIN:
             case KEYWORD:
             case PACKAGE:
@@ -144,8 +148,9 @@ public class TokenValue implements ILispFunction {
             case NUMBER_DOUBLE:
             case NUMBER_INTEGER:
             case STRING:
+            case T:
+            case NIL:
                 return this;
-
             case QUOTE:
                 return this.unary;
 
@@ -167,6 +172,10 @@ public class TokenValue implements ILispFunction {
                 return this.d;
             case NUMBER_INTEGER:
                 return Double.valueOf(this.i);
+            case T:
+                return 1.0;
+            case NIL:
+                return 0.0;
             default:
                 throw new IllegalArgumentException(
                         "Token value " + this.getValue() + " cannot be turned into a double");

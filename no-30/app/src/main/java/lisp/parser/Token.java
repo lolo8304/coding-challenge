@@ -19,6 +19,9 @@ public enum Token {
     NUMBER_DOUBLE(true),
     NUMBER_INTEGER(true),
 
+    T(true),
+    NIL(true),
+
     COMMA(false), // For the comma character (,)
     DOT(false), // For the dot character (.)
     EOF(false);

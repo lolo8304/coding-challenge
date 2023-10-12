@@ -6,4 +6,6 @@ public interface ILispFunction {
     Object getObject();
 
     Double getDouble();
+
+    Token getToken();
 }

@@ -179,7 +179,14 @@ public class Tokenizer {
         } else {
             this.last = Optional.of((char) next);
         }
-        return Optional.of(new TokenValue(returnedToken, buffer.toString()));
+        var symbol = buffer.toString();
+        if (symbol.equals("T")) {
+            return Optional.of(new TokenValue(Token.T, symbol));
+        } else if (symbol.equals("NIL")) {
+            return Optional.of(new TokenValue(Token.NIL, symbol));
+        } else {
+            return Optional.of(new TokenValue(returnedToken, symbol));
+        }
     }
 
     private boolean isSpecialSymbolChar(char next) {
