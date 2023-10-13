@@ -131,7 +131,9 @@ class LispTokenizerTests {
                 System.out.println("Line=" + line + ", " + token);
                 assertNotNull(token);
                 assertTrue(token.isPresent());
-                assertEquals(line, token.get().getValue());
+
+                assertEquals(line.replaceAll("true", "T").replaceAll("false", "NIL"), token.get().getValue());
+
                 assertTrue(Arrays.asList(results).contains(token.get().getToken()),
                         String.format("Line '%s' is %s", line, token.get().getToken()));
             }

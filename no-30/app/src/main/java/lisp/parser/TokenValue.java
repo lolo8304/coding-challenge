@@ -84,6 +84,10 @@ public class TokenValue implements ILispFunction {
     }
 
     public StringBuilder appendTo(StringBuilder builder) {
+        return this.appendTo(builder, false);
+    }
+
+    public StringBuilder appendTo(StringBuilder builder, boolean printToConsole) {
         switch (this.token) {
             case NUMBER_DOUBLE:
                 builder.append(this.d.toString());
@@ -104,11 +108,18 @@ public class TokenValue implements ILispFunction {
                 }
                 builder.append(")");
                 break;
-            case BUILTIN, KEYWORD, PACKAGE, SYMBOL, T, NIL:
+            case BUILTIN, KEYWORD, PACKAGE, SYMBOL:
                 builder.append(str);
                 break;
+            case T, NIL:
+                builder.append(this.token);
+                break;
             case STRING:
-                builder.append('"').append(str).append('"');
+                if (printToConsole) {
+                    builder.append(str);
+                } else {
+                    builder.append('"').append(str).append('"');
+                }
                 break;
             case COMMA:
                 builder.append(',');
@@ -129,7 +140,7 @@ public class TokenValue implements ILispFunction {
 
     @Override
     public String toString() {
-        return String.format("Token[%s, %s]", this.token, this.getValue());
+        return this.appendTo(new StringBuilder(), true).toString();
     }
 
     @Override
@@ -144,13 +155,19 @@ public class TokenValue implements ILispFunction {
             case BUILTIN:
             case KEYWORD:
             case PACKAGE:
-            case SYMBOL:
             case NUMBER_DOUBLE:
             case NUMBER_INTEGER:
             case STRING:
             case T:
             case NIL:
                 return this;
+            case SYMBOL:
+                var variable = runtime.tos().get(this.getValue());
+                if (variable != null) {
+                    return variable.apply(runtime);
+                } else {
+                    return this;
+                }
             case QUOTE:
                 return this.unary;
 
@@ -161,8 +178,21 @@ public class TokenValue implements ILispFunction {
 
     @Override
     public Object getObject() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getObject'");
+        switch (this.token) {
+            case NUMBER_DOUBLE:
+                return this.d;
+            case NUMBER_INTEGER:
+                return this.i;
+            case T:
+                return 1.0;
+            case NIL:
+                return 0.0;
+            case STRING:
+                return this.getValue();
+            default:
+                throw new IllegalArgumentException(
+                        "Token <"+this.token+"> value " + this.getValue() + " cannot be turned into a object");
+        }
     }
 
     @Override

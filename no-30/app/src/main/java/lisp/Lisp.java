@@ -5,9 +5,10 @@ package lisp;
  */
 import java.util.concurrent.Callable;
 
+import lisp.parser.LispRuntime;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @Command(name = "lisp", mixinStandardHelpOptions = true, version = "lisp 1.0", description = "This challenge is to build Your Own Lisp Interpreter")
 public class Lisp implements Callable<Result> {
@@ -16,27 +17,24 @@ public class Lisp implements Callable<Result> {
         var nats = new Lisp();
         var cmd = new CommandLine(nats);
         var exitCode = cmd.execute(args);
-        cmd.getExecutionResult();
-        System.exit(exitCode);
+        Result result = cmd.getExecutionResult();
+        if (result != null) {
+            System.out.println(result.toString());
+            System.exit(exitCode);
+        }
     }
 
-    @Option(names = "-s", description = "-s specifies starting a server, default = false, using cli")
-    boolean server = false;
-
-    @Option(names = "-p", description = "-p specifies the port, default 4222")
-    int port = 4222;
-
-    @Option(names = "-h", description = "-h specifies the server hostname, default localhost")
-    String hostname = "localhost";
-
-    @Option(names = "-c", description = "-c specifies the command executed")
+    @Parameters(description = "-c specifies the command executed")
     String command = null;
 
     boolean isInteractive = true;
 
     @Override
     public Result call() throws Exception {
-        System.out.println("Lisp-cli started.");
-        return new Result();
+        if (this.command != null) {
+            return new Result(new LispRuntime().execute(this.command));
+        } else {
+            return new Result("done.");
+        }
     }
 }

@@ -79,14 +79,15 @@ class TokenValueApplyTests {
         var line = reader.readLine();
         while (line != null) {
             if (!line.startsWith("#")) {
-                var token = new Parser(line).parse().get(0);
-                var result = token.apply(runtime);
-
-                // Assert
-                assertNotNull(result);
-                var builder = new StringBuilder();
-                token.appendTo(builder).append("=").append(result.toString());
-                System.out.println(builder.toString());
+                var tokens = new Parser(line).parse();
+                for (var token : tokens) {
+                    var result = token.apply(runtime);
+                    // Assert
+                    assertNotNull(result);
+                    var builder = new StringBuilder();
+                    token.appendTo(builder);
+                    System.out.println(builder.toString());
+                }
 
             }
             line = reader.readLine();

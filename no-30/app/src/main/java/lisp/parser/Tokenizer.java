@@ -180,9 +180,9 @@ public class Tokenizer {
             this.last = Optional.of((char) next);
         }
         var symbol = buffer.toString();
-        if (symbol.equals("T")) {
+        if (symbol.equals("T") || symbol.equals("true")) {
             return Optional.of(new TokenValue(Token.T, symbol));
-        } else if (symbol.equals("NIL")) {
+        } else if (symbol.equals("NIL") || symbol.equals("false")) {
             return Optional.of(new TokenValue(Token.NIL, symbol));
         } else {
             return Optional.of(new TokenValue(returnedToken, symbol));
