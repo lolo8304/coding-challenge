@@ -446,6 +446,12 @@ public class BuiltInLibrary {
         public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                     List<? extends ILispFunction> pars) {
 
+            // check count (vars) with count (pars)
+            // set tos().newScope(symbol)
+            // iterste over vars. set values from para with same index
+            // 
+
+
             // TODO: needs evaluation along the expression tree
             throw new IllegalAccessError("Not implemented yet");
         }
