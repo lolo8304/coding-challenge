@@ -387,8 +387,15 @@ public class BuiltInLibrary {
             @Override
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                     List<? extends ILispFunction> pars) {
-                runtime.addCustom(symbol, new DefunBuiltIn(expr, symbol, pars));
-                return expr;
+                if (pars.size() == 3) {
+                    var funcName = pars.get(0).getValue();
+                    var vars = pars.get(1);
+                    var func = pars.get(2);
+                    runtime.addCustom(symbol, new DefunBuiltIn(pars, funcName, vars, func));
+                    return expr;
+                } else {
+                    throw nw IllegalArumwntException("defun must have 3 parameters: func name, vars-expr, func-expr");
+                }
             }
         };
     }
@@ -425,18 +432,20 @@ public class BuiltInLibrary {
 
         private ILispFunction expr;
         private String symbol;
-        private List<? extends ILispFunction> pars;
+        private ILispFunction vars;
+        private ILispFunction func;
 
-        public DefunBuiltIn(ILispFunction expr, String symbol,
-                List<? extends ILispFunction> pars) {
+        public DefunBuiltIn(ILispFunction expr, String symbol, ILispFunction vars, ILispFunction func) {
             this.expr = expr;
             this.symbol = symbol;
-            this.pars = pars;
+            this.vars = vars;
+            this.func = func;
         }
 
         @Override
         public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
-                List<? extends ILispFunction> pars) {
+                    List<? extends ILispFunction> pars) {
+
             // TODO: needs evaluation along the expression tree
             throw new IllegalAccessError("Not implemented yet");
         }
