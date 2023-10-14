@@ -2,6 +2,8 @@ package lisp.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Context {
 
@@ -29,34 +31,51 @@ public class Context {
         return this.global;
     }
 
-    public ILispFunction get(String symbol) {
+    public ILispFunction getIfAbsent(String symbol, Function<Void, ILispFunction> callback) {
         if (this.isLocalScope()) {
             var variable = this.variables.get(symbol);
             if (variable == null) {
                 if (this.prev != null) {
-                    return this.prev.get(symbol);
+                    return this.prev.getIfAbsent(symbol, callback);
                 } else {
-                    return new TokenValue(Token.NIL, 0.0);
+                    return callback.apply(null);
                 }
             }
             return variable;
         } else if (this.isGlobalScope()) {
             var variable = this.variables.get(symbol);
             if (variable == null) {
-                return new TokenValue(Token.NIL, 0.0);
+                return callback.apply(null);
             }
             return variable;
         } else {
-            return this.global.get(symbol);
+            return this.global.getIfAbsent(symbol, callback);
         }
+    }
+
+    public ILispFunction get(String symbol) {
+        return this.getIfAbsent(symbol, (unused) -> {
+            throw new IllegalArgumentException("Evaluation aborted on #<UNBOUND-VARIABLE "+symbol+">");
+        });
+    }
+
+    public ILispFunction getOrNil(String symbol) {
+        return this.getIfAbsent(symbol, (unused) -> new TokenValue(Token.NIL, 0.0));
+    }
+
+    public void putGlobal(String symbol, ILispFunction value) {
+        this.global.variables.put(symbol, value);
+    }
+    public void putLocal(String symbol, ILispFunction value) {
+        this.variables.put(symbol, value);
     }
     public void put(String symbol, ILispFunction value) {
         if (this.isLocalScope()) {
-            this.variables.put(symbol, value);
+            putLocal(symbol, value);
         } else if (this.isGlobalScope()){
-            this.variables.put(symbol, value);
+            putLocal(symbol, value);
         } else {
-            this.global.put(symbol, value);
+            this.putGlobal(symbol, value);
         }
     }
 

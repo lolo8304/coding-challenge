@@ -84,9 +84,12 @@
 (with-input-from-string (input "1 2 3 4") (read input))
 (trace 'multiply)
 (defun factorial (n) (if (= n 0)))
-# not yet implemented
-# (macroexpand '(defmacro double (x) (* 2 ,x)))`
-# (defmacro double (x) (* 2 ,x))`
-# (macroexpand '(defmacro double (x) (* 2 ,x)))`
-# (defmacro double (x) (* 2 ,x))`
-# (consp '(1 . 2))
+(defun my-function (x) (* x x))
+(funcall #'my-function 5)
+#(3 3)
+; not yet implemented
+; (macroexpand '(defmacro double (x) (* 2 ,x)))`
+; (defmacro double (x) (* 2 ,x))`
+; (macroexpand '(defmacro double (x) (* 2 ,x)))`
+; (defmacro double (x) (* 2 ,x))`
+; (consp '(1 . 2))

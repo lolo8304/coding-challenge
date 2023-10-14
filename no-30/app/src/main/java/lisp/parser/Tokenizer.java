@@ -28,7 +28,7 @@ public class Tokenizer {
             this.last = Optional.empty();
             return this.nextToken(ch);
         } else {
-            return this.nextToken((char) reader.read());
+            return this.nextToken(this.readChar());
         }
     }
 
@@ -45,8 +45,12 @@ public class Tokenizer {
                 // return Optional.of(new TokenValue(Token.LPARENT));
                 return this.parseSExpression(ch);
             case ')':
+                this.readChar();
                 return Optional.of(new TokenValue(Token.RPAREN));
-
+            case ';':
+                return this.parseComment(ch);
+            case '#':
+                return this.parseSharpExpression(ch);
             case '+', '-', '_', '/', '=', '<', '>', '!', '$', '%', '&', '|', '?', '~', '*':
                 return this.parseSymbolToken(ch, Token.SYMBOL);
             case '\'':
@@ -58,9 +62,6 @@ public class Tokenizer {
             case ' ', '\t', '\r', '\n':
                 return this.parseWhitespace(ch);
             default:
-                if (Character.isDigit(ch)) {
-                    return this.parseSymbolToken(ch, Token.NUMBER);
-                }
                 if (isLetterAndUnderline(ch)) {
                     return this.parseSymbolToken(ch, Token.SYMBOL);
                 }
@@ -71,7 +72,73 @@ public class Tokenizer {
         }
     }
 
+    private Optional<TokenValue> parseSharpExpression(char ch) throws IOException {
+        ch = this.readChar(); 
+        switch (ch) {
+            case '(', '1', '2','3', '4', '5', '6', '7', '8', '9':
+                if (ch== '(') {
+                    var expr = this.parseSExpression(ch);
+                    if (expr.isPresent()) {
+                        expr.get().setDimension(1);
+                    }
+                    return expr;
+                }
+                var chA = this.readChar();
+                if (chA == 'A') {
+                    var dimension = Character.getNumericValue(ch);
+                    throw new IllegalArgumentException("not yet implemented - multi-dim");
+                } else {
+                    throw new IllegalArgumentException("Multidimenional arrays needs to have for #<dim>A(....)");
+                }
+
+            case '+', '-':
+                // Sharpsign+: The #+ and #- reader conditionals are used to conditionally read code
+                // #+sbcl (sb-ext:save-lisp-and-die "my-program")
+            case '=':
+                    // Sharpsign Equal #=: In Common Lisp, #= is used for "read-time evaluation."
+                    // (let ((x 5))
+                    //     (read (make-string-input-stream "#.(+ 3 x)")))
+            case ':':
+                // Sharpsign Colon #: uninterned symbols
+                // (#:my-symbol)
+                throw new IllegalArgumentException("#: not implemented yet");
+            case '\'':
+                // Sharpsign Single-quote #' is used as a shorthand for the function
+                // (defun my-function (x) (* x x))
+                // (funcall #'my-function 5)
+
+                ch = this.readChar();
+                var symbol = this.parseSymbolToken(ch, Token.SYMBOL);
+                if (symbol.isPresent()) {
+                    return Optional.of(new TokenValue(Token.DYNAMIC_FUNCTION, symbol.get().getValue()));
+                } else {
+                    throw new IllegalArgumentException("#': must be followed by a symbol: e.g. #'+ ");
+                }
+            default:
+                throw new IllegalArgumentException("#: not implemented yet");
+        }
+
+    }
+
+    private char readChar() throws IOException {
+        var ch = (char) reader.read();
+        if (ch == -1 || ch == 65535) {
+            this.last = Optional.empty();
+        }
+        this.last = Optional.of(ch);
+        return ch;
+    }
+
+    private Optional<TokenValue> parseComment(char ch) throws IOException {
+        ch = this.readChar();
+        while (ch != '\n' && ch != -1 && ch != 65535) {
+            ch = this.readChar();
+        }
+        return ch == -1 || ch == 65535 ? Optional.empty() : this.nextToken();
+    }
+
     private Optional<TokenValue> parseQuote(char ch) throws IOException {
+        ch = this.readChar();
         var elem = this.nextToken();
         if (elem.isPresent()) {
             return Optional.of(new TokenValue(Token.QUOTE, elem.get()));
@@ -81,6 +148,7 @@ public class Tokenizer {
     }
 
     private Optional<TokenValue> parseComma(char ch) throws IOException {
+        ch = this.readChar();
         var elem = this.nextToken();
         if (elem.isPresent()) {
             return Optional.of(new TokenValue(Token.COMMA, elem.get()));
@@ -110,19 +178,11 @@ public class Tokenizer {
     private Optional<TokenValue> parseNumberToken(char ch) throws IOException {
         var buffer = new StringBuilder();
         buffer.append(ch);
-        var nextInt = this.reader.read();
-        var next = (char) nextInt;
-        while (nextInt != -1 && (Character.isDigit(next) || (next == '.')) && !Character.isWhitespace(next)) {
+        var next = this.readChar();
+        while (this.last.isPresent() && (Character.isDigit(next) || (next == '.')) && !Character.isWhitespace(next)) {
             buffer.append(next);
-            nextInt = this.reader.read();
-            next = (char) nextInt;
+            next = this.readChar();
         }
-        if (nextInt == -1) {
-            this.last = Optional.empty();
-        } else {
-            this.last = Optional.of((char) next);
-        }
-
         var numStr = buffer.toString();
         var i = this.parseInteger(numStr);
         if (i.isPresent()) {
@@ -146,14 +206,15 @@ public class Tokenizer {
     }
 
     private Optional<TokenValue> parseWhitespace(char ch) throws IOException {
-        ch = (char) reader.read();
+        ch = this.readChar();
         while ((Character.isWhitespace(ch) || ch == '\r' || ch == '\n') && ch != -1 && ch != 65535) {
-            ch = (char) reader.read();
+            ch = this.readChar();
         }
-        return ch == -1 || ch == 65535 ? Optional.empty() : this.nextToken(ch);
+        return ch == -1 || ch == 65535 ? Optional.empty() : this.nextToken();
     }
 
     private Optional<TokenValue> parseSExpression(char ch) throws IOException {
+        ch = this.readChar();
         var elem = this.nextToken();
         var list = new ArrayList<TokenValue>();
         while (elem.isPresent() && (elem.get().getToken() != Token.RPAREN)) {
@@ -166,26 +227,26 @@ public class Tokenizer {
     private Optional<TokenValue> parseSymbolToken(char ch, Token returnedToken) throws IOException {
         var buffer = new StringBuilder();
         buffer.append(ch);
-        var nextInt = this.reader.read();
-        var next = (char) nextInt;
-        while (nextInt != -1
+        var next = this.readChar();
+        while (this.last.isPresent()
                 && (isLetterDigitalUnderline(next) || isSpecialSymbolChar(next) && !Character.isWhitespace(next))) {
             buffer.append(next);
-            nextInt = this.reader.read();
-            next = (char) nextInt;
-        }
-        if (nextInt == -1) {
-            this.last = Optional.empty();
-        } else {
-            this.last = Optional.of((char) next);
+            next = this.readChar();
         }
         var symbol = buffer.toString();
-        if (symbol.equals("T") || symbol.equals("true")) {
-            return Optional.of(new TokenValue(Token.T, symbol));
-        } else if (symbol.equals("NIL") || symbol.equals("false")) {
-            return Optional.of(new TokenValue(Token.NIL, symbol));
+        if (ch == '&') {
+            if (symbol.length() == 1) {
+                throw new IllegalArgumentException("& cannot be used alone. must be used with a symbol");
+            }
+            return Optional.of(new TokenValue(Token.FUNCTION_ARGUMENT_NAME, symbol.substring(1)));
         } else {
-            return Optional.of(new TokenValue(returnedToken, symbol));
+            if (symbol.equals("T") || symbol.equals("true")) {
+                return Optional.of(new TokenValue(Token.T, symbol));
+            } else if (symbol.equals("NIL") || symbol.equals("false")) {
+                return Optional.of(new TokenValue(Token.NIL, symbol));
+            } else {
+                return Optional.of(new TokenValue(returnedToken, symbol));
+            }
         }
     }
 
@@ -195,18 +256,20 @@ public class Tokenizer {
 
     private Optional<TokenValue> parseStringToken(char ch) throws IOException {
         var buffer = new StringBuilder();
-        var nextInt = this.reader.read();
-        while (nextInt != -1 && nextInt != ch) {
-            buffer.append((char) nextInt);
-            if (nextInt == '\\') { // escaping
-                buffer.append((char) this.reader.read());
+        var next = this.readChar();
+        while (this.last.isPresent() && next != ch) {
+            buffer.append(next);
+            if (next == '\\') { // escaping
+                buffer.append(this.readChar());
             }
-            nextInt = this.reader.read();
+            next = this.readChar();
         }
-        if (nextInt == -1) {
+        if (this.last.isPresent()) {
+            this.readChar();
+            return Optional.of(new TokenValue(Token.STRING, buffer.toString()));
+        } else {
             return Optional.empty();
         }
-        return Optional.of(new TokenValue(Token.STRING, buffer.toString()));
     }
 
 }

@@ -56,26 +56,43 @@ public class LispRuntime {
         this.tos().scope(defun);
     }
 
-    public ILispFunction execute(TokenValue tokenValue) {
+    public void pushScope() {
         this.stack.push(new Context(this.tos()));
+    }
+    public void pushScope(String defunName) {
+        this.stack.push(new Context(this.tos()));
+        this.newScope(defunName);
+    }
+
+    public void popScope() {
+        this.stack.pop();
+    }
+
+    public ILispFunction execute(TokenValue tokenValue) {
+        this.pushScope();
         try {
             if (tokenValue.getToken().equals(Token.S_EXPRESSION)) {
-                var symbol = tokenValue.getExprSymbol();
-                var pars = tokenValue.getExprParameters();
-                var builtIn = this.builtIns.get(symbol.toLowerCase());
-                if (builtIn != null) {
-                    return builtIn.apply(this, tokenValue, symbol, pars);
+                var symbolElement = tokenValue.getExpression().get(0);
+                if (symbolElement.getToken() == Token.SYMBOL) {
+                    var symbol = tokenValue.getExprSymbol();
+                    var pars = tokenValue.getExprParameters();
+                    var builtIn = this.builtIns.get(symbol.toLowerCase());
+                    if (builtIn != null) {
+                        return builtIn.apply(this, tokenValue, symbol, pars);
+                    }
+                    var custom = this.customIns.get(symbol.toLowerCase());
+                    if (custom != null) {
+                        return custom.apply(this, tokenValue, symbol, pars);
+                    }
+                    throw new IllegalArgumentException("EVAL: undefined function "+symbol);
+                } else {
+                    return tokenValue;
                 }
-                var custom = this.customIns.get(symbol.toLowerCase());
-                if (custom != null) {
-                    return custom.apply(this, tokenValue, symbol, pars);
-                }
-                return tokenValue;
             } else {
                 return tokenValue.apply(this);
             }
         } finally {
-            this.stack.pop();
+            this.popScope();
         }
     }
 

@@ -11,7 +11,6 @@ public enum Token {
 
     SYMBOL(true), // name
     KEYWORD(true), // :key
-    NUMBER(true), // 234234 23423.03
     STRING(true), // "___" '___'
     PACKAGE(true), // abc::def
 
@@ -24,7 +23,9 @@ public enum Token {
 
     COMMA(false), // For the comma character (,)
     DOT(false), // For the dot character (.)
-    EOF(false);
+    EOF(false),
+    DYNAMIC_FUNCTION(true),
+    FUNCTION_ARGUMENT_NAME(true);
 
     private final boolean isAtom;
 

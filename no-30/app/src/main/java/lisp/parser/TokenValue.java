@@ -12,6 +12,7 @@ public class TokenValue implements ILispFunction {
     private final Integer i;
     private List<TokenValue> expression;
     private TokenValue unary;
+    private int dimension = 0;
 
     public TokenValue(Token token) {
         this.token = token;
@@ -52,6 +53,12 @@ public class TokenValue implements ILispFunction {
         this.d = d;
         this.i = null;
     }
+    public TokenValue(Token numberInteger, Integer i) {
+        this.token = numberInteger;
+        this.str = String.format("%d", i);
+        this.d = null;
+        this.i = i;
+    }
 
     public TokenValue(Token numberDouble, String str, Double d) {
         this.token = numberDouble;
@@ -67,11 +74,15 @@ public class TokenValue implements ILispFunction {
         this.d = null;
     }
 
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
+    }
+
     public String getValue() {
         return this.appendTo(new StringBuilder()).toString();
     }
 
-    public int getInt() {
+    public Integer getInteger() {
         return this.i;
     }
 
@@ -79,7 +90,7 @@ public class TokenValue implements ILispFunction {
         return this.token;
     }
 
-    public List<TokenValue> getExpression() {
+    public List<? extends ILispFunction> getExpression() {
         return this.expression;
     }
 
@@ -96,6 +107,12 @@ public class TokenValue implements ILispFunction {
                 builder.append(this.i.toString());
                 break;
             case S_EXPRESSION:
+                if (this.dimension > 0) {
+                    builder.append("#");
+                    if (dimension > 1) {
+                        builder.append(dimension).append('A');
+                    }
+                }
                 builder.append("(");
                 var first = true;
                 for (TokenValue value : this.expression) {
@@ -132,6 +149,12 @@ public class TokenValue implements ILispFunction {
                 builder.append('\'');
                 this.unary.appendTo(builder);
                 break;
+            case DYNAMIC_FUNCTION:
+                builder.append("#'").append(str);
+                break;
+            case FUNCTION_ARGUMENT_NAME:
+                builder.append("&").append(str);
+                break;
             default:
                 throw new IllegalArgumentException("Token " + this.token + " is invalid");
         }
@@ -162,12 +185,8 @@ public class TokenValue implements ILispFunction {
             case NIL:
                 return this;
             case SYMBOL:
-                var variable = runtime.tos().get(this.getValue());
-                if (variable != null) {
-                    return variable.apply(runtime);
-                } else {
-                    return this;
-                }
+                // if variable is not found - error
+                return runtime.tos().get(this.getValue()).apply(runtime);
             case QUOTE:
                 return this.unary;
 
@@ -212,12 +231,18 @@ public class TokenValue implements ILispFunction {
         }
     }
 
+    @Override
+    public TokenValue getUnary() {
+        return unary;
+    }
+
     public String getExprSymbol() {
         return this.getExpression().get(0).getValue();
     }
 
     public List<TokenValue> getExprParameters() {
-        return this.getExpression().subList(1, this.getExpression().size());
+        return expression.subList(1, this.getExpression().size());
     }
+
 
 }

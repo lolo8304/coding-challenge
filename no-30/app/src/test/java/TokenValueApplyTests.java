@@ -70,7 +70,7 @@ class TokenValueApplyTests {
     }
 
     @Test
-    void tokenize_s_expressions_expectok() throws URISyntaxException, IOException {
+    void tokenize_s_builtins_expectok() throws URISyntaxException, IOException {
         // Arrange
         ReadReader("step1/valid-builtins.txt");
         var runtime = new LispRuntime();
@@ -78,17 +78,14 @@ class TokenValueApplyTests {
         // Action
         var line = reader.readLine();
         while (line != null) {
-            if (!line.startsWith("#")) {
-                var tokens = new Parser(line).parse();
-                for (var token : tokens) {
-                    var result = token.apply(runtime);
-                    // Assert
-                    assertNotNull(result);
-                    var builder = new StringBuilder();
-                    token.appendTo(builder);
-                    System.out.println(builder.toString());
-                }
-
+            var tokens = new Parser(line).parse();
+            for (var token : tokens) {
+                var result = token.apply(runtime);
+                // Assert
+                assertNotNull(result);
+                var builder = new StringBuilder();
+                token.appendTo(builder);
+                System.out.println(builder.toString());
             }
             line = reader.readLine();
         }
