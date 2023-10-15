@@ -26,7 +26,7 @@
     output-activation))
 
 ;;; Train the neural network (example training loop)
-(defun train-network(inputs, target)
+(defun train-network(inputs target)
   (let* ((learning-rate 0.1)
          (hidden-activations (make-array '(20)))
          (output-activation 0.0))
@@ -63,23 +63,57 @@
       ;; Update hidden layer weights and bias
       (dotimes (i 7)
         (dotimes (j 20)
-          (setf (aref new-hidden-weights i j) (+ (aref hidden-weights i j) (* learning-rate (aref hidden-deltas j) (aref inputs i)))))
-        (setf (aref new-hidden-bias j) (+ (aref hidden-biases j) (* learning-rate (aref hidden-deltas j))))))
+          (setf (aref new-hidden-weights i j) (+ (aref hidden-weights i j) (* learning-rate (aref hidden-deltas j) (aref inputs i))))
+          (setf (aref new-hidden-bias j) (+ (aref hidden-biases j) (* learning-rate (aref hidden-deltas j))))))
 
+      (format t "output-weights ~A~%" new-output-weights)
+      (format t "hidden-weights ~A~%" new-hidden-weights)
+      (format t "new-hidden-bias ~A~%" new-output-bias)
+      (format t "new-hidden-bias ~A~%" new-hidden-bias)
       ;; Update weights and biases
       (setf output-weights new-output-weights
             hidden-weights new-hidden-weights
             output-bias new-output-bias
-            hidden-biases new-hidden-bias)))
+            hidden-biases new-hidden-bias))))
 
 ;;; Test the neural network
-(let ((inputs '(1 1 1 1 1 1 1 7))
-      (target 7))
-  (format t "Input: ~A~%" inputs)
-  (format t "Target: ~A~%" target)
-  (format t "Prediction: ~A~%" (forward-pass inputs))
+(let (
+      (inputs0 '(1 1 1 1 1 1 0))
+      (target0 0)
+      (inputs1 '(0 1 1 0 0 0 0))
+      (target1 1)
+      (inputs2 '(1 1 0 1 1 0 1))
+      (target2 2)
+      (inputs3 '(1 1 1 1 0 0 1))
+      (target3 3)
+      (inputs4 '(0 1 1 0 0 1 1))
+      (target4 4)
+      (inputs5 '(1 0 1 1 0 1 1))
+      (target5 5)
+      (inputs6 '(1 0 1 1 1 1 1))
+      (target6 6)
+      (inputs7 '(1 1 1 0 0 0 0))
+      (target7 7)
+      (inputs8 '(1 1 1 1 1 1 1))
+      (target8 8)
+      (inputs9 '(1 1 1 1 0 1 1))
+      (target9 9)
+     )
+  (format t "Input: ~A~%" inputs3)
+  (format t "Target: ~A~%" target3)
+  (format t "Prediction: ~A~%" (forward-pass inputs3))
   (format t "Training...~%")
   ;; Train the network with the same input and target
-  (dotimes (i 1000)  ; Training loop
-    (train-network inputs target))
-  (format t "Trained Prediction: ~A~%" (forward-pass inputs))
+  (dotimes (i 100)  ; Training loop
+    (train-network inputs0 target0)
+    (train-network inputs1 target1)
+    (train-network inputs2 target2)
+    (train-network inputs3 target3)
+    (train-network inputs4 target4)
+    (train-network inputs5 target5)
+    (train-network inputs6 target6)
+    (train-network inputs7 target7)
+    (train-network inputs8 target8)
+    (train-network inputs9 target9)
+  )
+  (format t "Trained Prediction: ~A~%" (forward-pass inputs3)))

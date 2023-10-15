@@ -1,16 +1,26 @@
 package lisp.parser;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TokenValue implements ILispFunction {
     private static final ArrayList<TokenValue> EMPTY_ARRAY_LIST = new ArrayList<>();
+    private static final Random RANDOM = new SecureRandom();
+    public static final TokenValue NIL = new TokenValue(Token.NIL,0.0);
+    public static TokenValue ZERO = new TokenValue(Token.NUMBER_DOUBLE, 0.0);
+    public static TokenValue ZERO_INT = new TokenValue(Token.NUMBER_INTEGER, 0);
+    public static TokenValue ONE = new TokenValue(Token.NUMBER_DOUBLE, 1.0);
+    public static TokenValue ONE_INT = new TokenValue(Token.NUMBER_INTEGER, 1);
 
     private final Token token;
     private final String str;
     private final Double d;
     private final Integer i;
     private List<TokenValue> expression;
+
+    private Tensor tensor;
     private TokenValue unary;
     private int dimension = 0;
 
@@ -22,6 +32,10 @@ public class TokenValue implements ILispFunction {
         this.i = null;
     }
 
+    public TokenValue(String str) {
+        this(Token.STRING, str);
+    }
+
     public TokenValue(Token token, String str) {
         this.token = token;
         this.str = str;
@@ -30,9 +44,9 @@ public class TokenValue implements ILispFunction {
         this.i = null;
     }
 
-    public TokenValue(Token token, List<TokenValue> expression) {
+    public TokenValue(Token token, List<? extends ILispFunction> expression) {
         this.token = token;
-        this.expression = expression;
+        this.expression = expression.stream().map( x -> (TokenValue)x).toList();
         this.str = null;
         this.d = null;
         this.i = null;
@@ -47,11 +61,18 @@ public class TokenValue implements ILispFunction {
         this.unary = unary;
     }
 
+    public TokenValue(Double d) {
+        this(Token.NUMBER_DOUBLE, d);
+    }
+
     public TokenValue(Token numberDouble, Double d) {
         this.token = numberDouble;
         this.str = String.format("%f", d);
         this.d = d;
         this.i = null;
+    }
+    public TokenValue(Integer i) {
+        this(Token.NUMBER_INTEGER, i);
     }
     public TokenValue(Token numberInteger, Integer i) {
         this.token = numberInteger;
@@ -74,6 +95,25 @@ public class TokenValue implements ILispFunction {
         this.d = null;
     }
 
+    public TokenValue(Tensor tensor) {
+        this.token = Token.S_EXPRESSION;
+        this.tensor = tensor;
+        this.expression = tensor.toList();
+        this.str = null;
+        this.d = null;
+        this.i = null;
+    }
+
+    public static TokenValue randomDouble() {
+        return new TokenValue(Token.NUMBER_DOUBLE, RANDOM.nextDouble());
+    }
+    public static TokenValue randomDouble(double max) {
+        return new TokenValue(Token.NUMBER_DOUBLE, RANDOM.nextDouble(max));
+    }
+    public static TokenValue randomInteger(int max) {
+        return new TokenValue(Token.NUMBER_INTEGER, RANDOM.nextInt(max));
+    }
+
     public void setDimension(int dimension) {
         this.dimension = dimension;
     }
@@ -88,6 +128,22 @@ public class TokenValue implements ILispFunction {
 
     public Token getToken() {
         return this.token;
+    }
+
+    @Override
+    public ILispFunction get(int... indices) {
+        if (this.tensor != null) {
+            return this.tensor.get(indices);
+        } else if (indices.length == 1) {
+            return this.getExpression().get(indices[0]);
+        } else {
+            throw new IllegalArgumentException("cannot access multiple dimensions without tensor");
+        }
+    }
+
+    @Override
+    public ILispFunction get(int index) {
+        return this.expression.get(index);
     }
 
     public List<? extends ILispFunction> getExpression() {
@@ -115,13 +171,19 @@ public class TokenValue implements ILispFunction {
                 }
                 builder.append("(");
                 var first = true;
+                var count = 0;
                 for (TokenValue value : this.expression) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        builder.append(" ");
+                    if (count == 20) {
+                        builder.append(" ... (size="+this.expression.size()+")");
+                    } else if (count > 20) {
+                        // skip
+                    }else {
+                        if (count > 0) {
+                            builder.append(" ");
+                        }
+                        value.appendTo(builder);
                     }
-                    value.appendTo(builder);
+                    count++;
                 }
                 builder.append(")");
                 break;
@@ -171,7 +233,7 @@ public class TokenValue implements ILispFunction {
         switch (this.token) {
             case S_EXPRESSION:
                 if (this.expression.isEmpty()) {
-                    return new TokenValue(Token.NIL, 0.0);
+                    return TokenValue.NIL;
                 } else {
                     return runtime.execute(this);
                 }

@@ -13,6 +13,9 @@ public interface ILispFunction {
 
     Token getToken();
 
+    ILispFunction get(int... indices);
+    ILispFunction get(int index);
+
     ILispFunction getUnary();
 
     List<? extends ILispFunction> getExpression();

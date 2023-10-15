@@ -27,9 +27,11 @@ public class LispRuntime {
                 .initGlobals(this.globals());
     }
 
-    public String execute(String command) throws IOException {
-        var result = this.execute(new BufferedReader(new StringReader(command)));
-        return result.toString();
+    public String executeAndPrint(String command) throws IOException {
+        return this.execute(command).toString();
+    }
+    public ILispFunction execute(String command) throws IOException {
+        return this.execute(new BufferedReader(new StringReader(command)));
     }
 
     public ILispFunction execute(Reader reader) throws IOException {

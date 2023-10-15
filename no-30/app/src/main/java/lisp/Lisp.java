@@ -32,7 +32,7 @@ public class Lisp implements Callable<Result> {
     @Override
     public Result call() throws Exception {
         if (this.command != null) {
-            return new Result(new LispRuntime().execute(this.command));
+            return new Result(new LispRuntime().executeAndPrint(this.command));
         } else {
             return new Result("done.");
         }

@@ -62,8 +62,9 @@ class DefunTests {
             var result = runtime.execute(token);
             // Assert
             assertNotNull(result);
-            System.out.println(token.appendTo(new StringBuilder()).toString());
-            System.out.println(result.toString());
+            //System.out.println(token.appendTo(new StringBuilder()).toString());
+            //System.out.println(result.toString());
         }
     }
+
 }

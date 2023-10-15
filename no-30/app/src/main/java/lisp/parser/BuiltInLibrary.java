@@ -2,7 +2,6 @@ package lisp.parser;
 
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.function.Function;
 
 import static lisp.parser.Token.*;
 
@@ -104,12 +103,12 @@ public class BuiltInLibrary {
                     for (int i = 1; i < pars.size(); i++) {
                         var compare = (Double) pars.get(i).apply(runtime).getDouble();
                         if (!val.equals(compare)) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
                 } else {
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 }
             }
         };
@@ -125,12 +124,12 @@ public class BuiltInLibrary {
                     for (int i = 1; i < pars.size(); i++) {
                         var compare = (Double) pars.get(i).apply(runtime).getDouble();
                         if (val.compareTo(compare) >= 0) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
                 } else {
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 }
             }
         };
@@ -147,12 +146,12 @@ public class BuiltInLibrary {
                     for (int i = 1; i < pars.size(); i++) {
                         var compare = (Double) pars.get(i).apply(runtime).getDouble();
                         if (val.compareTo(compare) > 0) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
                 } else {
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 }
             }
         };
@@ -168,12 +167,12 @@ public class BuiltInLibrary {
                     for (int i = 1; i < pars.size(); i++) {
                         var compare = (Double) pars.get(i).apply(runtime).getDouble();
                         if (val.compareTo(compare) <= 0) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
                 } else {
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 }
             }
         };
@@ -190,12 +189,12 @@ public class BuiltInLibrary {
                     for (int i = 1; i < pars.size(); i++) {
                         var compare = (Double) pars.get(i).apply(runtime).getDouble();
                         if (val.compareTo(compare) < 0) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
                 } else {
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 }
             }
         };
@@ -213,7 +212,7 @@ public class BuiltInLibrary {
                     if (token == NIL) {
                         return new TokenValue(Token.T, 1.0);
                     } else {
-                        return new TokenValue(NIL, 0.0);
+                        return TokenValue.NIL;
                     }
                 } else {
                     throw new IllegalArgumentException("NOT function must have at least 1 element");
@@ -231,7 +230,7 @@ public class BuiltInLibrary {
                     for (int i = 0; i < pars.size(); i++) {
                         var token = pars.get(i).apply(runtime).getToken();
                         if (token.equals(NIL)) {
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     return new TokenValue(Token.T, 1.0);
@@ -255,7 +254,7 @@ public class BuiltInLibrary {
                             return new TokenValue(Token.T, 1.0);
                         }
                     }
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
 
                 } else {
                     throw new IllegalArgumentException("AND function must have at least 1 element");
@@ -280,7 +279,7 @@ public class BuiltInLibrary {
                 }
                 System.out.println("");
 
-                return new TokenValue(NIL, 0.0);
+                return TokenValue.NIL;
             }
         };
     }
@@ -337,7 +336,7 @@ public class BuiltInLibrary {
                 } else {
                     throw new IllegalArgumentException("format expression must contain <stream> (.e.g t), a string and optional parameters");
                 }
-                return new TokenValue(NIL, 0.0);
+                return TokenValue.NIL;
             }
         };
     }
@@ -351,7 +350,7 @@ public class BuiltInLibrary {
                 if (pars.size() > 1) {
                     var condition = pars.get(0).apply(runtime).getToken();
                     var trueCondition = pars.get(1);
-                    ILispFunction elseCondition = new TokenValue(NIL, 0.0);
+                    ILispFunction elseCondition = TokenValue.NIL;
                     if (pars.size() > 2) {
                         elseCondition = pars.get(2);
                     }
@@ -380,7 +379,7 @@ public class BuiltInLibrary {
                         var exprOrVariable = pars.get(i).apply(runtime);
                         runtime.tos().put(variable, exprOrVariable);
                     }
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 } else {
                     throw new IllegalArgumentException("setq must have 2 or even number of parameters: setq <symbol> <expression of value> | setq <s1> <exp1> <s2> <exp2> ...");
                 }
@@ -406,12 +405,12 @@ public class BuiltInLibrary {
                         var existingValue = runtime.tos().globals().getOrNil(parName);
                         if (existingValue != null && !existingValue.getToken().equals(NIL)) {
                             // do not overwrite the value
-                            return new TokenValue(NIL, 0.0);
+                            return TokenValue.NIL;
                         }
                     }
                     // defparameter or not existing value
                     runtime.tos().putGlobal(parName, initValue);
-                    return new TokenValue(NIL, 0.0);
+                    return TokenValue.NIL;
                 } else {
                     throw new IllegalArgumentException("set1 must have 2 parameters: setq <symbol> <expression of value>");
                 }
@@ -439,27 +438,20 @@ public class BuiltInLibrary {
                     throw new IllegalArgumentException(":element-type must be quoted values of 'integer 'float 'string 't (any)");
                 }
                 var elementTypeSymbol = elementType.apply(runtime).getValue();
-                return initialContent != null ? initialContent.apply(runtime) : this.makeArray(runtime, dimensions, elementTypeSymbol, initialElement);
+                return initialContent != null ?
+                        this.makeArray(runtime, dimensions, null, initialContent.apply(runtime))
+                        :
+                        this.makeArray(runtime, dimensions, initialElement, null);
             }
 
-            private ILispFunction makeArray(int size, Function<Void, ILispFunction> initialValueCallback) {
-                List<TokenValue> list = new ArrayList<>();
-                for (int i = 0; i < size; i++) {
-                    //TODO: check how to solve casting issue with list and interface later
-                    list.add((TokenValue) initialValueCallback.apply(null));
-                }
-                return new TokenValue(Token.S_EXPRESSION, list);
-            }
-
-            private ILispFunction makeArray(LispRuntime runtime, ILispFunction dimensions, String elementTypeSymbol, ILispFunction initialElement) {
+            private ILispFunction makeArray(LispRuntime runtime, ILispFunction dimensions, ILispFunction initialElement, ILispFunction initialContent) {
                 if (initialElement == null) {
-                    initialElement = new TokenValue(NIL, 0.0);
+                    initialElement = TokenValue.NIL;
                 }
-                var initialValue = initialElement.apply(runtime);
                 if (dimensions.getToken() == Token.NUMBER_INTEGER || (dimensions.getToken() == Token.QUOTE && dimensions.getUnary().getToken() == Token.NUMBER_INTEGER)) {
                     // 1 dimensional vector
                     var size = dimensions.apply(runtime).getInteger();
-                    return this.makeArray(size, (unused -> initialValue));
+                    return this.makeArray(runtime, new int[]{size}, initialElement, initialContent);
                 }
                 ILispFunction dimensionToken;
                 if (dimensions.getToken() == Token.S_EXPRESSION) {
@@ -469,22 +461,34 @@ public class BuiltInLibrary {
                 } else {
                     throw new IllegalArgumentException("Invalid multi dimensions '(1 2) ");
                 }
-                var xD = dimensionToken.getExpression().size();
-                if (xD == 2) {
-                    // 1 dimensional vector
-                    var size2 = dimensionToken.getExpression().get(0).apply(runtime).getInteger();
-                    var size1 = dimensionToken.getExpression().get(1).apply(runtime).getInteger();
-                    return this.makeArray(size2, unused -> this.makeArray(size1, unused1 -> initialValue));
-                } else {
-                    var innerInitialValue = initialValue;
-                    while (xD > 0) {
-                        xD--;
-                        var size_i = dimensionToken.getExpression().get(xD).apply(runtime).getInteger();
-                        ILispFunction finalInnerInitialValue = innerInitialValue; // effectivly final !!!
-                        innerInitialValue = this.makeArray(size_i, unused -> finalInnerInitialValue);
-                    }
-                    return innerInitialValue;
+                var xD = dimensionToken.getExpression();
+                var dims = new int[xD.size()];
+                for (int i = 0; i < xD.size(); i++) {
+                    dims[i] = xD.get(i).getInteger();
                 }
+                return this.makeArray(runtime, dims, initialElement, initialContent);
+            }
+
+
+            private ILispFunction makeArray(LispRuntime runtime, int[] size, ILispFunction initialElement, ILispFunction initialContent) {
+                var initialValue = initialElement != null ? initialElement.apply(runtime) : null;
+                var initialContentValue = initialContent != null ? initialContent.apply(runtime) : null;
+                if (initialValue == null && initialContentValue == null) {
+                    initialValue = TokenValue.NIL;
+                }
+                final var initialValue2 = initialValue;
+                if (initialValue2 != null) {
+                    var initializer = new TensorInitializer() {
+                        @Override
+                        public TokenValue get() {
+                            return (TokenValue)initialValue2;
+                        }
+                    };
+                    var tensor = new Tensor(size, initializer);
+                    return new TokenValue(tensor);
+                }
+                var tensor = new Tensor(size, (TokenValue) initialContent);
+                return new TokenValue(tensor);
             }
         };
     }
@@ -503,7 +507,7 @@ public class BuiltInLibrary {
                         if (max.getToken() == Token.NUMBER_INTEGER) {
                             return new TokenValue(Token.NUMBER_INTEGER, RANDOM.nextInt(max.getInteger()));
                         } else {
-                            return new TokenValue(Token.NUMBER_INTEGER, RANDOM.nextDouble() * Math.abs(max.getDouble()));
+                            return new TokenValue(NUMBER_DOUBLE, RANDOM.nextDouble() * Math.abs(max.getDouble()));
                         }
                     }
                     return new TokenValue(Token.NUMBER_DOUBLE, RANDOM.nextDouble());
@@ -568,7 +572,7 @@ public class BuiltInLibrary {
                                 runtime.tos().putLocal(variable, value);
                             }
                         }
-                        ILispFunction lastResult = new TokenValue(NIL);
+                        ILispFunction lastResult = TokenValue.NIL;
                         for (int i = 1; i < pars.size(); i++) {
                             var body = pars.get(i);
                             lastResult = body.apply(runtime);
@@ -595,7 +599,7 @@ public class BuiltInLibrary {
             @Override
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                                        List<? extends ILispFunction> pars) {
-                if (pars.size() == 2) {
+                if (pars.size() >= 2) {
                     runtime.pushScope("dotimes");
                     try {
                         // (dotimes (var count &optional result-form) body)
@@ -603,13 +607,14 @@ public class BuiltInLibrary {
                         var variable = counter.getExpression().get(0).getValue();
                         var count = counter.getExpression().get(1).apply(runtime);
 
-                        runtime.tos().put(variable, count);
                         var countInt = count.getInteger();
-                        var body = pars.get(1);
                         for (int i = 0; i < countInt; i++) {
-                            body.apply(runtime);
+                            runtime.tos().put(variable, new TokenValue(i));
+                            for (int j = 1; j < pars.size(); j++) {
+                                pars.get(j).apply(runtime);
+                            }
                         }
-                        ILispFunction result = new TokenValue(NIL);
+                        ILispFunction result = TokenValue.NIL;
                         if (counter.getExpression().size() == 3) {
                             // include result form
                             result = counter.getExpression().get(2).apply(runtime);
@@ -619,7 +624,48 @@ public class BuiltInLibrary {
                         runtime.popScope();
                     }
                 } else {
-                    throw new IllegalArgumentException("dottimes must have 2 parameters: (dotimes (var count &optional result-form) body)");
+                    throw new IllegalArgumentException("dotimes must have >=2 parameters: (dotimes (var count &optional result-form) body body body ...)");
+                }
+            }
+        };
+    }
+
+
+    // (loop repeat count collect|append body)
+    //
+    private ILispBuiltInFunction loopFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() == 4) {
+                    runtime.pushScope("loop");
+                    try {
+                        var type = pars.get(0).getValue();
+                        switch (type) {
+                            case "repeat":
+                                var count = pars.get(1).apply(runtime).getInteger();
+                                var accumulator = pars.get(2).getValue();
+                                var body = pars.get(3);
+                                if (accumulator.equals("collect")) {
+                                    var values = new ArrayList<ILispFunction>();
+                                    for (int i = 0; i < count; i++) {
+                                        var newValue = body.apply(runtime);
+                                        values.add(newValue);
+                                    }
+                                    return new TokenValue(S_EXPRESSION, values);
+                                } else {
+                                    throw new IllegalArgumentException("loop - different accumulator than defined: "+accumulator);
+                                }
+                            default:
+                                throw new IllegalArgumentException("loop - different type than defined: "+expr);
+                        }
+                    } finally {
+                        runtime.popScope();
+                    }
+                } else {
+                    throw new IllegalArgumentException("loop must have 3 parameters: (loop repeat count body)");
                 }
             }
         };
@@ -645,28 +691,29 @@ public class BuiltInLibrary {
             @Override
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                                        List<? extends ILispFunction> pars) {
-                if (pars.size() == 2) {
-                    var variable = pars.get(0);
-                    if (variable.getToken() == SYMBOL) {
-                        var exprOrVariable = pars.get(1).apply(runtime);
-                        runtime.tos().put(variable.getValue(), exprOrVariable);
-                        return new TokenValue(NIL, 0.0);
-                    }
-                    if (variable.getToken() == S_EXPRESSION && variable.getExpression().get(0).getValue().equals("aref")) {
-                        // (setf (aref my-array 1) 100)
-                        // do not run (aref ...) just use definitions to access array and adapt it
-                        var arrayVariableName = variable.getExpression().get(1).getValue();
-                        var array = runtime.tos().get(arrayVariableName);
-                        var index = variable.getExpression().get(2).apply(runtime).getInteger();
-                        var newValue = pars.get(1).apply(runtime);
+                if (pars.size() >= 2 && pars.size() % 2 == 0) {
+                    for (int i = 0; i < pars.size(); i++) {
+                        var variable = pars.get(i++);
+                        if (variable.getToken() == SYMBOL) {
+                            var exprOrVariable = pars.get(i).apply(runtime);
+                            runtime.tos().put(variable.getValue(), exprOrVariable);
+                        } else if (variable.getToken() == S_EXPRESSION && variable.getExpression().get(0).getValue().equals("aref")) {
+                            // (setf (aref my-array 1) 100)
+                            // do not run (aref ...) just use definitions to access array and adapt it
+                            var arrayVariableName = variable.getExpression().get(1).getValue();
+                            var array = runtime.tos().get(arrayVariableName);
+                            var index = variable.getExpression().get(2).apply(runtime).getInteger();
+                            var newValue = pars.get(i).apply(runtime);
 
-                        var casting = (List<TokenValue>)array.getExpression(); // issue with <? extends ILispFunction
-                        casting.set(index, (TokenValue)newValue);
-                        return new TokenValue(NIL, 0.0);
+                            var casting = (List<TokenValue>) array.getExpression(); // issue with <? extends ILispFunction
+                            casting.set(index, (TokenValue) newValue);
+                        } else {
+                            throw new IllegalArgumentException("setf type is not supported yet - " + expr.toString());
+                        }
                     }
-                    throw new IllegalArgumentException("setf type is not supported yet - "+expr.toString());
+                    return TokenValue.NIL;
                 } else {
-                    throw new IllegalArgumentException("setf must have 2 : setf place value");
+                    throw new IllegalArgumentException("setf must have >2 and even arguments : setf place value place value ...");
                 }
             }
         };
@@ -682,17 +729,35 @@ public class BuiltInLibrary {
                 if (pars.size() >= 2) {
                     var arrayVariableName = pars.get(0).getValue();
                     var array = runtime.tos().get(arrayVariableName);
-                    var result = array;
+
+                    var indices = new int[pars.size()-1];
                     for (int i = 1; i < pars.size(); i++) {
                         var index = pars.get(i).apply(runtime).getInteger();
-                        if (array.getToken() != S_EXPRESSION) {
-                            throw new IllegalArgumentException("Array referenced is not an array ("+array.getToken()+") - "+array.toString());
-                        }
-                        result = result.getExpression().get(index);
+                        indices[i-1] = index;
                     }
-                    return result;
+                    if (array.getToken() != S_EXPRESSION) {
+                        throw new IllegalArgumentException("Array referenced is not an array ("+array.getToken()+") - "+array.toString());
+                    }
+                    return array.get(indices);
                 } else {
                     throw new IllegalArgumentException("aref must have > 2 parameters: aref var index1 index2 ... - "+expr);
+                }
+            }
+        };
+    }
+
+    // (aref my-array 10)
+    private ILispBuiltInFunction expFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() == 1) {
+                    var power = pars.get(0).apply(runtime).getDouble();
+                    return new TokenValue(Math.exp(power));
+                } else {
+                    throw new IllegalArgumentException("exp must have 1 parameter: (exp power) - " +expr);
                 }
             }
         };
@@ -750,6 +815,9 @@ public class BuiltInLibrary {
         builtIns.put("dotimes", this.dotimesFunction());
         builtIns.put("setf", this.setfFunction());
         builtIns.put("aref", this.arefFunction());
+        builtIns.put("dotimes", this.dotimesFunction());
+        builtIns.put("loop", this.loopFunction());
+        builtIns.put("exp", this.expFunction());
 
         builtIns.put("defun", this.defunFunction());
         return this;

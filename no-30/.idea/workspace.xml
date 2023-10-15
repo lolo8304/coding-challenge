@@ -4,29 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0411ef4-ddcc-42fe-956c-f26b91988400" name="Changes" comment="impl most built ins and execution logic with stack">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/DefunBuiltIn.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/java/DefunTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.defun.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.nn.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="a0411ef4-ddcc-42fe-956c-f26b91988400" name="Changes" comment="implement nn version fully implemetned built-ins for interpreter">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/app/no-30.app.test.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/no-30.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Tensor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/TensorInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/BuiltInTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/TensorTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/Lisp.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/Lisp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Context.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Context.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/ILispFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/ILispFunction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/LispRuntime.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/LispRuntime.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Parser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Token.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/TokenValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/TokenValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Tokenizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/Tokenizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/LispTokenizerTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/LispTokenizerTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/TokenValueApplyTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/TokenValueApplyTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid-builtins.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid-builtins.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.atoms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.atoms.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.s-expressions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.s-expressions.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.strings.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.strings.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/DefunTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/DefunTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.nn.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step1/valid.nn.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +78,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -103,21 +97,25 @@
     <option name="flattenPackages" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/Lolo/git/coding-challenge/no-30/app/src/test/resources/tests/step1&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/Lolo/git/coding-challenge/no-30/app/src/test/resources/tests/step1",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/src/test/resources/tests/step1" />
     </key>
     <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="lisp.parser.TokenValue" />
       <recent name="lisp.parser.DefunBuiltIn" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -125,6 +123,30 @@
     </key>
   </component>
   <component name="RunManager" selected="Gradle.DefunTests.tokenize_nn_expectok">
+    <configuration name="BuiltInTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:test" />
+            <option value="--tests" />
+            <option value="&quot;BuiltInTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
     <configuration name="DefunTests.tokenize_nn_expectok" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -139,30 +161,6 @@
             <option value=":app:test" />
             <option value="--tests" />
             <option value="&quot;DefunTests.tokenize_nn_expectok&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
-      <method v="2" />
-    </configuration>
-    <configuration name="LispTokenizerTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":app:test" />
-            <option value="--tests" />
-            <option value="&quot;LispTokenizerTests&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -197,6 +195,30 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
+    <configuration name="TensorTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:test" />
+            <option value="--tests" />
+            <option value="&quot;TensorTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
     <configuration name="Tests in 'no-30.app.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -219,37 +241,13 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="TokenValueApplyTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--debug" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":app:test" />
-            <option value="--tests" />
-            <option value="&quot;TokenValueApplyTests&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.DefunTests.tokenize_nn_expectok" />
         <item itemvalue="Gradle.Tests in 'no-30.app.test'" />
+        <item itemvalue="Gradle.BuiltInTests" />
+        <item itemvalue="Gradle.TensorTests" />
         <item itemvalue="Gradle.LispTokenizerTests.tokenize_s_expressions_expectok" />
-        <item itemvalue="Gradle.TokenValueApplyTests" />
-        <item itemvalue="Gradle.LispTokenizerTests" />
       </list>
     </recent_temporary>
   </component>
@@ -270,7 +268,15 @@
       <option name="project" value="LOCAL" />
       <updated>1697164132503</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="implement full logic of built ins and neuronal network example">
+      <option name="closed" value="true" />
+      <created>1697302080686</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1697302080686</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -287,14 +293,16 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="impl most built ins and execution logic with stack" />
-    <option name="LAST_COMMIT_MESSAGE" value="impl most built ins and execution logic with stack" />
+    <MESSAGE value="implement full logic of built ins and neuronal network example" />
+    <MESSAGE value="implement nn version fully implemetned built-ins for interpreter" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement nn version fully implemetned built-ins for interpreter" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/TokenValue.java</url>
-          <line>193</line>
+          <line>255</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
@@ -304,50 +312,51 @@
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java</url>
-          <line>570</line>
+          <line>574</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/TokenValue.java</url>
-          <line>188</line>
+          <line>250</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/Context.java</url>
-          <line>56</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/Context.java</url>
-          <line>34</line>
+          <line>33</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java</url>
-          <line>326</line>
-          <properties>
-            <option name="lambda-ordinal" value="-1" />
-          </properties>
-          <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/TokenValue.java</url>
-          <line>211</line>
+          <line>273</line>
           <option name="timeStamp" value="39" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <condition expression="pars.size() &gt; 1" language="JAVA" />
-          <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java</url>
-          <line>685</line>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <condition expression="variable.equals(&quot;hidden-weights&quot;)" language="JAVA" />
           <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java</url>
-          <line>379</line>
+          <line>378</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java</url>
+          <line>439</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/lisp/parser/Tensor.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="java-exception">
+          <properties>
+            <catch-class-filters>
+              <class-filter pattern="java.lang.IllegalArgumentException" />
+            </catch-class-filters>
+            <option name="catch-filters-enabled" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GradleRunConfiguration">

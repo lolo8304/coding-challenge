@@ -2,7 +2,6 @@ package lisp.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Context {
@@ -60,7 +59,7 @@ public class Context {
     }
 
     public ILispFunction getOrNil(String symbol) {
-        return this.getIfAbsent(symbol, (unused) -> new TokenValue(Token.NIL, 0.0));
+        return this.getIfAbsent(symbol, (unused) -> TokenValue.NIL);
     }
 
     public void putGlobal(String symbol, ILispFunction value) {
