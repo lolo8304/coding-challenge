@@ -45,8 +45,8 @@ public class BuiltInLibrary {
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                     List<? extends ILispFunction> pars) {
                 if (!pars.isEmpty()) {
-                    var sum = pars.get(0).apply(runtime).getDouble();
-                    for (int i = 1; i < pars.size(); i++) {
+                    var sum = 0.0;
+                    for (int i = 0; i < pars.size(); i++) {
                         sum -= (Double) pars.get(i).apply(runtime).getDouble();
                     }
                     return new TokenValue(Token.NUMBER_DOUBLE, sum);
@@ -445,9 +445,6 @@ public class BuiltInLibrary {
             }
 
             private ILispFunction makeArray(LispRuntime runtime, ILispFunction dimensions, ILispFunction initialElement, ILispFunction initialContent) {
-                if (initialElement == null) {
-                    initialElement = TokenValue.NIL;
-                }
                 if (dimensions.getToken() == Token.NUMBER_INTEGER || (dimensions.getToken() == Token.QUOTE && dimensions.getUnary().getToken() == Token.NUMBER_INTEGER)) {
                     // 1 dimensional vector
                     var size = dimensions.apply(runtime).getInteger();
@@ -455,7 +452,11 @@ public class BuiltInLibrary {
                 }
                 ILispFunction dimensionToken;
                 if (dimensions.getToken() == Token.S_EXPRESSION) {
-                    dimensionToken = dimensions;
+                    if (dimensions.getExpression().get(0).getValue().equals("list")) {
+                        dimensionToken = dimensions.apply(runtime);
+                    } else {
+                        dimensionToken = dimensions;
+                    }
                 } else if (dimensions.getToken() == Token.QUOTE && dimensions.getUnary().getToken() == Token.S_EXPRESSION) {
                     dimensionToken = dimensions.apply(runtime);
                 } else {
@@ -548,7 +549,7 @@ public class BuiltInLibrary {
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                                        List<? extends ILispFunction> pars) {
                 if (pars.size() >= 2) {
-                    runtime.pushScope("let"); // ensure scope only for the "let" command
+                    runtime.pushScope("let");
                     try {
                         // ( (var1 value1) (var2 value2) )
                         var varAndValueDeclaration = pars.get(0);
@@ -639,7 +640,7 @@ public class BuiltInLibrary {
             @Override
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                                        List<? extends ILispFunction> pars) {
-                if (pars.size() == 4) {
+                if (pars.size() >= 4) {
                     runtime.pushScope("loop");
                     try {
                         var type = pars.get(0).getValue();
@@ -658,6 +659,34 @@ public class BuiltInLibrary {
                                 } else {
                                     throw new IllegalArgumentException("loop - different accumulator than defined: "+accumulator);
                                 }
+                            // loop for i from 0 below 5 do
+                            case "for":
+                                var variable = pars.get(1);
+                                var variableName = variable.getValue();
+                                // from
+                                var lower = pars.get(3).apply(runtime);
+                                runtime.tos().putLocal(variableName, lower);
+                                // below
+                                var upperExclude = pars.get(5).apply(runtime);
+                                var doIndex = 6;
+                                for (int i = lower.getInteger(); i < upperExclude.getInteger(); i++) {
+                                    runtime.tos().putLocal(variableName, new TokenValue(NUMBER_INTEGER, i));
+                                    // do
+                                    doIndex = 6;
+                                    while (doIndex < pars.size() && pars.get(doIndex).getValue().equals("do")) {
+                                        doIndex++;
+                                        pars.get(doIndex).apply(runtime);
+                                        doIndex++;
+                                    }
+                                }
+                                // finally
+                                var finallyIndex = doIndex;
+                                while (finallyIndex < pars.size() && pars.get(finallyIndex).getValue().equals("finally")) {
+                                    finallyIndex++;
+                                    pars.get(finallyIndex).apply(runtime);
+                                    finallyIndex++;
+                                }
+                                return TokenValue.NIL;
                             default:
                                 throw new IllegalArgumentException("loop - different type than defined: "+expr);
                         }
@@ -702,11 +731,29 @@ public class BuiltInLibrary {
                             // do not run (aref ...) just use definitions to access array and adapt it
                             var arrayVariableName = variable.getExpression().get(1).getValue();
                             var array = runtime.tos().get(arrayVariableName);
-                            var index = variable.getExpression().get(2).apply(runtime).getInteger();
-                            var newValue = pars.get(i).apply(runtime);
-
-                            var casting = (List<TokenValue>) array.getExpression(); // issue with <? extends ILispFunction
-                            casting.set(index, (TokenValue) newValue);
+                            // after 2 there could be multiple indices
+                            var indices = new int[variable.getExpression().size()-2];
+                            for (int j = 2; j < variable.getExpression().size(); j++) {
+                                indices[j-2] = variable.getExpression().get(j).apply(runtime).getInteger();
+                            }
+                            // check if (apply #'aref var) is now there
+                            var newValueSlot = pars.get(i);
+                            ILispFunction newValue = TokenValue.NIL;
+                            if (newValueSlot.getToken() == S_EXPRESSION && newValueSlot.get(0).getValue().equals("apply") && newValueSlot.get(1).getValue().equals("#'aref")) {
+                                var newValueArray = newValueSlot.get(2).apply(runtime); // resolve variable
+                                var fromValueArrayDims = newValueArray.dimensions();
+                                var toValueArrayDims = array.dimensions();
+                                if (fromValueArrayDims.length < toValueArrayDims.length) {
+                                    var newIndices = new int[fromValueArrayDims.length];
+                                    System.arraycopy(indices, 0, newIndices, 0, fromValueArrayDims.length);
+                                    newValue = newValueArray.get(newIndices);
+                                } else {
+                                    newValue = newValueArray.get(indices);
+                                }
+                            } else {
+                                newValue = pars.get(i).apply(runtime);
+                            }
+                            array.set(indices, newValue);
                         } else {
                             throw new IllegalArgumentException("setf type is not supported yet - " + expr.toString());
                         }
@@ -763,6 +810,79 @@ public class BuiltInLibrary {
         };
     }
 
+    private ILispBuiltInFunction listFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                var list = new ArrayList<TokenValue>();
+                for (int i = 0; i < pars.size(); i++) {
+                    list.add((TokenValue)pars.get(i).apply(runtime));
+                }
+                return new TokenValue(S_EXPRESSION, list);
+            }
+        };
+    }
+
+
+    // (destructuring-bind pattern source-form
+    //  body)
+    // e.g. (destructuring-bind (input-layer hidden-layer output-layer output) network
+    //       body ...)
+    private ILispBuiltInFunction destructuringBindFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() >= 3) {
+                    runtime.pushScope("destructuringBind");
+                    try {
+                        var patterns = pars.get(0); // contains list of variable names - found in
+                        var sourceForm = pars.get(1).apply(runtime); // variable resolved as list of paramters
+                        for (int i = 0; i < patterns.getExpression().size(); i++) {
+                            var patternString = patterns.getExpression().get(i).getValue();
+                            var source = sourceForm.get(i);
+                            runtime.tos().putLocal(patternString, source);
+                        }
+                        ILispFunction result = TokenValue.NIL;
+                        for (int i = 2; i < pars.size(); i++) {
+                            result = pars.get(i).apply(runtime);
+                        }
+                        return result;
+                    } finally {
+                        runtime.popScope();
+                    }
+                } else {
+                    throw new IllegalArgumentException("destructuring-bind must have >= 3 parameter: (destructuring-bind pattern source-form body...) - " +expr);
+                }
+            }
+        };
+    }
+
+    private ILispBuiltInFunction arrayDimensionBindFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() == 2) {
+                    var array = pars.get(0).apply(runtime);
+                    var index = pars.get(1).apply(runtime).getInteger();
+                    if (index < array.dimensions().length) {
+                        return new TokenValue(Token.NUMBER_INTEGER, array.dimensions()[index]);
+                    } else {
+                        // hack to support 20 x 1 = 20
+                        return new TokenValue(Token.NUMBER_INTEGER, 1);
+                    }
+                } else {
+                    throw new IllegalArgumentException("array-dimension must have 2 parameter: (array-dimension array dimension) - " +expr);
+                }
+            }
+        };
+    }
+
     // (defun doublen (n) (* n 2))
     // defun <symbol> expr(par1, par2, ) expr
     private ILispBuiltInFunction defunFunction() {
@@ -770,19 +890,25 @@ public class BuiltInLibrary {
             @Override
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                     List<? extends ILispFunction> pars) {
-                if (pars.size() == 3 || pars.size() == 4) {
+                if (pars.size() >= 3) {
                     var funcName = pars.get(0).getValue();
                     var vars = pars.get(1);
                     ILispFunction docu = new TokenValue(Token.STRING, "");
+                    var funcStartIndex = 2;
                     var func = pars.get(2);
                     if (func.getToken() == Token.STRING) {
                         docu = func;
                         func = pars.get(3);
+                        funcStartIndex = 3;
                     }
-                    runtime.addCustom(funcName, new DefunBuiltIn(funcName, vars, docu, func));
+                    var funcs = new ILispFunction[pars.size() - funcStartIndex];
+                    for (int i = funcStartIndex; i < pars.size(); i++) {
+                        funcs[i-funcStartIndex] = pars.get(i);
+                    }
+                    runtime.addCustom(funcName, new DefunBuiltIn(funcName, vars, docu, funcs));
                     return new TokenValue(Token.SYMBOL, symbol.toUpperCase());
                 } else {
-                    throw new IllegalArgumentException("defun must have 3 or 4 parameters: func name, vars-expr, [docustring], func-expr");
+                    throw new IllegalArgumentException("defun must have >=3 parameters: func name, vars-expr, [docustring], func-expr func-expre func-exp - "+expr);
                 }
             }
         };
@@ -815,9 +941,12 @@ public class BuiltInLibrary {
         builtIns.put("dotimes", this.dotimesFunction());
         builtIns.put("setf", this.setfFunction());
         builtIns.put("aref", this.arefFunction());
-        builtIns.put("dotimes", this.dotimesFunction());
         builtIns.put("loop", this.loopFunction());
         builtIns.put("exp", this.expFunction());
+        builtIns.put("list", this.listFunction());
+        builtIns.put("destructuring-bind", this.destructuringBindFunction());
+        builtIns.put("array-dimension", this.arrayDimensionBindFunction());
+
 
         builtIns.put("defun", this.defunFunction());
         return this;

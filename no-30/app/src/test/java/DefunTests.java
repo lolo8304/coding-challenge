@@ -53,7 +53,7 @@ class DefunTests {
     @Test
     void tokenize_nn_expectok() throws URISyntaxException, IOException {
         // Arrange
-        ReadReader("step1/valid.nn.txt");
+        ReadReader("step1/valid2.nn.lisp");
         var runtime = new LispRuntime();
 
         // Action

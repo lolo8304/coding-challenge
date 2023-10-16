@@ -77,11 +77,7 @@ public class Tokenizer {
         switch (ch) {
             case '(', '1', '2','3', '4', '5', '6', '7', '8', '9':
                 if (ch== '(') {
-                    var expr = this.parseSExpression(ch);
-                    if (expr.isPresent()) {
-                        expr.get().setDimension(1);
-                    }
-                    return expr;
+                    return this.parseSExpression(ch);
                 }
                 var chA = this.readChar();
                 if (chA == 'A') {

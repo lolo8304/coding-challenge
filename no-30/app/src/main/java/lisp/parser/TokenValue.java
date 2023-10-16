@@ -22,7 +22,6 @@ public class TokenValue implements ILispFunction {
 
     private Tensor tensor;
     private TokenValue unary;
-    private int dimension = 0;
 
     public TokenValue(Token token) {
         this.token = token;
@@ -114,10 +113,6 @@ public class TokenValue implements ILispFunction {
         return new TokenValue(Token.NUMBER_INTEGER, RANDOM.nextInt(max));
     }
 
-    public void setDimension(int dimension) {
-        this.dimension = dimension;
-    }
-
     public String getValue() {
         return this.appendTo(new StringBuilder()).toString();
     }
@@ -146,6 +141,39 @@ public class TokenValue implements ILispFunction {
         return this.expression.get(index);
     }
 
+    @Override
+    public ILispFunction set(int[] indices, ILispFunction value) {
+        if (indices.length > 1) {
+            if (this.tensor != null) {
+                return this.tensor.set(indices, value);
+            } else {
+                throw new IllegalArgumentException("Cannot set multi-dim array values without tensor");
+            }
+        } else {
+            if (this.tensor != null) {
+                return this.tensor.set(indices, value);
+            } else {
+                return this.expression.set(indices[0], (TokenValue)value);
+            }
+        }
+    }
+
+    @Override
+    public ILispFunction set(int index, ILispFunction value) {
+        return null;
+    }
+
+    @Override
+    public int[] dimensions() {
+        if (this.tensor != null) {
+            return this.tensor.dimensions();
+        } else if (this.token == Token.S_EXPRESSION){
+            return new int[] { this.expression.size() };
+        } else {
+            return new int[0];
+        }
+    }
+
     public List<? extends ILispFunction> getExpression() {
         return this.expression;
     }
@@ -163,11 +191,10 @@ public class TokenValue implements ILispFunction {
                 builder.append(this.i.toString());
                 break;
             case S_EXPRESSION:
-                if (this.dimension > 0) {
+                if (this.tensor != null) {
                     builder.append("#");
-                    if (dimension > 1) {
-                        builder.append(dimension).append('A');
-                    }
+                    var dimensionsSize = this.tensor.dimensions().length;
+                    builder.append(dimensionsSize).append('A');
                 }
                 builder.append("(");
                 var first = true;

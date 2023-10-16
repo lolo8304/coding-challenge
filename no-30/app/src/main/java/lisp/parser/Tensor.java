@@ -47,7 +47,7 @@ public class Tensor {
     }
     private void initDataContent(Function<Void, TokenValue> initializer) {
         var intializeContentExpress = initializer.apply(null);
-        this.data = intializeContentExpress.getExprParameters().toArray(TokenValue[]::new);
+        this.data = intializeContentExpress.getExpression().toArray(TokenValue[]::new);
     }
     private void initData(TensorInitializer initializer) {
         for (int i = 0; i < this.data.length; i++) {
@@ -94,7 +94,12 @@ public class Tensor {
 
     private int calculateFlatIndex(int... indices) {
         if (indices.length != dimensions.length) {
-            throw new IllegalArgumentException("Index dimensions "+indices.length+" does not fit the tensor dimensions "+this.dimensions.length);
+            // special case if dimension size of indec + n-tlayer = 1
+            for (int i = indices.length; i < dimensions.length; i++) {
+                if (dimensions[i] != 1) {
+                    throw new IllegalArgumentException("Index dimensions "+indices.length+" does not fit the tensor dimensions "+this.dimensions.length);
+                }
+            }
         }
         int flatIndex = 0;
         int multiplier = 1;
@@ -110,6 +115,13 @@ public class Tensor {
 
     public List<TokenValue> toList() {
         return new DataList(this);
+    }
+
+    public ILispFunction set(int[] indices, ILispFunction value) {
+        var index = this.calculateFlatIndex(indices);
+        var oldValue = this.data[this.calculateFlatIndex(indices)];
+        this.data[index] = (TokenValue)value;
+        return oldValue;
     }
 
 

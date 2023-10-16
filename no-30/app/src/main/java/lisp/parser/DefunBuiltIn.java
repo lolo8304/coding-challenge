@@ -8,9 +8,9 @@ public class DefunBuiltIn implements ILispBuiltInFunction {
     private String symbol;
     private ILispFunction vars;
     private final ILispFunction docu;
-    private ILispFunction func;
+    private ILispFunction[] func;
 
-    public DefunBuiltIn(String symbol, ILispFunction vars, ILispFunction docu, ILispFunction func) {
+    public DefunBuiltIn(String symbol, ILispFunction vars, ILispFunction docu, ILispFunction... func) {
         this.symbol = symbol;
         this.vars = vars;
         this.docu = docu;
@@ -29,7 +29,11 @@ public class DefunBuiltIn implements ILispBuiltInFunction {
                     var value = pars.get(i).apply(runtime);
                     runtime.tos().put(variable, value);
                 }
-                return this.func.apply(runtime);
+                ILispFunction result = TokenValue.NIL;
+                for (ILispFunction iLispFunction : this.func) {
+                    result = iLispFunction.apply(runtime);
+                }
+                return result;
             } finally {
                 runtime.popScope();
             }

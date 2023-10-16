@@ -16,6 +16,11 @@ public interface ILispFunction {
     ILispFunction get(int... indices);
     ILispFunction get(int index);
 
+    ILispFunction set(int[] indices, ILispFunction value);
+    ILispFunction set(int index, ILispFunction value);
+
+    int[] dimensions();
+
     ILispFunction getUnary();
 
     List<? extends ILispFunction> getExpression();

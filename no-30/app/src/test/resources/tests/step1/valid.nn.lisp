@@ -10,8 +10,8 @@
 
 ;;; Define the forward pass
 (defun forward-pass(inputs)
-  (let* ((hidden-activations (make-array '(20)))
-         (output-activation 0.0))
+  (let* ((hidden-activations (make-array '(20)  :initial-contents (loop repeat 20 collect (random 0.00001)) ))
+         (output-activation 0.000001))
     ;; Compute hidden layer activations
     (dotimes (i 20)
       (setf (aref hidden-activations i)
@@ -22,23 +22,26 @@
     (setf output-activation
           (sigmoid (+ (dotimes (i 20 (+ 1 i)) (* (aref hidden-activations i) (aref output-weights i 0)))
                       output-bias)))
+    (format t "output-activation = ~A~%" output-activation)
 
     output-activation))
 
 ;;; Train the neural network (example training loop)
 (defun train-network(inputs target)
   (let* ((learning-rate 0.1)
-         (hidden-activations (make-array '(20)))
+         (hidden-activations (make-array '(20) :initial-element 0.0000000000))
          (output-activation 0.0))
     ;; Forward pass
     (dotimes (i 20)
       (setf (aref hidden-activations i)
             (sigmoid (+ (dotimes (j 7 (+ 1 j)) (* (aref inputs j) (aref hidden-weights j i)))
                         (aref hidden-biases i)))))
+    (format t "hidden-activations = ~A~%" hidden-activations)
 
     (setf output-activation
           (sigmoid (+ (dotimes (i 20 (+ 1 i)) (* (aref hidden-activations i) (aref output-weights i 0)))
                       output-bias)))
+    (format t "output-activation = ~A~%" output-activation)
 
     ;; Compute the error
     (let* ((error (- target output-activation))
@@ -47,9 +50,10 @@
            (hidden-deltas (make-array '(20)))
            (new-output-weights (make-array '(20 1)))
            (new-hidden-weights (make-array '(7 20)))
-           (new-output-bias 0.0)
-           (new-hidden-bias (make-array '(20))))
-
+           (new-output-bias 0.000001)
+           (new-hidden-bias (make-array '(20) :initial-element 0.000001)))
+      (format t "error = ~A~%" error)
+      (format t "output-delta = ~A~%" output-delta)
       ;; Calculate errors and deltas
       (dotimes (i 20)
         (setf (aref hidden-errors i) (* (aref output-weights i 0) output-delta))
@@ -66,37 +70,37 @@
           (setf (aref new-hidden-weights i j) (+ (aref hidden-weights i j) (* learning-rate (aref hidden-deltas j) (aref inputs i))))
           (setf (aref new-hidden-bias j) (+ (aref hidden-biases j) (* learning-rate (aref hidden-deltas j))))))
 
-      (format t "output-weights ~A~%" new-output-weights)
-      (format t "hidden-weights ~A~%" new-hidden-weights)
-      (format t "new-hidden-bias ~A~%" new-output-bias)
-      (format t "new-hidden-bias ~A~%" new-hidden-bias)
       ;; Update weights and biases
       (setf output-weights new-output-weights
             hidden-weights new-hidden-weights
             output-bias new-output-bias
             hidden-biases new-hidden-bias))))
+      (format t "output-weights ~A~%" output-weights)
+      (format t "hidden-weights ~A~%" hidden-weights)
+      (format t "output-bias ~A~%" output-bias)
+      (format t "hidden-biases ~A~%" hidden-biases)
 
 ;;; Test the neural network
 (let (
-      (inputs0 '(1 1 1 1 1 1 0))
+      (inputs0 '#(1 1 1 1 1 1 0))
       (target0 0)
-      (inputs1 '(0 1 1 0 0 0 0))
+      (inputs1 '#(0 1 1 0 0 0 0))
       (target1 1)
-      (inputs2 '(1 1 0 1 1 0 1))
+      (inputs2 '#(1 1 0 1 1 0 1))
       (target2 2)
-      (inputs3 '(1 1 1 1 0 0 1))
+      (inputs3 '#(1 1 1 1 0 0 1))
       (target3 3)
-      (inputs4 '(0 1 1 0 0 1 1))
+      (inputs4 '#(0 1 1 0 0 1 1))
       (target4 4)
-      (inputs5 '(1 0 1 1 0 1 1))
+      (inputs5 '#(1 0 1 1 0 1 1))
       (target5 5)
-      (inputs6 '(1 0 1 1 1 1 1))
+      (inputs6 '#(1 0 1 1 1 1 1))
       (target6 6)
-      (inputs7 '(1 1 1 0 0 0 0))
+      (inputs7 '#(1 1 1 0 0 0 0))
       (target7 7)
-      (inputs8 '(1 1 1 1 1 1 1))
+      (inputs8 '#(1 1 1 1 1 1 1))
       (target8 8)
-      (inputs9 '(1 1 1 1 0 1 1))
+      (inputs9 '#(1 1 1 1 0 1 1))
       (target9 9)
      )
   (format t "Input: ~A~%" inputs3)
