@@ -103,9 +103,14 @@ here you can find all my implementation
 - 29 scheduling automation app: not implemented yet
 - 30 Lisp interpreter
   - https://github.com/lolo8304/coding-challenge/tree/main/no-30
-  - just started. 
+  - implemented full Lisp tokenizer, parser and interpreter.
+  - implemented > 30 built-ins incl pure function caching for faster execution
   - love Lisp. used it to build first neuronal network with 10 own perceptron (back in 1994)
   - additional idea: build interpreter to build this again
+- 31 QR Code Generator
+  - https://github.com/lolo8304/coding-challenge/tree/main/no-31
+- 32 Crontab: not implemented yet
+
 
 # A brief history of my coding languages learned and used
 
