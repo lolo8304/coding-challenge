@@ -49,7 +49,7 @@ class LispTokenizerTests {
             assertNotNull(token);
             assertTrue(token.isPresent());
             System.out.println("Line=" + line + ", " + token.get());
-            assertEquals(line, token.get().getValue());
+            assertTrue(line.equals(token.get().getValue()) || line.equals(token.get().getValue()+".0"));
             assertTrue(Arrays.asList(results).contains(token.get().getToken()),
                     String.format("Line '%s' is %s", line, token.get().getToken()));
             line = reader.readLine();
@@ -124,7 +124,8 @@ class LispTokenizerTests {
                 assertNotNull(token);
                 assertTrue(token.isPresent());
 
-                assertEquals(line.replaceAll("true", "T").replaceAll("false", "NIL"), token.get().getValue());
+                var lineResult = line.replaceAll("true", "T").replaceAll("false", "NIL");
+                assertTrue(lineResult.equals(token.get().getValue()) || lineResult.equals(token.get().getValue()+".0"));
 
                 assertTrue(Arrays.asList(results).contains(token.get().getToken()),
                         String.format("Line '%s' is %s", line, token.get().getToken()));

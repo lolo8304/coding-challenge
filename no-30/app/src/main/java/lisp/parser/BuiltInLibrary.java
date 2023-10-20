@@ -1,5 +1,8 @@
 package lisp.parser;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -46,8 +49,13 @@ public class BuiltInLibrary {
                     List<? extends ILispFunction> pars) {
                 if (!pars.isEmpty()) {
                     var sum = 0.0;
-                    for (int i = 0; i < pars.size(); i++) {
-                        sum -= (Double) pars.get(i).apply(runtime).getDouble();
+                    if (pars.size() == 1) {
+                        sum = -(Double) pars.get(0).apply(runtime).getDouble();
+                    } else {
+                        sum = pars.get(0).apply(runtime).getDouble();
+                        for (int i = 1; i < pars.size(); i++) {
+                            sum -= pars.get(i).apply(runtime).getDouble();
+                        }
                     }
                     return new TokenValue(Token.NUMBER_DOUBLE, sum);
                 } else {
@@ -883,6 +891,54 @@ public class BuiltInLibrary {
         };
     }
 
+
+
+    private ILispBuiltInFunction loadFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() >= 1) {
+                    System.out.println("Pars "+pars.toString());
+                    for (int i = 0; i < pars.size(); i++) {
+                        var fileName = pars.get(0).getValue();
+                        System.out.println("Load from file "+fileName);
+                        try (var reader = new FileReader(fileName)) {
+                            runtime.execute(reader);
+                        } catch (FileNotFoundException e) {
+                            System.out.println("File "+fileName+" does not exists");
+                        } catch (IOException e) {
+                            System.out.println("Error while reading file: "+e.getMessage());
+                        }
+                    }
+                    return TokenValue.NIL;
+                } else {
+                    throw new IllegalArgumentException("load at least 1 parameter: (load file file file...) - " +expr);
+                }
+            }
+        };
+    }
+
+
+    private ILispBuiltInFunction pureFunction() {
+        return new ILispBuiltInFunction() {
+
+            @Override
+            public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
+                                       List<? extends ILispFunction> pars) {
+                if (pars.size() >= 1) {
+                    for (int i = 0; i < pars.size(); i++) {
+                        runtime.setPureFunction(pars.get(i).getValue());
+                    }
+                    return TokenValue.NIL;
+                } else {
+                    throw new IllegalArgumentException("pure at least 1 parameter: (pure funcname funcname funcname ...) - " +expr);
+                }
+            }
+        };
+    }
+
     // (defun doublen (n) (* n 2))
     // defun <symbol> expr(par1, par2, ) expr
     private ILispBuiltInFunction defunFunction() {
@@ -946,6 +1002,8 @@ public class BuiltInLibrary {
         builtIns.put("list", this.listFunction());
         builtIns.put("destructuring-bind", this.destructuringBindFunction());
         builtIns.put("array-dimension", this.arrayDimensionBindFunction());
+        builtIns.put("load", this.loadFunction());
+        builtIns.put("pure", this.pureFunction());
 
 
         builtIns.put("defun", this.defunFunction());

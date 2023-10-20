@@ -182,10 +182,18 @@ public class TokenValue implements ILispFunction {
         return this.appendTo(builder, false);
     }
 
+    private boolean isInteger(Double value) {
+        return value % 1 == 0;
+    }
+
     public StringBuilder appendTo(StringBuilder builder, boolean printToConsole) {
         switch (this.token) {
             case NUMBER_DOUBLE:
-                builder.append(this.d.toString());
+                if (this.isInteger(this.d)) {
+                    builder.append(this.d.intValue());
+                } else {
+                    builder.append(this.d.toString());
+                }
                 break;
             case NUMBER_INTEGER:
                 builder.append(this.i.toString());
@@ -194,7 +202,9 @@ public class TokenValue implements ILispFunction {
                 if (this.tensor != null) {
                     builder.append("#");
                     var dimensionsSize = this.tensor.dimensions().length;
-                    builder.append(dimensionsSize).append('A');
+                    if (dimensionsSize > 1) {
+                        builder.append(dimensionsSize).append('A');
+                    }
                 }
                 builder.append("(");
                 var first = true;

@@ -6,11 +6,10 @@ package lisp;
 import java.util.concurrent.Callable;
 
 import lisp.parser.LispRuntime;
+import picocli.CommandLine.Option;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 
-@Command(name = "lisp", mixinStandardHelpOptions = true, version = "lisp 1.0", description = "This challenge is to build Your Own Lisp Interpreter")
+@CommandLine.Command(name = "lisp", mixinStandardHelpOptions = true, version = "lisp 1.0", description = "This challenge is to build Your Own Lisp Interpreter")
 public class Lisp implements Callable<Result> {
 
     public static void main(String[] args) {
@@ -18,23 +17,31 @@ public class Lisp implements Callable<Result> {
         var cmd = new CommandLine(nats);
         var exitCode = cmd.execute(args);
         Result result = cmd.getExecutionResult();
-        if (result != null) {
+        if (result != null && result.toString() != null) {
             System.out.println(result.toString());
             System.exit(exitCode);
         }
     }
 
-    @Parameters(description = "-c specifies the command executed")
+    @Option(names = {"-c"}, description = "-c specifies the command executed")
     String command = null;
+
+    @Option(names = {"-f"}, description = "-f specifies a file name to load")
+    String fileName = null;
 
     boolean isInteractive = true;
 
     @Override
     public Result call() throws Exception {
+        var runtime = new LispRuntime();
+        if (this.fileName != null) {
+            runtime.execute("(load "+fileName+")");
+        }
         if (this.command != null) {
-            return new Result(new LispRuntime().executeAndPrint(this.command));
+            return new Result(runtime.executeAndPrint(this.command));
         } else {
-            return new Result("done.");
+            new LispConsole(runtime).run();
+            return new Result("finished.");
         }
     }
 }

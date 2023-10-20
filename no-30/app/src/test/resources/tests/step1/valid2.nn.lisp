@@ -6,10 +6,10 @@
 
 (defun initialize-network(input-size hidden-size output-size)
   (list
-   (make-array (list input-size hidden-size) :initial-element 0.0)
-   (make-array (list hidden-size) :initial-element 0.0)
-   (make-array (list hidden-size output-size) :initial-element 0.0)
-   (make-array (list output-size) :initial-element 0.0)))
+   (make-array (list input-size hidden-size) :initial-element 0.0)      ;; input layer
+   (make-array (list hidden-size) :initial-element 0.0)                 ;; hidden layer
+   (make-array (list hidden-size output-size) :initial-element 0.0)     ;; output layer
+   (make-array (list output-size) :initial-element 0.0)))               ;; output
 
 (defun forward-propagation(network inputs)
   (destructuring-bind (input-layer hidden-layer output-layer output) network
@@ -85,8 +85,8 @@
          (learning-rate 0.1)
          (num-epochs 1000)
          (network (initialize-network input-size hidden-size output-size))
-         (inputs '#(1 1 1 1 1 1 1))
-         (expected-output 7.0))
+         (inputs '#2A((1 1 1 1 1 1 0)(0 1 1 0 0 0 0)) )
+         (expected-output '#1A(0 1)))
     (dotimes (epoch num-epochs)
       (train-network network inputs expected-output learning-rate))
     (forward-propagation network inputs)

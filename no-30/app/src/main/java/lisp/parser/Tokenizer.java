@@ -1,5 +1,6 @@
 package lisp.parser;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class Tokenizer {
                 return this.parseSymbolToken(ch, Token.KEYWORD);
             case '(':
                 // return Optional.of(new TokenValue(Token.LPARENT));
-                return this.parseSExpression(ch);
+                return this.parseSExpression(ch, 0);
             case ')':
                 this.readChar();
                 return Optional.of(new TokenValue(Token.RPAREN));
@@ -77,7 +78,7 @@ public class Tokenizer {
         switch (ch) {
             case '(', '1', '2','3', '4', '5', '6', '7', '8', '9':
                 if (ch== '(') {
-                    return this.parseSExpression(ch);
+                    return this.parseSExpression(ch, 1);
                 }
                 var chA = this.readChar();
                 if (chA == 'A') {
@@ -209,7 +210,7 @@ public class Tokenizer {
         return ch == -1 || ch == 65535 ? Optional.empty() : this.nextToken();
     }
 
-    private Optional<TokenValue> parseSExpression(char ch) throws IOException {
+    private Optional<TokenValue> parseSExpression(char ch, int dimension) throws IOException {
         ch = this.readChar();
         var elem = this.nextToken();
         var list = new ArrayList<TokenValue>();
@@ -217,7 +218,14 @@ public class Tokenizer {
             list.add(elem.get());
             elem = this.nextToken();
         }
-        return Optional.of(new TokenValue(Token.S_EXPRESSION, list));
+        if (dimension == 1) {
+            var tensor = new Tensor(list.size(), new TokenValue(Token.S_EXPRESSION, list));
+            return Optional.of(new TokenValue(tensor));
+        } else if (dimension == 0){
+            return Optional.of(new TokenValue(Token.S_EXPRESSION, list));
+        } else {
+            throw new IllegalArgumentException("multi dim not allowed yet" );
+        }
     }
 
     private Optional<TokenValue> parseSymbolToken(char ch, Token returnedToken) throws IOException {

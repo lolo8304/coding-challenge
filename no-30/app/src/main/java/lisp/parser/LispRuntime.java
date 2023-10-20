@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 public class LispRuntime {
 
@@ -13,11 +15,13 @@ public class LispRuntime {
     private HashMap<String, ILispBuiltInFunction> customIns;
 
     private Stack<Context> stack = new Stack<>();
+    private Set<String> pureFunctions;
 
     public LispRuntime() {
         this.builtIns = new HashMap<String, ILispBuiltInFunction>();
         this.customIns = new HashMap<String, ILispBuiltInFunction>();
         this.stack.push(new Context());
+        this.pureFunctions = new TreeSet<>();
         this.initBuiltIns();
     }
 
@@ -28,7 +32,8 @@ public class LispRuntime {
     }
 
     public String executeAndPrint(String command) throws IOException {
-        return this.execute(command).toString();
+        var result = this.execute(command);
+        return result != TokenValue.NIL? result.toString() : null;
     }
     public ILispFunction execute(String command) throws IOException {
         return this.execute(new BufferedReader(new StringReader(command)));
@@ -103,4 +108,10 @@ public class LispRuntime {
         return function;
     }
 
+    public boolean isPureFunction(String value) {
+        return this.pureFunctions.contains(value.toUpperCase());
+    }
+    public void setPureFunction(String value) {
+        this.pureFunctions.add(value.toUpperCase());
+    }
 }

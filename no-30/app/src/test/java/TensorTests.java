@@ -151,4 +151,21 @@ class TensorTests {
             }
         }
     }
+
+    @Test
+    void tensor1dim_access2_ok() throws URISyntaxException, IOException {
+        // Arrange
+        var dim = 20;
+        var tensor20 = Tensor.Random(new int[]{dim});
+        var tensor20_1 = Tensor.Random(new int[]{dim, 1});
+
+        // Act
+        // Assert
+        for (int i = 0; i < dim; i++) {
+            var val20 = tensor20.get(i).getDouble();
+            var val20_1 = tensor20_1.get(i,0).getDouble();
+            assertTrue(val20 >= 0.0 && val20 < 1.0);
+            assertTrue(val20_1 >= 0.0 && val20_1 < 1.0);
+        }
+    }
 }

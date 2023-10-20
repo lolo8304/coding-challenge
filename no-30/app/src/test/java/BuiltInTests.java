@@ -88,7 +88,7 @@ class BuiltInTests {
 
         // Action Assert
 
-        assertThrows(IllegalArgumentException.class, new Executable() {
+        assertThrows(ArrayIndexOutOfBoundsException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 result.get(2,2,1);
@@ -190,6 +190,45 @@ class BuiltInTests {
         assertNotNull(result);
         assertNotNull(testResult1);
         assertNotNull(testResult2);
+    }
+
+    @Test
+    void dotimes_epochs_ok() throws IOException {
+        // Arrange, Act
+        var result = runtime.execute(
+                "(setq num-epochs 7)\n" +
+                        "(dotimes (epoch num-epochs)\n" +
+                        "  (print epoch))");
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void fact_defun_ok() throws IOException {
+        // Arrange
+        var result = runtime.execute(
+                "(defun fact (n)\n" +
+                        "  (if (<= n 1)\n" +
+                        "    1\n" +
+                        "    (* n (fact (- n 1)))))"
+        );
+
+        // Act
+        var testResultString = runtime.execute("(format t \"The 7th number of the Fibonacci sequence is ~D~%\" (fact 7))");
+        var testResult1 = runtime.execute("(fact 7)");
+
+        assertNotNull(result);
+        assertNotNull(testResult1);
+        assertEquals(5040.0, testResult1.getDouble());
+    }
+
+    @Test
+    void load_final_ok() throws IOException {
+        // Arrange, Act
+        var result = runtime.execute(
+                "(load src/test/resources/tests.step5/final.step.lisp)");
+
+        assertNotNull(result);
     }
 
 }
