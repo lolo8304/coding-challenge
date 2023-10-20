@@ -27,5 +27,4 @@
 (format t "The 7th number of the Fibonacci sequence is ~D~%" (fib 7))
 
 (format t "The 42th number of the Fibonacci sequence is ~D~%" (fib 42))
-(format t "The 42th number of the Fibonacci sequence is ~D~%" (fib 100))
-(hello)
+(format t "The 100th number of the Fibonacci sequence is ~D~%" (fib 100))

@@ -900,7 +900,7 @@ public class BuiltInLibrary {
             public ILispFunction apply(LispRuntime runtime, ILispFunction expr, String symbol,
                                        List<? extends ILispFunction> pars) {
                 if (pars.size() >= 1) {
-                    System.out.println("Pars "+pars.toString());
+                    //System.out.println("Pars "+pars.toString());
                     for (int i = 0; i < pars.size(); i++) {
                         var fileName = pars.get(0).getValue();
                         System.out.println("Load from file "+fileName);

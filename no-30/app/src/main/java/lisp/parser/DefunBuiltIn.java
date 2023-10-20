@@ -77,7 +77,7 @@ public class DefunBuiltIn implements ILispBuiltInFunction {
                     sha256Key = this.sha256(keyAndArguments);
                     resultCached = this.cached(sha256Key);
                     if (resultCached.isPresent()) {
-                        System.out.println("Cached result: " + symbol + ": " + keyAndArguments);
+                        //System.out.println("Cached result: " + symbol + ": " + keyAndArguments);
                         return resultCached.get();
                     }
                 }
