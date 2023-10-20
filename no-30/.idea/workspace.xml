@@ -130,7 +130,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.LispTokenizerTests">
+  <component name="RunManager" selected="Gradle.Tests in 'no-30.app.test'">
     <configuration name="BuiltInTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -249,8 +249,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.LispTokenizerTests" />
         <item itemvalue="Gradle.Tests in 'no-30.app.test'" />
+        <item itemvalue="Gradle.LispTokenizerTests" />
         <item itemvalue="Gradle.BuiltInTests" />
         <item itemvalue="Gradle.BuiltInTests.load_final_ok" />
         <item itemvalue="Gradle.no-30 [installDist]" />
