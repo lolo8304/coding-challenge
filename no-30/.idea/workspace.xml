@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0411ef4-ddcc-42fe-956c-f26b91988400" name="Changes" comment="adapt workpace">
-      <change afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+    <list default="true" id="a0411ef4-ddcc-42fe-956c-f26b91988400" name="Changes" comment="document¯ed readme.md">
+      <change afterPath="$PROJECT_DIR$/../.idea/dbnavigator.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/qaplug_profiles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/BuiltInLibrary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/lisp/parser/DefunBuiltIn.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/lisp/parser/DefunBuiltIn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests.step5/final.step.lisp" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests.step5/final.step.lisp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,20 +93,20 @@
     <option name="flattenPackages" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/Lolo/git/coding-challenge/no-30/app/src/test/resources/tests/step1",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "editor.preferences.tabs"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/Lolo/git/coding-challenge/no-30/app/src/test/resources/tests/step1&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.tabs&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/src/test/resources/tests/step1" />
@@ -303,7 +303,23 @@
       <option name="project" value="LOCAL" />
       <updated>1697831066224</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="documented readme.md">
+      <option name="closed" value="true" />
+      <created>1697833127849</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1697833127849</updated>
+    </task>
+    <task id="LOCAL-00008" summary="documented readme.md">
+      <option name="closed" value="true" />
+      <created>1697833381240</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1697833381240</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -325,7 +341,8 @@
     <MESSAGE value="new built ins and beter dimension info if (20,1)" />
     <MESSAGE value="finalize tests&#10;implement console repl&#10;implement pure function cache&#10;step 5 done" />
     <MESSAGE value="adapt workpace" />
-    <option name="LAST_COMMIT_MESSAGE" value="adapt workpace" />
+    <MESSAGE value="documented readme.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="documented readme.md" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
