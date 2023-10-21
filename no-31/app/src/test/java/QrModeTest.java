@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
@@ -26,11 +27,11 @@ public class QrModeTest {
 
     private Reader reader;
 
-    void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
+    void ReadReader(String testfile) throws IOException, URISyntaxException {
         URL resource = QrModeTest.class.getResource("tests/"+testfile);
         if (resource != null) {
             File file = Paths.get(resource.toURI()).toFile();
-            reader = new FileReader(file);
+            reader = new FileReader(file, StandardCharsets.UTF_8);
         }
     }
 
