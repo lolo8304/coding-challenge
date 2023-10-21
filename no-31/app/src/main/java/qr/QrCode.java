@@ -20,7 +20,7 @@ public class QrCode implements Callable<Result> {
         var exitCode = cmd.execute(args);
         Result result = cmd.getExecutionResult();
         if (result != null && result.toString() != null) {
-            System.out.println(result.toString());
+            System.out.println(result);
             System.exit(exitCode);
         }
     }
