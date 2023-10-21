@@ -1,2 +1,2 @@
-Main-Class: qr.QrCode
+Main-Class: qr.Qr
 

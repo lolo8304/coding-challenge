@@ -1,0 +1,7 @@
+漢字QRコード=KANJI
+234234243234=NUMERIC
+https://codingchallenges.fyi/challenges/challenge-qr-generator=ALPHA_NUMERIC
+Lorenz Hänggi=BYTE
+23423423424234漢=KANJI
+234234234 =ALPHA_NUMERIC
+https://anywebsite.com?漢=KANJI
