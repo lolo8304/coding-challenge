@@ -10,10 +10,14 @@ public class QrCode implements BitAppender {
 
     private final String data;
     private final EncodingMode mode;
+    private final ErrorCorrection correction;
+    private final int version;
 
     public QrCode(String data) {
         this.data = data.toUpperCase();
         this.mode = detectMode();
+        this.correction = ErrorCorrection.M;
+        this.version = 4;
     }
 
     public EncodingMode detectMode() {

@@ -17,6 +17,7 @@ repositories {
 dependencies {
     
     implementation 'info.picocli:picocli:4.7.1'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.1'
 
     // Use JUnit Jupiter for testing.
