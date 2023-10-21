@@ -22,8 +22,10 @@ class QrCodeTest {
 
     void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
         URL resource = QrCodeTest.class.getResource("tests/"+testfile);
-        File file = Paths.get(resource.toURI()).toFile();
-        reader = new FileReader(file);
+        if (resource != null) {
+            File file = Paths.get(resource.toURI()).toFile();
+            reader = new FileReader(file);
+        }
     }
 
     @AfterEach
@@ -34,7 +36,7 @@ class QrCodeTest {
     }
 
     @Test void test() throws URISyntaxException, IOException {
-
+        ReadReader("step1/valid.txt");
     }
 
 
