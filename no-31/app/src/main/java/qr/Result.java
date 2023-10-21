@@ -2,11 +2,9 @@ package qr;
 
 public class Result {
 
-    private final String data;
     private final String outputFileName;
 
-    public Result(String data, String outputFileName) {
-        this.data = data;
+    public Result(String outputFileName) {
         this.outputFileName = outputFileName;
     }
 

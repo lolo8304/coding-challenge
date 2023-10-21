@@ -29,13 +29,13 @@ public class QrCode implements Callable<Result> {
     String data = null;
 
     @Option(names = "-o", description = "-o specifies an optional output file for the generated code")
-    String outputFileName = "qr-"+ UUID.randomUUID().toString()+".png";
+    String outputFileName = "qr-"+ UUID.randomUUID()+".png";
 
     @Override
-    public Result call() throws Exception {
+    public Result call() {
         if (data == null) {
             return null;
         }
-        return new Result(this.data, this.outputFileName);
+        return new Result(this.outputFileName);
     }
 }
