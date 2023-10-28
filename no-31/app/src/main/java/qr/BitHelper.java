@@ -31,8 +31,6 @@ public class BitHelper {
                     builder.insert(0, "0");
                 }
                 return builder.toString();
-            } else if (bitString.length() > nofBits) {
-                throw new IllegalArgumentException("int is too big for requested bits ("+nofBits+")");
             } else {
                 return bitString;
             }
@@ -68,6 +66,19 @@ public class BitHelper {
 
     public static int bitsToInt(String value) {
         return Integer.parseUnsignedInt(value, 2);
+    }
+    public static byte bitsToByte(String value) {
+        return (byte)Integer.parseInt(value, 2);
+    }
+    public static byte[] bitsToByteArray(String value) {
+        var bytes = new byte[value.length() / 8];
+        var bytesIndex = 0;
+        for (int i = 0; i < value.length();) {
+            bytes[bytesIndex] = bitsToByte(value.substring(i, i + 8));
+            i += 8;
+            bytesIndex++;
+        }
+        return bytes;
     }
 
     public static String bitsToString(String value) {
@@ -283,9 +294,14 @@ public class BitHelper {
 
     // https://www.thonky.com/qr-code-tutorial/byte-mode-encoding
     public static String byteStringToBits(String data) {
-        var isoBytes = utf8ToIso88591Bytes(data);
+        return bytesToBits(utf8ToIso88591Bytes(data));
+    }
+    public static String byteToBits(byte singleByte) {
+        return intToBits(singleByte & 0xFF, 8);
+    }
+    public static String bytesToBits(byte[] bytes) {
         var builder = new StringBuilder();
-        for (byte isoByte : isoBytes) {
+        for (byte isoByte : bytes) {
             builder.append(intToBits(isoByte, 8));
         }
         return builder.toString();

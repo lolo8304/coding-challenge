@@ -1,13 +1,6 @@
 package qr;
 
-import java.util.Arrays;
-import org.apache.commons.math3.analysis.function.Exp;
-import org.apache.commons.math3.exception.MathArithmeticException;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.linear.*;
-import org.apache.commons.math3.util.Pair;
-
-public enum ErrorCorrection {
+public enum Quality {
 
     L(new int[][]{new int[]{4, 80, 1, 20, 80}}),
     M(new int[][]{new int[]{4, 64, 2, 18, 32}}),
@@ -18,7 +11,7 @@ public enum ErrorCorrection {
 
     private final int[][] metadata;
 
-    ErrorCorrection(int[][] metadata) {
+    Quality(int[][] metadata) {
         this.metadata = metadata;
     }
 

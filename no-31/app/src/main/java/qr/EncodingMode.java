@@ -1,32 +1,55 @@
 package qr;
 
 public enum EncodingMode implements BitAppender {
-    NUMERIC ("0001", 10, 1),
-    ALPHA_NUMERIC ("0010", 9, 1),
-    BYTE("0100", 8, 2),
-    KANJI("1000", 8, 2);
+
+    // https://www.thonky.com/qr-code-tutorial/data-encoding#versions-1-through-9
+
+    NUMERIC (       "0001", new int[]{10, 12, 14}),
+    ALPHA_NUMERIC ( "0010", new int[] {9, 11, 13}),
+    BYTE(           "0100", new int[] {8, 16, 16}),
+    KANJI(          "1000", new int[] {8, 10, 12});
+
+    private static final int[] BREAK_POINTS = new int[] {0, 9, 26};
 
     private final int value;
-    private final int characterCountInBits;
-    private final int stringBytes;
+    private final int[] characterCountInBits;
 
-    EncodingMode(String bitString, int characterCountInBits, int stringBytes) {
+
+    EncodingMode(String bitString, int[] characterCountInBits) {
         this.value = BitHelper.bitsToInt(bitString);
         this.characterCountInBits = characterCountInBits;
-        this.stringBytes = stringBytes;
     }
 
     public int value() {
         return this.value;
     }
-    public int characterCountInBits() {
-        return this.characterCountInBits;
+    public int characterCountInBits(Version version) {
+        return this.getBitLen(version.version());
     }
-    public int stringBytes() { return this.stringBytes; }
 
     @Override
     public StringBuilder appendBits(StringBuilder builder) {
         return builder
                 .append(BitHelper.intToBits(this.value, 4));
+    }
+
+    public int getBitLen(int version) {
+        if(version > BREAK_POINTS[2]) {
+            return characterCountInBits[2];
+        }
+        if(version > BREAK_POINTS[1]) {
+            return characterCountInBits[1];
+        }
+        return characterCountInBits[0];
+    }
+
+    public static int getCurrentBreakPointVersion(int version) {
+        if(version < BREAK_POINTS[1]) {
+            return BREAK_POINTS[1];
+        }
+        if(version < BREAK_POINTS[2]) {
+            return BREAK_POINTS[2];
+        }
+        return 40;
     }
 }
