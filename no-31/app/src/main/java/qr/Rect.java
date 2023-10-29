@@ -4,13 +4,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class Rect {
 
-    public Color color = Color.GRAY;
-
     public final Point2d leftTop;
     public final Point2d rightBottom;
+
+    public boolean fillReversed = false;
 
     public Rect(Point2d center, int totalWidth) {
         if (totalWidth <= 0) {
@@ -31,11 +32,13 @@ public class Rect {
     public Rect(Point2d leftTop, int width, int height) {
         if (width < 0) {
             width = -width;
-            leftTop = new Point2d(leftTop.x - width, leftTop.y);
+            leftTop = new Point2d(leftTop.x - width + 1, leftTop.y);
+            this.fillReversed = true;
         }
         if (height < 0) {
             height = -height;
-            leftTop = new Point2d(leftTop.x, leftTop.y - height);
+            leftTop = new Point2d(leftTop.x, leftTop.y - height + 1);
+            this.fillReversed = true;
         }
         this.leftTop = leftTop;
         this.rightBottom = new Point2d(leftTop.x + width - 1, leftTop.y + height - 1);
@@ -88,34 +91,14 @@ public class Rect {
         return intersections;
     }
 
-    @Override
-    public String toString() {
-        return "Rect[ " + this.leftTop + " - " + this.rightBottom + " ]";
+    public boolean contains(Point2d point) {
+        return this.x() <= point.x && point.x < this.x()+this.width()
+                && this.y() <= point.y && point.y < this.y() + this.height();
     }
 
-    public Rect white() {
-        this.color = Color.WHITE;
-        return this;
-    }
-    public Rect black() {
-        this.color = Color.BLACK;
-        return this;
-    }
-    public Rect resetColor() {
-        this.color = Color.GRAY;
-        return this;
-    }
-    public Rect color(Color color) {
-        this.color = color;
-        return this;
-    }
-    public Rect red() {
-        this.color = Color.RED;
-        return this;
-    }
-    public Rect green() {
-        this.color = Color.GREEN;
-        return this;
+    @Override
+    public String toString() {
+        return "Rect[ " + this.leftTop + " - " + this.rightBottom + ", w="+this.width()+", h="+this.height()+" ]";
     }
 
     public Rect translate(int dx, int dy, int dw, int dh) {

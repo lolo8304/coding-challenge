@@ -2,6 +2,7 @@ package qr.generator;
 
 import qr.Point2d;
 import qr.Rect;
+import qr.Region;
 
 import java.awt.*;
 
@@ -9,12 +10,11 @@ public class QrTextCanvas extends  QrCanvas {
 
     private final String[][] canvas;
     private final boolean stretch;
-    private final boolean verifyEmpty;
 
     public QrTextCanvas(Rect rect) {
         super(rect);
         this.stretch = true;
-        this.verifyEmpty = true;
+        this.overwriteDisabled();
         this.canvas = new String[this.rect.width()][this.rect.height()];
         for (int i = rect.leftTop.x; i <= rect.rightBottom.x; i++) {
             for (int j = rect.leftTop.y; j <= rect.rightBottom.y; j++) {
@@ -56,13 +56,26 @@ public class QrTextCanvas extends  QrCanvas {
     }
 
     @Override
+    public boolean isEmpty(Point2d at) {
+        return this.canvas[at.x][at.y].isBlank();
+    }
+
+    @Override
     public void drawPoint(Point2d point, Color color) {
-        if (this.canvas[point.x][point.y].isBlank()) {
+        if (this.canOverwrite() || this.isEmpty(point)) {
             this.canvas[point.x][point.y] = mapColor(color);
         } else {
             throw new IllegalArgumentException("Point "+point+" has already a value '"+this.canvas[point.x][point.y]+"'");
         }
     }
+
+    @Override
+    public void drawRegion(Region region, Color... colors) {
+        for (Rect rect: region.rectangles) {
+            this.drawReq(rect,true, colors);
+        }
+    }
+
     @Override
     public void drawStraightLine(Point2d point, int length, int thickness, Direction direction, Color... colors) {
         Point2d point2 = null;
@@ -96,9 +109,10 @@ public class QrTextCanvas extends  QrCanvas {
         if (this.stretch) {
             System.out.println("Attention: "+mapColor(Color.BLACK)+" = 1 pixel");
         }
-        for (int j = 0; j < this.canvas.length; j++) {
-            for (int i = 0; i < this.canvas.length; i++) {
-                System.out.print(this.canvas[i][j]);
+        System.out.println("------------------------------------------------------------------------------------------------------");
+        for (int y = 0; y < this.canvas.length; y++) {
+            for (int x = 0; x < this.canvas.length; x++) {
+                System.out.print(this.canvas[x][y]);
             }
             System.out.println();
         }

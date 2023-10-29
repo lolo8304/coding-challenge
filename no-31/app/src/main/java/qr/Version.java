@@ -18,6 +18,9 @@ public class Version {
     private List<Rect> separatorPatterns = new ArrayList<>();
     private List<Rect> alignmentPatterns = new ArrayList<>();
     private List<Rect> timingPatterns = new ArrayList<>();
+
+    private Region reserveFormatInformation  = new Region();
+    private List<Rect> reserveVersionInformation  = new ArrayList<>();
     private Point2d darkModule;
 
     static {
@@ -28,6 +31,8 @@ public class Version {
         initAlignmentPatterns();
         initTimingPatterns();
         initDarkModule();
+        initReserveFormatInformation();
+        initReserveVersionInformation();
     }
 
 
@@ -56,7 +61,7 @@ public class Version {
     }
 
     public Modules modules() {
-        return new Modules(this, this.finderPatterns, this.separatorPatterns, this.alignmentPatterns, this.timingPatterns, this.darkModule);
+        return new Modules(this, this.finderPatterns, this.separatorPatterns, this.alignmentPatterns, this.timingPatterns, this.darkModule, this.reserveFormatInformation, this.reserveVersionInformation);
     }
 
     public static Version bestFixByBits(Quality quality, int bitSize) {
@@ -197,17 +202,17 @@ public class Version {
 
             v.separatorPatterns = new ArrayList<>();
             var sep11 = new Rect(0, pattern0.rightBottom.y+1, 8, 1);
-            var sep12 = new Rect(sep11.rightBottom.x, sep11.rightBottom.y, 1, -7);
+            var sep12 = new Rect(sep11.rightBottom.translate(0,-1), 1, -7);
             v.separatorPatterns.add(sep11);
             v.separatorPatterns.add(sep12);
 
             var sep21 = new Rect(pattern1.leftTop.x - 1, pattern1.rightBottom.y + 1, 8, 1);
-            var sep22 = new Rect(sep21.leftTop.x, sep21.rightBottom.y, 1, -7);
+            var sep22 = new Rect(sep21.leftTop.translate(0, -1), 1, -7);
             v.separatorPatterns.add(sep21);
             v.separatorPatterns.add(sep22);
 
-            var sep31 = new Rect(pattern2.leftTop.x, pattern2.leftTop.y - 1, 8, 1);
-            var sep32 = new Rect(sep31.rightBottom.x, sep31.leftTop.y+1, 1, 7);
+            var sep31 = new Rect(pattern2.leftTop.translate(0, -1), 8, 1);
+            var sep32 = new Rect(sep31.rightBottom.translate(0,1), 1, 7);
             v.separatorPatterns.add(sep31);
             v.separatorPatterns.add(sep32);
         }
@@ -273,6 +278,58 @@ public class Version {
             }
         }
     }
+
+    private static void initReserveFormatInformation() {
+        for (Version v: VERSIONS) {
+            if (v.size > 0) {
+                var patLeftTop = v.finderPatterns.get(0);
+                var patRightTop = v.finderPatterns.get(1);
+                var patBottom = v.finderPatterns.get(2);
+
+                var reserveFormatInformation = new ArrayList<Rect>();
+                var info11 = new Rect(patLeftTop.leftTop.translate(0, patLeftTop.height()+1), patLeftTop.width()-1, 1);
+                var info12 = new Rect(info11.rightBottom.translate(2,0), 2, 1);
+                var info13 = new Rect(info12.rightBottom.translate(0, -1), 1, -1);
+                var info14 = new Rect(info13.leftTop.translate(0, -2), 1, -(patLeftTop.height()-1));
+                reserveFormatInformation.add(info11);
+                reserveFormatInformation.add(info12);
+                reserveFormatInformation.add(info13);
+                reserveFormatInformation.add(info14);
+
+                var info21 = new Rect(patRightTop.leftTop.translate(-1, patRightTop.height()+1), patRightTop.width()+1, 1);
+                reserveFormatInformation.add(info21);
+
+                var info31 = new Rect(patBottom.rightBottom.translate(2, 0), 1, -patBottom.height());
+                reserveFormatInformation.add(info31);
+
+                v.reserveFormatInformation = new Region().addRects(reserveFormatInformation);
+            }
+        }
+    }
+
+    // https://www.thonky.com/qr-code-tutorial/module-placement-matrix#reserve-the-version-information-area
+    // only for version >= 7
+    private static void initReserveVersionInformation() {
+        for (Version v: VERSIONS) {
+            if (v.size > 0 && v.version >= 7) {
+                var patRightTop = v.finderPatterns.get(1);
+                var patBottom = v.finderPatterns.get(2);
+
+                var reserveVersionInformation = new ArrayList<Rect>();
+                var version1 = new Rect(patBottom.leftTop.translate(0, -4), 6, 3);
+                var version2 = new Rect(patRightTop.leftTop.translate(-4, 0), 3, 6);
+                reserveVersionInformation.add(version1);
+                reserveVersionInformation.add(version2);
+
+                v.reserveVersionInformation = reserveVersionInformation;
+
+            }
+
+        }
+
+    }
+
+
 
     public static Version version(int version) {
         return VERSIONS[version];

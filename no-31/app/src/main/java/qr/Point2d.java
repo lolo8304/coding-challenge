@@ -28,6 +28,19 @@ public class Point2d {
         return new Point2d(this.x + dx, this.y + dy);
     }
 
+    public Point2d left() {
+        return this.translate(-1, 0);
+    }
+    public Point2d right() {
+        return this.translate(1, 0);
+    }
+    public Point2d up() {
+        return this.translate(0, -1);
+    }
+    public Point2d down() {
+        return this.translate(0, 1);
+    }
+
     @Override
     public String toString() {
         return "Point2d(" + this.x + ", " + this.y + ")";

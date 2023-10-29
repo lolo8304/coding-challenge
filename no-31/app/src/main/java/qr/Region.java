@@ -1,5 +1,6 @@
 package qr;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,19 @@ public class Region {
     public Region setLevel(int level) {
         this.level = level;
         return this;
+    }
+
+    public Region addRect(Rect rect) {
+        this.rectangles.add(rect);
+        return this;
+    }
+    public Region addRects(List<Rect> rects) {
+        this.rectangles.addAll(rects);
+        return this;
+    }
+
+    public void draw(Color color) {
+
     }
 
 }

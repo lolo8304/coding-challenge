@@ -79,6 +79,10 @@ public class QrCode implements BitAppender {
         return this.bits.toString();
     }
 
+    public String bits() {
+        return this.bits.toString();
+    }
+
     // https://www.thonky.com/qr-code-tutorial/error-correction-coding#step-1-break-data-codewords-into-blocks-if-necessary
     private void calculateGroups() {
         var metadata = this.version.metaData(this.quality);
