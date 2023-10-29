@@ -24,6 +24,10 @@ public class Point2d {
         return list;
     }
 
+    public Point2d translate (int dx, int dy) {
+        return new Point2d(this.x + dx, this.y + dy);
+    }
+
     @Override
     public String toString() {
         return "Point2d(" + this.x + ", " + this.y + ")";

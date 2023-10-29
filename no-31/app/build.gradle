@@ -7,7 +7,7 @@
  */
 apply plugin: "application"
 
-mainClassName = "qr.QrCode"
+mainClassName = "qr.Qr"
 
 repositories {
     // Use Maven Central for resolving dependencies.

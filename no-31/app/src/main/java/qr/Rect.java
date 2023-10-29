@@ -29,8 +29,13 @@ public class Rect {
     }
 
     public Rect(Point2d leftTop, int width, int height) {
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Illegal width or height");
+        if (width < 0) {
+            width = -width;
+            leftTop = new Point2d(leftTop.x - width, leftTop.y);
+        }
+        if (height < 0) {
+            height = -height;
+            leftTop = new Point2d(leftTop.x, leftTop.y - height);
         }
         this.leftTop = leftTop;
         this.rightBottom = new Point2d(leftTop.x + width - 1, leftTop.y + height - 1);
@@ -111,6 +116,10 @@ public class Rect {
     public Rect green() {
         this.color = Color.GREEN;
         return this;
+    }
+
+    public Rect translate(int dx, int dy, int dw, int dh) {
+        return new Rect(this.x()+dx, this.y() + dy, this.width() + dw, this.height() + dh);
     }
 
 }

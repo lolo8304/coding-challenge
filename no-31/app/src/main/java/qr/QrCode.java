@@ -206,4 +206,9 @@ public class QrCode implements BitAppender {
             ecBytes[i] = (byte) toEncode[numDataBytes + i];
         }
         return ecBytes;
-    }}
+    }
+
+    public Version version() {
+        return this.version;
+    }
+}

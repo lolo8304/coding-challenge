@@ -10,6 +10,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
+import qr.generator.QrCodeGenerator;
 
 @Command(name = "qr", mixinStandardHelpOptions = true, version = "qr 1.0", description = "This challenge is to build your own QR Code Generator")
 public class Qr implements Callable<Result> {
@@ -31,11 +32,18 @@ public class Qr implements Callable<Result> {
     @Option(names = "-o", description = "-o specifies an optional output file for the generated code")
     String outputFileName = "qr-"+ UUID.randomUUID()+".png";
 
+    @Option(names = "-q", description = "-q specificies an optional quality name: L M Q H")
+    String quality = "Q";
+
     @Override
     public Result call() {
         if (data == null) {
             return null;
         }
+        var qr = new QrCode(this.data, Quality.valueOf(quality != null ? quality : "Q"));
+        qr.encode();
+        var generator = new QrCodeGenerator(qr);
+        generator.draw();
         return new Result(this.outputFileName);
     }
 }

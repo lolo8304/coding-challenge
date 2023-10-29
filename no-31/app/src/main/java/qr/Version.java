@@ -14,10 +14,11 @@ public class Version {
     private final int size;
     private Map<Quality, MetaData> metaData = new HashMap<Quality, MetaData>();
 
-    private List<Rect> alignmentPatterns;
-    private List<Rect> finderPatterns;
-    private List<Rect> timingPatterns;
-    private Rect darkModule;
+    private List<Rect> finderPatterns = new ArrayList<>();
+    private List<Rect> separatorPatterns = new ArrayList<>();
+    private List<Rect> alignmentPatterns = new ArrayList<>();
+    private List<Rect> timingPatterns = new ArrayList<>();
+    private Point2d darkModule;
 
     static {
         initVersionCapacity();
@@ -52,6 +53,10 @@ public class Version {
     }
     public int qrSize() {
         return this.size;
+    }
+
+    public Modules modules() {
+        return new Modules(this, this.finderPatterns, this.separatorPatterns, this.alignmentPatterns, this.timingPatterns, this.darkModule);
     }
 
     public static Version bestFixByBits(Quality quality, int bitSize) {
@@ -181,7 +186,7 @@ public class Version {
         The bottom-left finder pattern's top LEFT corner is always placed at (0,[(((V-1)*4)+21) - 7])
          */
         for (var v : VERSIONS) {
-            var size = 7 + 1;
+            var size = 7;
             var pattern0 = new Rect(new Point2d(0, 0), size, size);
             var pattern1 = new Rect(new Point2d((((v.version-1)*4)+21) - 7, 0), size, size);
             var pattern2 = new Rect(new Point2d(0,(((v.version-1)*4)+21) - 7), size, size);
@@ -189,6 +194,22 @@ public class Version {
             v.finderPatterns.add(pattern0);
             v.finderPatterns.add(pattern1);
             v.finderPatterns.add(pattern2);
+
+            v.separatorPatterns = new ArrayList<>();
+            var sep11 = new Rect(0, pattern0.rightBottom.y+1, 8, 1);
+            var sep12 = new Rect(sep11.rightBottom.x, sep11.rightBottom.y, 1, -7);
+            v.separatorPatterns.add(sep11);
+            v.separatorPatterns.add(sep12);
+
+            var sep21 = new Rect(pattern1.leftTop.x - 1, pattern1.rightBottom.y + 1, 8, 1);
+            var sep22 = new Rect(sep21.leftTop.x, sep21.rightBottom.y, 1, -7);
+            v.separatorPatterns.add(sep21);
+            v.separatorPatterns.add(sep22);
+
+            var sep31 = new Rect(pattern2.leftTop.x, pattern2.leftTop.y - 1, 8, 1);
+            var sep32 = new Rect(sep31.rightBottom.x, sep31.leftTop.y+1, 1, 7);
+            v.separatorPatterns.add(sep31);
+            v.separatorPatterns.add(sep32);
         }
     }
 
@@ -199,12 +220,12 @@ public class Version {
                 v.timingPatterns = new ArrayList<>();
                 var p1a = v.finderPatterns.get(0);
                 var p1b = v.finderPatterns.get(1);
-                var horizontalTimingPattern = new Rect(new Point2d(p1a.rightBottom.x+1, 6), p1b.leftTop.x + 1 - p1a.rightBottom.x + 1, 1);
+                var horizontalTimingPattern = new Rect(new Point2d(p1a.rightBottom.x+2, p1a.rightBottom.y), p1b.leftTop.x - 2 - (p1a.rightBottom.x + 2) + 1, 1);
                 v.timingPatterns.add(horizontalTimingPattern);
 
                 var p2a = v.finderPatterns.get(0);
                 var p2b = v.finderPatterns.get(2);
-                var verticalTimingPattern = new Rect(new Point2d(6, p2a.rightBottom.y+1), 1, p2b.leftTop.y + 1 - p2a.rightBottom.y + 1);
+                var verticalTimingPattern = new Rect(new Point2d(p2a.rightBottom.x, p2a.rightBottom.y+2), 1, p2b.leftTop.y - 2 - (p2a.rightBottom.y + 2) + 1);
                 v.timingPatterns.add(verticalTimingPattern);
             }
         }
@@ -218,7 +239,7 @@ public class Version {
                 /*
                 ([(4 * V) + 9], 8)
                  */
-                v.darkModule = new Rect(new Point2d((4 * v.version) + 9, 8), 1, 1);
+                v.darkModule = new Point2d(8, (4 * v.version) + 9);
             }
         }
 
