@@ -59,6 +59,10 @@ public class CanvasBitIterator implements Iterable<Point2d>, Iterator<Point2d> {
                 if (!this.canvas.size().contains(up)) {
                     // now at the top. go to left again, turn flag and then down
                     var left2 = left.left();
+                    // special condition - do not use vertical separator module go to next left
+                    if (left2.x == this.generator.modules().timingPatterns.get(1).leftTop.x) {
+                        left2 = left2.left();
+                    }
                     if (!tryAddPosition(left2)) return pos;
                     this.up = false;
                 } else {

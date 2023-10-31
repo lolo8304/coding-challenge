@@ -10,49 +10,61 @@ import java.util.Map;
 
 public abstract class QrCanvas {
 
+    protected static Map<Color, String> COLOR_MAP;
+    protected static Map<Color, String> BW_COLOR_MAP;
+    protected static Map<Color, String> WB_COLOR_MAP;
+
     private boolean overwrite;
     private boolean bw;
-    private static Map<Color, String> COLOR_MAP;
-    private static Map<Color, String> BW_COLOR_MAP;
-    private static Map<Color, String> WB_COLOR_MAP;
+    private Map<Color, String> colorMap;
 
     static {
         COLOR_MAP = new HashMap<>();
         COLOR_MAP.put(Color.BLACK,  "█");
-        COLOR_MAP.put(Color.DARK_GRAY,  "X");
+        COLOR_MAP.put(Color.DARK_GRAY,  "█");
 
         COLOR_MAP.put(Color.WHITE,  "·");
-        COLOR_MAP.put(Color.GREEN,  "G");
         COLOR_MAP.put(Color.BLUE,   "B");
         COLOR_MAP.put(Color.YELLOW, "Y");
         COLOR_MAP.put(Color.ORANGE, "O");
         COLOR_MAP.put(Color.GRAY,   " ");
+
+        COLOR_MAP.put(Color.RED,   "0");
+        COLOR_MAP.put(Color.GREEN,  "1");
+
+
 
         BW_COLOR_MAP = new HashMap<>();
         BW_COLOR_MAP.put(Color.BLACK,  "█");
         BW_COLOR_MAP.put(Color.DARK_GRAY,  "█");
 
         BW_COLOR_MAP.put(Color.WHITE,  "·");
-        BW_COLOR_MAP.put(Color.GREEN,  "█");
         BW_COLOR_MAP.put(Color.BLUE,   "█");
         BW_COLOR_MAP.put(Color.YELLOW, "█");
         BW_COLOR_MAP.put(Color.ORANGE, "█");
         BW_COLOR_MAP.put(Color.GRAY,   " ");
+
+        BW_COLOR_MAP.put(Color.RED,   "0");
+        BW_COLOR_MAP.put(Color.GREEN,  "1");
+
+
+
 
         WB_COLOR_MAP = new HashMap<>();
         WB_COLOR_MAP.put(Color.BLACK,  "·");
         WB_COLOR_MAP.put(Color.DARK_GRAY,  "·");
 
         WB_COLOR_MAP.put(Color.WHITE,  "█");
-        WB_COLOR_MAP.put(Color.GREEN,  "·");
         WB_COLOR_MAP.put(Color.BLUE,   "·");
         WB_COLOR_MAP.put(Color.YELLOW, "·");
         WB_COLOR_MAP.put(Color.ORANGE, "·");
         WB_COLOR_MAP.put(Color.GRAY,   " ");
 
+        WB_COLOR_MAP.put(Color.RED,   "0");
+        WB_COLOR_MAP.put(Color.GREEN,  "1");
     }
 
-    protected final Rect rect;
+    protected Rect rect;
 
     public void overwriteDisabled() {
         this.overwrite = false;
@@ -66,18 +78,18 @@ public abstract class QrCanvas {
     }
 
     public QrCanvas(Rect rect) {
-        this.rect = rect;
-        this.bw = true;
-        if (this.bw) {
-            //COLOR_MAP = BW_COLOR_MAP;
-            COLOR_MAP = BW_COLOR_MAP;
-        }
+        this(rect, false);
     }
 
-    // https://www.thonky.com/qr-code-tutorial/module-placement-matrix
-    // print all modules into the Rectangle
-    public void placeModules() {
-
+    public QrCanvas(Rect rect, boolean useBlackAndWhite) {
+        this.rect = rect;
+        this.bw = useBlackAndWhite;
+        if (this.bw) {
+            //COLOR_MAP = BW_COLOR_MAP;
+            this.colorMap = BW_COLOR_MAP;
+        } else {
+            this.colorMap = COLOR_MAP;
+        }
     }
 
     public abstract void drawReq(Rect rect, boolean fill, Color... colors);
@@ -96,13 +108,24 @@ public abstract class QrCanvas {
 
     public abstract void draw();
 
-    public void drawBitStream(Color... colors) {
-
-    }
-
     public Rect size() {
         return this.rect;
     }
+
+    public void cloneTo(QrCanvas newCanvas) {
+        newCanvas.colorMap = this.colorMap;
+        newCanvas.bw = this.bw;
+        newCanvas.rect = this.rect;
+        newCanvas.overwrite = this.overwrite;
+    }
+
+    public abstract void flipBitAt(Point2d point, Color green, Color red);
+
+    public abstract boolean isWhite(Point2d point2d);
+    public boolean isBlack(Point2d point2d) {
+        return !this.isWhite(point2d);
+    }
+
 
     public static enum Direction {
         HORIZONTAL,

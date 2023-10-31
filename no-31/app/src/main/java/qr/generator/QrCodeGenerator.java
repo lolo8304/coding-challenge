@@ -1,23 +1,37 @@
 package qr.generator;
 
 import qr.Modules;
+import qr.Point2d;
 import qr.QrCode;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QrCodeGenerator {
 
     private final QrCode qr;
-    private final QrCanvas canvas;
+    private QrCanvas canvas;
     private final Modules modules;
+    private final Map<Integer, Mask> masks;
+    private QrCodeGenerator bestGenerator;
 
     public QrCodeGenerator(QrCode qr) {
         this.qr = qr;
         this.modules = qr.version().modules();
         this.canvas = QrCanvasFactory.INSTANCE.newCanvasFromQrCode(qr);
+        this.masks = new HashMap<>();
     }
 
-    public void draw() {
+    public QrCodeGenerator cloneForMasking() {
+        var newGenerator = new QrCodeGenerator(this.qr);
+        this.canvas.cloneTo(newGenerator.canvas);
+        return newGenerator;
+    }
+
+    // https://www.thonky.com/qr-code-tutorial/module-placement-matrix
+    // print all modules into the Rectangle
+    public QrCodeGenerator drawBestGenerator() {
         drawFinderModules();
         drawSeparatorModules();
         drawTimingModules();
@@ -26,14 +40,74 @@ public class QrCodeGenerator {
         drawReservedFormatInformation();
         drawReservedVersionInformation();
         drawBitStream();
-        this.canvas.draw();
+        return drawBestMask();
+    }
+
+
+    // based on https://www.thonky.com/qr-code-tutorial/mask-patterns
+    // return true if mask pattern hit
+    private boolean maskPattern(Point2d pos, int mask) {
+        var row = pos.x;
+        var column = pos.y;
+        return switch (mask) {
+            case 0 -> ((row + column) % 2 == 0);
+            case 1 -> row % 2 == 0;
+            case 2 -> column % 3 == 0;
+            case 3 -> (row + column) % 3 == 0;
+            case 4 -> ((row / 2) + (column / 3)) % 2 == 0;
+            case 5 -> ((row * column) % 2) + ((row * column) % 3) == 0;
+            case 6 -> (((row * column) % 2) + ((row * column) % 3)) % 2 == 0;
+            case 7 -> (((row + column) % 2) + ((row * column) % 3)) % 2 == 0;
+            default -> false;
+        };
+    }
+
+    private Mask createMaskForMe(int maskNo) {
+        var mask = new Mask(this, maskNo);
+        for (int x = 0; x < this.canvas.size().width(); x++) {
+            for (int y = 0; y < this.canvas.size().height(); y++) {
+                var point = new Point2d(x,y);
+                if (maskPattern(point, mask.maskNo())) {
+                    this.canvas.flipBitAt(point, Color.GREEN, Color.RED);
+                    mask.incFlippedMask();
+                }
+            }
+        }
+        return mask;
+    }
+
+
+    private Mask createMaskFor(int maskNo) {
+        return this.cloneForMasking().createMaskForMe(maskNo);
+    }
+
+    private QrCodeGenerator drawBestMask() {
+        this.bestGenerator = this.getBestMask();
+        return this.bestGenerator;
+    }
+
+    private QrCodeGenerator getBestMask() {
+        this.canvas().draw();
+        var minPenalties = Integer.MAX_VALUE;
+        var bestMaskNo = -1;
+        for (int maskNo = 0; maskNo < 8; maskNo++) {
+            var mask = this.createMaskFor(maskNo);
+            masks.put(maskNo, mask);
+            var penalty = mask.evaluateConditions();
+            if (penalty < minPenalties) {
+                bestMaskNo = maskNo;
+                minPenalties = penalty;
+            }
+        }
+        System.out.println("Choose Mask no '"+bestMaskNo+"', pentalty = "+minPenalties);
+        return masks.get(bestMaskNo).generator();
     }
 
     private void drawBitStream() {
         var bitIndex = 0;
         var bits = this.qr.bits();
         var iterator = new CanvasBitIterator(this);
-        Color[] colors = { Color.WHITE, Color.BLACK };
+        Color[] colors = { /* 0 */ Color.GREEN, /* 1 */ Color.RED };
         while (iterator.hasNext()) {
             var pos = iterator.next();
             if (pos != null) {
@@ -95,7 +169,7 @@ public class QrCodeGenerator {
 
     private void drawReservedVersionInformation() {
         for (var rect : this.modules.reserveVersionInformation) {
-            this.canvas.drawReq(rect, true, Color.BLACK);
+            this.canvas.drawReq(rect, true, Color.BLUE);
         }
     }
 

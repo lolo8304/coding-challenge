@@ -25,6 +25,13 @@ public class Rect {
         this.rightBottom = new Point2d(center.x + distance, center.y + distance);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+        return ((Rect) obj).leftTop.equals(this.leftTop) && ((Rect) obj).rightBottom.equals(this.rightBottom);
+    }
+
     public Rect(int x, int y, int width, int height) {
         this(new Point2d(x, y), width, height);
     }
@@ -70,12 +77,25 @@ public class Rect {
         return this.rightBottom.y - this.leftTop.y + 1;
     }
 
+    public boolean isIncludedInAny(List<Rect> list) {
+        for (int i = 0; i < list.size(); i++) {
+            var other = list.get(i);
+            if (this != other) {
+                var intersection = this.intersection(other);
+                if (intersection.isPresent() && intersection.get().equals(this)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public Optional<Rect> intersection(Rect other) {
         var leftX = Math.max(this.leftTop.x, other.leftTop.x);
         var leftY = Math.max(this.leftTop.y, other.leftTop.y);
         var rightX = Math.min(this.rightBottom.x, other.rightBottom.x);
         var rightY = Math.min(this.rightBottom.y, other.rightBottom.y);
-        if (leftX < rightX && leftY < rightY) {
+        if (leftX <= rightX && leftY <= rightY) {
             return Optional.of(new Rect(new Point2d(leftX, leftY), new Point2d(rightX, rightY)));
         } else {
             return Optional.empty();

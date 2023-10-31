@@ -40,4 +40,14 @@ public class QrImageCanvas extends QrCanvas {
     public void draw() {
 
     }
+
+    @Override
+    public void flipBitAt(Point2d point, Color green, Color red) {
+
+    }
+
+    @Override
+    public boolean isWhite(Point2d point2d) {
+        return false;
+    }
 }

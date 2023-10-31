@@ -42,8 +42,8 @@ public class Qr implements Callable<Result> {
         }
         var qr = new QrCode(this.data, Quality.valueOf(quality != null ? quality : "Q"));
         qr.encode();
-        var generator = new QrCodeGenerator(qr);
-        generator.draw();
+        var generator = new QrCodeGenerator(qr).drawBestGenerator();
+        generator.canvas().draw();
         return new Result(this.outputFileName);
     }
 }

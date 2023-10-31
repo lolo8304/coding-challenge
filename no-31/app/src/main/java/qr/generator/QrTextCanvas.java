@@ -8,8 +8,8 @@ import java.awt.*;
 
 public class QrTextCanvas extends  QrCanvas {
 
-    private final String[][] canvas;
-    private final boolean stretch;
+    private String[][] canvas;
+    private boolean stretch;
 
     public QrTextCanvas(Rect rect) {
         super(rect);
@@ -67,6 +67,42 @@ public class QrTextCanvas extends  QrCanvas {
         } else {
             throw new IllegalArgumentException("Point "+point+" has already a value '"+this.canvas[point.x][point.y]+"'");
         }
+    }
+
+    @Override
+    public void cloneTo(QrCanvas newCanvas) {
+        super.cloneTo(newCanvas);
+        var textCanvas = (QrTextCanvas)newCanvas;
+        for (int x = 0; x < textCanvas.canvas.length; x++) {
+            for (int y = 0; y < textCanvas.canvas[x].length; y++) {
+                textCanvas.canvas[x][y] = this.canvas[x][y];
+            }
+        }
+        textCanvas.stretch = this.stretch;
+    }
+
+    @Override
+    public void flipBitAt(Point2d point, Color colorBit0, Color colorBit1) {
+        var mappedBit0 = mapColor(colorBit0);
+        var mappedBit1 = mapColor(colorBit1);
+        // if bit0 --> bit 1
+        // if bit1 --> bit 0
+        // if all else --> keep it
+        var oldColor = this.canvas[point.x][point.y];
+        var newColor = oldColor.equals(mappedBit0) ?
+                mappedBit1
+                :
+                (oldColor.equals(mappedBit1) ?
+                        mappedBit0
+                        :
+                        oldColor);
+        this.canvas[point.x][point.y] = newColor;
+    }
+
+    @Override
+    public boolean isWhite(Point2d point2d) {
+        var color = this.canvas[point2d.x][point2d.y];
+        return color.equals(this.mapColor(Color.WHITE)) || color.equals(this.mapColor(Color.GREEN));
     }
 
     @Override
