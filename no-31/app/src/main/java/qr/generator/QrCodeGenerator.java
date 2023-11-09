@@ -86,17 +86,17 @@ public class QrCodeGenerator {
     private boolean maskPattern(Point2d pos, int mask) {
         var row = pos.y;
         var column = pos.x;
-        switch (mask) {
-            case 0: return (row + column) % 2 == 0;
-            case 1: return row % 2 == 0;
-            case 2: return column % 3 == 0;
-            case 3: return (row + column) % 3 == 0;
-            case 4: return (Math.floorDiv(row, 2) + Math.floorDiv(column, 3)) % 2 == 0;
-            case 5: return (((row * column) % 2) + ((row * column) % 3)) == 0;
-            case 6: return (((row * column) % 2) + ((row * column) % 3)) % 2 == 0;
-            case 7: return (((row + column) % 2) + ((row * column) % 3)) % 2 == 0;
-            default: return false;
-        }
+        return switch (mask) {
+            case 0 -> (row + column) % 2 == 0;
+            case 1 -> row % 2 == 0;
+            case 2 -> column % 3 == 0;
+            case 3 -> (row + column) % 3 == 0;
+            case 4 -> (Math.floorDiv(row, 2) + Math.floorDiv(column, 3)) % 2 == 0;
+            case 5 -> (((row * column) % 2) + ((row * column) % 3)) == 0;
+            case 6 -> (((row * column) % 2) + ((row * column) % 3)) % 2 == 0;
+            case 7 -> (((row + column) % 2) + ((row * column) % 3)) % 2 == 0;
+            default -> false;
+        };
     }
 
     private Masking createMaskForMe(int maskNo) {
@@ -247,7 +247,6 @@ public class QrCodeGenerator {
     public QrCanvas canvas() {
         return this.canvas;
     }
-    public QrCode qrCode() { return this.qr; }
 
     public Modules modules() { return this.modules;}
 

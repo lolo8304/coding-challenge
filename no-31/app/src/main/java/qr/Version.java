@@ -15,7 +15,7 @@ public class Version {
     private String informationBits;
     private final Map<Quality, Map<EncodingMode, Integer>> capacity;
     private final int size;
-    private final Map<Quality, MetaData> metaData = new HashMap<Quality, MetaData>();
+    private final Map<Quality, MetaData> metaData = new HashMap<>();
 
     private List<Rect> finderPatterns = new ArrayList<>();
     private List<Rect> separatorPatterns = new ArrayList<>();
@@ -72,8 +72,7 @@ public class Version {
     }
 
     public static Version bestFixByBits(Quality quality, int bitSize) {
-        for (int i = 0; i < VERSIONS.length; i++) {
-            var version = VERSIONS[i];
+        for (Version version : VERSIONS) {
             if (version.bitCapacity(quality) >= bitSize) {
                 return version;
             }
@@ -83,8 +82,7 @@ public class Version {
 
 
     public static Version bestFixByChars(int characterSize, EncodingMode mode, Quality quality) {
-        for (int i = 0; i < VERSIONS.length; i++) {
-            var version = VERSIONS[i];
+        for (Version version : VERSIONS) {
             if (version.capacity(mode, quality) >= characterSize) {
                 return version;
             }
@@ -105,14 +103,13 @@ public class Version {
             var lastVersion = "0";
             Map<Quality, Map<EncodingMode, Integer>> capacityMap = null;
             Version versionElement = null;
-            for (int i = 0; i < lines.size(); i++) {
-                var line = lines.get(i);
+            for (String line : lines) {
                 var splitted = line.split("\t");
                 var version = splitted[0].trim();
                 if (version.equals("")) {
                     version = lastVersion;
                 } else {
-                    capacityMap = new HashMap<Quality, Map<EncodingMode, Integer>>();
+                    capacityMap = new HashMap<>();
                     var versionInt = Integer.parseInt(version);
                     versionElement = new Version(versionInt, capacityMap);
                     VERSIONS[versionInt] = versionElement;
@@ -131,7 +128,7 @@ public class Version {
                 encodingMap.put(EncodingMode.ALPHA_NUMERIC, alphaNumericCapacity);
                 encodingMap.put(EncodingMode.BYTE, byteCapacity);
                 encodingMap.put(EncodingMode.KANJI, kanjiCapacity);
-                capacityMap.put(quality,encodingMap);
+                capacityMap.put(quality, encodingMap);
             }
         }
     }
@@ -144,8 +141,7 @@ public class Version {
             var lines = reader.lines().toList();
             // remove header
             lines = lines.subList(1, lines.size());
-            for (int i = 0; i < lines.size(); i++) {
-                var line = lines.get(i);
+            for (String line : lines) {
                 var splitted = line.split("\t");
                 var versionQuality = splitted[0].trim();
                 var versionSplitted = versionQuality.split("-");
@@ -160,7 +156,7 @@ public class Version {
                 var numberOfDataCodewordsInEachOfGroup2sBlocks = splitted[6].equals("") ? 0 : Integer.parseInt(splitted[6].trim());
                 var totalCodeWords = Integer.parseInt(splitted[7].trim().split("=")[1].trim());
                 var totalCodeBits = totalCodeWords * 8;
-                version(version).metaData.put(quality,new MetaData(
+                version(version).metaData.put(quality, new MetaData(
                         totalNumberOfDataCodeWords,
                         codewordsPerBlock,
                         numberOfBlocksInGroup1,
@@ -181,12 +177,10 @@ public class Version {
             var lines = reader.lines().toList();
             // remove header
             lines = lines.subList(1, lines.size());
-            for (int i = 0; i < lines.size(); i++) {
-                var line = lines.get(i);
+            for (String line : lines) {
                 var splitted = line.split("\t");
                 var version = Integer.parseInt(splitted[0].trim());
-                var information = splitted[1].trim();
-                version(version).informationBits = information;
+                version(version).informationBits = splitted[1].trim();
             }
         }
     }

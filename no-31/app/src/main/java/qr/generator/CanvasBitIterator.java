@@ -11,7 +11,6 @@ public class CanvasBitIterator implements Iterable<Point2d>, Iterator<Point2d> {
     private final QrCodeGenerator generator;
     private final QrCanvas canvas;
     private final List<Point2d> nextPositions;
-    private Iterator<Point2d> iterator;
     private boolean up;
 
     public CanvasBitIterator(QrCodeGenerator generator) {
