@@ -10,7 +10,7 @@ public enum Quality {
     private final static int TOTAL_METADATA = 2;
 
     private final int[][] metadata;
-    private String errorCorrectionBits;
+    private final String errorCorrectionBits;
 
     Quality(String errorCorrectionBits, int[][] metadata) {
         this.errorCorrectionBits = errorCorrectionBits;

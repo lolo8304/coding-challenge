@@ -5,7 +5,6 @@
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import qr.EncodingMode;
 import qr.QrCode;
 import qr.Quality;
 import qr.Version;

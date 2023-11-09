@@ -5,7 +5,7 @@ import qr.Rect;
 
 public class Block {
     private final QrCanvas canvas;
-    private Rect rect;
+    private final Rect rect;
     private boolean isWhiteColor;
     private boolean isBlackColor;
     private boolean isOutsideCanvas;

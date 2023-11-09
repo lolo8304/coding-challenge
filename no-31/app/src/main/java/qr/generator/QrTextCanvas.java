@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class QrTextCanvas extends  QrCanvas {
 
-    private String[][] canvas;
+    private final String[][] canvas;
     private boolean stretch;
 
     public QrTextCanvas(Rect rect) {
@@ -75,9 +75,7 @@ public class QrTextCanvas extends  QrCanvas {
         super.cloneTo(newCanvas);
         var textCanvas = (QrTextCanvas)newCanvas;
         for (int x = 0; x < textCanvas.canvas.length; x++) {
-            for (int y = 0; y < textCanvas.canvas[x].length; y++) {
-                textCanvas.canvas[x][y] = this.canvas[x][y];
-            }
+            System.arraycopy(this.canvas[x], 0, textCanvas.canvas[x], 0, textCanvas.canvas[x].length);
         }
         textCanvas.stretch = this.stretch;
     }
@@ -108,7 +106,7 @@ public class QrTextCanvas extends  QrCanvas {
     }
 
     @Override
-    public void finalize() {
+    protected void finalize() {
 
     }
 

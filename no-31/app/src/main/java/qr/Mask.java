@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Mask {
 
-    private static Map<Quality, Map<Integer, Mask>> MASKS = new HashMap<>();
+    private static final Map<Quality, Map<Integer, Mask>> MASKS = new HashMap<>();
     private final Quality quality;
     private final int maskNo;
 

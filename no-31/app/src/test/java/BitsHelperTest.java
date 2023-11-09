@@ -6,18 +6,13 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import qr.BitHelper;
-import qr.EncodingMode;
-import qr.QrCode;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BitsHelperTest {
 

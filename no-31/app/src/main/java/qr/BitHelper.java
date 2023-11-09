@@ -320,15 +320,15 @@ public class BitHelper {
         return iso88591BytesToUtf8(isoBytes);
     }
 
-    private static long KANJI_1_START = Long.parseLong("8140", 16);
-    private static long KANJI_1_END = Long.parseLong("9FFC", 16);
-    private static long KANJI_1_SUBTRACT = Long.parseLong("8140", 16);
-    private static long KANJI_MULT = Long.parseLong("C0", 16);
+    private static final long KANJI_1_START = Long.parseLong("8140", 16);
+    private static final long KANJI_1_END = Long.parseLong("9FFC", 16);
+    private static final long KANJI_1_SUBTRACT = Long.parseLong("8140", 16);
+    private static final long KANJI_MULT = Long.parseLong("C0", 16);
 
 
-    private static long KANJI_2_START = Long.parseLong("E040", 16);
-    private static long KANJI_2_END = Long.parseLong("EBBF", 16);
-    private static long KANJI_2_SUBTRACT = Long.parseLong("C140", 16);
+    private static final long KANJI_2_START = Long.parseLong("E040", 16);
+    private static final long KANJI_2_END = Long.parseLong("EBBF", 16);
+    private static final long KANJI_2_SUBTRACT = Long.parseLong("C140", 16);
 
 
     public static String kanjiStringToBits(String data) {

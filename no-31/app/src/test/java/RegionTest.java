@@ -112,10 +112,10 @@ public class RegionTest {
         var isWhite01 = canvas.isWhite(new Point2d(0,1));
 
         // Assert: 0101 - black 0 white 1 black 0 white 1
-        assertEquals(false, isWhite00);
-        assertEquals(true, isWhite10);
-        assertEquals(false, isWhite11);
-        assertEquals(true, isWhite01);
+        assertFalse(isWhite00);
+        assertTrue(isWhite10);
+        assertFalse(isWhite11);
+        assertTrue(isWhite01);
 
     }
 
@@ -140,10 +140,10 @@ public class RegionTest {
         var isWhite01 = canvas.isWhite(new Point2d(0,1));
 
         // Assert: 0101 - white 1 white 1 black 0 white 1
-        assertEquals(true, isWhite00);
-        assertEquals(true, isWhite10);
-        assertEquals(false, isWhite11);
-        assertEquals(true, isWhite01);
+        assertTrue(isWhite00);
+        assertTrue(isWhite10);
+        assertFalse(isWhite11);
+        assertTrue(isWhite01);
 
     }
 

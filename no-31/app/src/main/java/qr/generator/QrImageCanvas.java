@@ -14,7 +14,7 @@ public class QrImageCanvas extends QrCanvas {
 
     private BufferedImage board;
     private Graphics2D g2d;
-    private int squareSize;
+    private final int squareSize;
 
     public QrImageCanvas(Rect rect) {
         this(rect, 5);
@@ -70,7 +70,7 @@ public class QrImageCanvas extends QrCanvas {
     }
 
     @Override
-    public void finalize() {
+    protected void finalize() {
         this.g2d.dispose();
     }
 

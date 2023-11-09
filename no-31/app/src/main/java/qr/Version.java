@@ -2,7 +2,10 @@ package qr;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Version {
 
@@ -12,7 +15,7 @@ public class Version {
     private String informationBits;
     private final Map<Quality, Map<EncodingMode, Integer>> capacity;
     private final int size;
-    private Map<Quality, MetaData> metaData = new HashMap<Quality, MetaData>();
+    private final Map<Quality, MetaData> metaData = new HashMap<Quality, MetaData>();
 
     private List<Rect> finderPatterns = new ArrayList<>();
     private List<Rect> separatorPatterns = new ArrayList<>();
@@ -20,7 +23,7 @@ public class Version {
     private List<Rect> timingPatterns = new ArrayList<>();
 
     private Region reserveFormatInformation  = new Region();
-    private Region reserveVersionInformation  = new Region();
+    private final Region reserveVersionInformation  = new Region();
     private Point2d darkModule;
 
     static {
@@ -129,7 +132,7 @@ public class Version {
                 encodingMap.put(EncodingMode.BYTE, byteCapacity);
                 encodingMap.put(EncodingMode.KANJI, kanjiCapacity);
                 capacityMap.put(quality,encodingMap);
-            };
+            }
         }
     }
 

@@ -173,7 +173,7 @@ public abstract class QrCanvas {
 
     public abstract boolean flipBitAt(Point2d point, Color bit0Color, Color bit1Color, Color replBit0Color, Color replBit1Color);
 
-    public abstract void finalize();
+    protected abstract void finalize();
 
     public abstract boolean isWhite(Point2d point2d);
     public abstract Color getColor(Point2d point2d);
@@ -188,7 +188,7 @@ public abstract class QrCanvas {
     public abstract void saveFile(String outputFileName);
 
 
-    public static enum Direction {
+    public enum Direction {
         HORIZONTAL,
         VERTICAL
     }

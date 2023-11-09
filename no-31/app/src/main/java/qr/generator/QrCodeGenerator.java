@@ -9,7 +9,7 @@ import java.util.Map;
 public class QrCodeGenerator {
 
     private final QrCode qr;
-    private QrCanvas canvas;
+    private final QrCanvas canvas;
     private final Modules modules;
     private final Map<Integer, Masking> masks;
     private QrCodeGenerator bestGenerator;

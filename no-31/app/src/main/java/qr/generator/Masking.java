@@ -15,8 +15,8 @@ public class Masking {
     private final QrCodeGenerator generator;
     private final int maskNo;
     private int flippedMasks = 0;
-    private int[] penalties = new int[4];
-    private List<Block> condition2Blocks = new ArrayList<>();
+    private final int[] penalties = new int[4];
+    private final List<Block> condition2Blocks = new ArrayList<>();
     private int totalPenalties = 0;
 
     public Masking(QrCodeGenerator generator, int maskNo) {
