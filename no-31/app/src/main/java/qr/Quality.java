@@ -2,17 +2,23 @@ package qr;
 
 public enum Quality {
 
-    L(new int[][]{new int[]{4, 80, 1, 20, 80}}),
-    M(new int[][]{new int[]{4, 64, 2, 18, 32}}),
-    Q(new int[][]{new int[]{4, 48, 2, 26, 29}}),
-    H(new int[][]{new int[]{4, 36, 4, 16, 9}});
+    L("01", new int[][]{new int[]{4, 80, 1, 20, 80}}),
+    M("00", new int[][]{new int[]{4, 64, 2, 18, 32}}),
+    Q("11", new int[][]{new int[]{4, 48, 2, 26, 29}}),
+    H("10", new int[][]{new int[]{4, 36, 4, 16, 9}});
 
     private final static int TOTAL_METADATA = 2;
 
     private final int[][] metadata;
+    private String errorCorrectionBits;
 
-    Quality(int[][] metadata) {
+    Quality(String errorCorrectionBits, int[][] metadata) {
+        this.errorCorrectionBits = errorCorrectionBits;
         this.metadata = metadata;
+    }
+
+    public String errorCorrectionBits() {
+        return this.errorCorrectionBits;
     }
 
     public int[] metadata(int version) {

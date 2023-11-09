@@ -20,7 +20,7 @@ public class Version {
     private List<Rect> timingPatterns = new ArrayList<>();
 
     private Region reserveFormatInformation  = new Region();
-    private List<Rect> reserveVersionInformation  = new ArrayList<>();
+    private Region reserveVersionInformation  = new Region();
     private Point2d darkModule;
 
     static {
@@ -41,6 +41,10 @@ public class Version {
         this.version = version;
         this.capacity = capacity;
         this.size = 21 + (this.version - 1) * 4;
+    }
+
+    public String informationBits() {
+        return this.informationBits;
     }
     public int capacity(EncodingMode mode, Quality quality) {
         return this.capacity.get(quality).get(mode);
@@ -274,7 +278,8 @@ public class Version {
                         // only add alignment pattern if has not intersection with any of the finder patterns
                         r.intersection(v.finderPatterns).isEmpty()
                 ).toList();
-                //System.out.println("V: "+v.version+"="+v.alignmentPatterns.size()+" alignment patterns to draw");
+                if (Qr.verbose2())
+                    System.out.println("V: "+v.version+"="+v.alignmentPatterns.size()+" alignment patterns to draw");
             }
         }
     }
@@ -296,11 +301,11 @@ public class Version {
                 reserveFormatInformation.add(info13);
                 reserveFormatInformation.add(info14);
 
-                var info21 = new Rect(patRightTop.leftTop.translate(-1, patRightTop.height()+1), patRightTop.width()+1, 1);
-                reserveFormatInformation.add(info21);
-
                 var info31 = new Rect(patBottom.rightBottom.translate(2, 0), 1, -patBottom.height());
                 reserveFormatInformation.add(info31);
+
+                var info21 = new Rect(patRightTop.leftTop.translate(-1, patRightTop.height()+1), patRightTop.width()+1, 1);
+                reserveFormatInformation.add(info21);
 
                 v.reserveFormatInformation = new Region().addRects(reserveFormatInformation);
             }
@@ -315,13 +320,20 @@ public class Version {
                 var patRightTop = v.finderPatterns.get(1);
                 var patBottom = v.finderPatterns.get(2);
 
-                var reserveVersionInformation = new ArrayList<Rect>();
-                var version1 = new Rect(patBottom.leftTop.translate(0, -4), 6, 3);
-                var version2 = new Rect(patRightTop.leftTop.translate(-4, 0), 3, 6);
-                reserveVersionInformation.add(version1);
-                reserveVersionInformation.add(version2);
+                // add region rects in the order of filling. so drawing on it is easier using the iterator
+                var version1 = new Rect(patBottom.leftTop.translate(0, -4), 1, 3);
+                v.reserveVersionInformation.addRect(version1);
+                for (int i = 0; i < 5; i++) {
+                    version1 = version1.translate(1, 0, 0, 0);
+                    v.reserveVersionInformation.addRect(version1);
+                }
 
-                v.reserveVersionInformation = reserveVersionInformation;
+                var version2 = new Rect(patRightTop.leftTop.translate(-4, 0), 3, 1);
+                v.reserveVersionInformation.addRect(version2);
+                for (int i = 0; i < 5; i++) {
+                    version2 = version2.translate(0, 1, 0, 0);
+                    v.reserveVersionInformation.addRect(version2);
+                }
 
             }
 

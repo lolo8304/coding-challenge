@@ -36,6 +36,12 @@ public class Rect {
         this(new Point2d(x, y), width, height);
     }
 
+    public Rect flipOrder() {
+        var newRect = new Rect(this.leftTop, this.rightBottom);
+        newRect.fillReversed = !this.fillReversed;
+        return newRect;
+    }
+
     public Rect(Point2d leftTop, int width, int height) {
         if (width < 0) {
             width = -width;
@@ -71,6 +77,22 @@ public class Rect {
 
     public int width() {
         return this.rightBottom.x - this.leftTop.x + 1;
+    }
+
+    public int size() {
+        return this.width() * this.height();
+    }
+
+    public Point2d get(int index) {
+        if (index < 0 || index >= this.size()) {
+            throw new IllegalStateException("Index out of bounds");
+        }
+        if (this.fillReversed) {
+            index = this.size() - 1 - index;
+        }
+        var y = index / this.width();
+        var x = index % this.width();
+        return new Point2d(this.leftTop.x+x,this.leftTop.y+y);
     }
 
     public int height() {

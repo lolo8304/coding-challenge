@@ -5,10 +5,8 @@
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import qr.QrCode;
-import qr.Quality;
-import qr.Rect;
-import qr.Version;
+import qr.*;
+import qr.generator.QrTextCanvasFactory;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -68,5 +66,86 @@ public class RegionTest {
         assertFalse(intersection.isPresent());
 
     }
+
+
+    @Test
+    public void iterate_lineregion_outside() throws URISyntaxException, IOException {
+        // Arrange
+        var rect1 = new Rect(0, 0, 2, 1);
+        var rect2 = new Rect(1, 1, -2, 1);
+        var region = new Region(rect1, rect2);
+
+        // Act
+        var itertor = region.iterator();
+        var p1 = itertor.next();
+        var p2 = itertor.next();
+        var p3 = itertor.next();
+        var p4 = itertor.next();
+        var hasNext = itertor.hasNext();
+
+        // Assert
+        assertEquals(new Point2d(0,0), p1);
+        assertEquals(new Point2d(1,0), p2);
+        assertEquals(new Point2d(1,1), p3);
+        assertEquals(new Point2d(0,1), p4);
+        assertFalse(hasNext);
+
+    }
+
+    @Test
+    public void draw_lineregions_outside() throws URISyntaxException, IOException {
+        // Arrange
+        var rect1 = new Rect(0, 0, 2, 1);
+        var rect2 = new Rect(1, 1, -2, 1);
+        var region = new Region(rect1, rect2);
+
+        var bits = "01010000";
+        var string = BitHelper.bitsToString(bits);
+        var qr = new QrCode(string);
+        var canvas = new QrTextCanvasFactory().newCanvasFromQrCode(qr);
+
+        // Act
+        region.draw(canvas, bits);
+        var isWhite00 = canvas.isWhite(new Point2d(0,0));
+        var isWhite10 = canvas.isWhite(new Point2d(1,0));
+        var isWhite11 = canvas.isWhite(new Point2d(1,1));
+        var isWhite01 = canvas.isWhite(new Point2d(0,1));
+
+        // Assert: 0101 - black 0 white 1 black 0 white 1
+        assertEquals(false, isWhite00);
+        assertEquals(true, isWhite10);
+        assertEquals(false, isWhite11);
+        assertEquals(true, isWhite01);
+
+    }
+
+
+    @Test
+    public void draw_lineregions2_outside() throws URISyntaxException, IOException {
+        // Arrange
+        var rect1 = new Rect(0, 0, 2, 1);
+        var rect2 = new Rect(1, 1, -2, 1);
+        var region = new Region(rect1, rect2);
+
+        var bits = "11010000";
+        var string = BitHelper.bitsToString(bits);
+        var qr = new QrCode(string);
+        var canvas = new QrTextCanvasFactory().newCanvasFromQrCode(qr);
+
+        // Act
+        region.draw(canvas, bits);
+        var isWhite00 = canvas.isWhite(new Point2d(0,0));
+        var isWhite10 = canvas.isWhite(new Point2d(1,0));
+        var isWhite11 = canvas.isWhite(new Point2d(1,1));
+        var isWhite01 = canvas.isWhite(new Point2d(0,1));
+
+        // Assert: 0101 - white 1 white 1 black 0 white 1
+        assertEquals(true, isWhite00);
+        assertEquals(true, isWhite10);
+        assertEquals(false, isWhite11);
+        assertEquals(true, isWhite01);
+
+    }
+
 
 }

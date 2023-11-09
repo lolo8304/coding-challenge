@@ -9,20 +9,27 @@ public class Mask {
 
     private static Map<Quality, Map<Integer, Mask>> MASKS = new HashMap<>();
     private final Quality quality;
-    private final int maskPattern;
+    private final int maskNo;
 
-    private final String information;
+    private final String informationBits;
 
-    public Mask(Quality quality, int maskPattern, String information) {
+    public Mask(Quality quality, int maskNo, String informationBits) {
         this.quality = quality;
-        this.maskPattern = maskPattern;
-        this.information = information;
+        this.maskNo = maskNo;
+        this.informationBits = informationBits;
     }
 
     static {
         initFormatInformation();
     }
 
+    public static Mask get(Quality quality, int maskNo) {
+        return MASKS.get(quality).get(maskNo);
+    }
+
+    public String informationBits() {
+        return this.informationBits;
+    }
     private static void initFormatInformation() {
 
         var stream = Mask.class.getResourceAsStream("/mask-format-information.txt");

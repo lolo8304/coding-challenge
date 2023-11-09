@@ -382,4 +382,11 @@ public class BitHelper {
         return kanjiBytesToUtf8(kanjiBytes);
     }
 
+    public static String reverseString(String s) {
+        var buffer = new StringBuilder();
+        for (int i = s.length() - 1; i > 0; i--) {
+            buffer.append(s.charAt(i));
+        }
+        return buffer.toString();
+    }
 }

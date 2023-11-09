@@ -9,10 +9,10 @@ public class Modules {
     public final List<Rect> timingPatterns;
     public final Point2d darkModule;
     public final Region reserveFormatInformation;
-    public final List<Rect> reserveVersionInformation;
+    public final Region reserveVersionInformation;
     public final List<Rect> separatorPatterns;
 
-    public Modules(Version version, List<Rect> finderPatterns, List<Rect> separatorPatterns, List<Rect> alignmentPatterns, List<Rect> timingPatterns, Point2d darkModule, Region reserveFormatInformation, List<Rect> reserveVersionInformation) {
+    public Modules(Version version, List<Rect> finderPatterns, List<Rect> separatorPatterns, List<Rect> alignmentPatterns, List<Rect> timingPatterns, Point2d darkModule, Region reserveFormatInformation, Region reserveVersionInformation) {
         this.version = version;
         this.finderPatterns = finderPatterns;
         this.separatorPatterns = separatorPatterns;

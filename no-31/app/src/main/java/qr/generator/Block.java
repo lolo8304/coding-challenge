@@ -3,9 +3,6 @@ package qr.generator;
 import qr.Point2d;
 import qr.Rect;
 
-import java.awt.Color;
-import java.util.List;
-
 public class Block {
     private final QrCanvas canvas;
     private Rect rect;
@@ -23,7 +20,7 @@ public class Block {
     }
 
     private Block checkColors() {
-        var canvasRect = this.canvas.size();
+        var canvasRect = this.canvas.dimensions();
         var intersection = this.rect.intersection(canvasRect);
         if (intersection.isEmpty() || !intersection.get().equals(this.rect)) {
             this.isOutsideCanvas = true;

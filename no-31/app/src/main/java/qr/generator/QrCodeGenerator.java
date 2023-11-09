@@ -1,8 +1,6 @@
 package qr.generator;
 
-import qr.Modules;
-import qr.Point2d;
-import qr.QrCode;
+import qr.*;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -13,14 +11,25 @@ public class QrCodeGenerator {
     private final QrCode qr;
     private QrCanvas canvas;
     private final Modules modules;
-    private final Map<Integer, Mask> masks;
+    private final Map<Integer, Masking> masks;
     private QrCodeGenerator bestGenerator;
+    private int maskNo;
 
     public QrCodeGenerator(QrCode qr) {
         this.qr = qr;
         this.modules = qr.version().modules();
         this.canvas = QrCanvasFactory.INSTANCE.newCanvasFromQrCode(qr);
         this.masks = new HashMap<>();
+        this.maskNo = -1;
+    }
+
+    public static QrCodeGenerator buildBestGenerator(QrCode qr) {
+        var withMasking = true;
+        if (withMasking) {
+            return new QrCodeGenerator(qr).drawBestGenerator(withMasking).drawFinal();
+        } else {
+            return new QrCodeGenerator(qr).drawBestGenerator(withMasking);
+        }
     }
 
     public QrCodeGenerator cloneForMasking() {
@@ -31,54 +40,91 @@ public class QrCodeGenerator {
 
     // https://www.thonky.com/qr-code-tutorial/module-placement-matrix
     // print all modules into the Rectangle
-    public QrCodeGenerator drawBestGenerator() {
+    public QrCodeGenerator drawBestGenerator(boolean withMasking) {
         drawFinderModules();
         drawSeparatorModules();
         drawTimingModules();
         drawAlignmentModules();
         drawDarkModule();
+
         drawReservedFormatInformation();
         drawReservedVersionInformation();
         drawBitStream();
-        return drawBestMask();
+        if (withMasking) {
+            return drawBestMask();
+        } else {
+            return this;
+        }
+    }
+
+    public QrCodeGenerator drawFinal() {
+        this.drawFormatInformation();
+        this.drawVersionInformation();
+        this.drawWhite();
+        return this;
+    }
+
+    private void drawWhite() {
+        this.canvas.overwriteEnabled(); // allow to overwrite timing pattern.
+        try {
+            for (int i = 0; i < this.canvas.dimensions().size(); i++) {
+                var point = this.canvas.getPoint(i);
+                if (this.canvas.isWhite(point)) {
+                    this.canvas.drawPoint(point,Color.WHITE);
+                } else {
+                    this.canvas.drawPoint(point,Color.BLACK);
+                }
+            }
+        } finally {
+            this.canvas.overwriteDisabled();
+        }
     }
 
 
     // based on https://www.thonky.com/qr-code-tutorial/mask-patterns
     // return true if mask pattern hit
     private boolean maskPattern(Point2d pos, int mask) {
-        var row = pos.x;
-        var column = pos.y;
-        return switch (mask) {
-            case 0 -> ((row + column) % 2 == 0);
-            case 1 -> row % 2 == 0;
-            case 2 -> column % 3 == 0;
-            case 3 -> (row + column) % 3 == 0;
-            case 4 -> ((row / 2) + (column / 3)) % 2 == 0;
-            case 5 -> ((row * column) % 2) + ((row * column) % 3) == 0;
-            case 6 -> (((row * column) % 2) + ((row * column) % 3)) % 2 == 0;
-            case 7 -> (((row + column) % 2) + ((row * column) % 3)) % 2 == 0;
-            default -> false;
-        };
+        var row = pos.y;
+        var column = pos.x;
+        switch (mask) {
+            case 0: return (row + column) % 2 == 0;
+            case 1: return row % 2 == 0;
+            case 2: return column % 3 == 0;
+            case 3: return (row + column) % 3 == 0;
+            case 4: return (Math.floorDiv(row, 2) + Math.floorDiv(column, 3)) % 2 == 0;
+            case 5: return (((row * column) % 2) + ((row * column) % 3)) == 0;
+            case 6: return (((row * column) % 2) + ((row * column) % 3)) % 2 == 0;
+            case 7: return (((row + column) % 2) + ((row * column) % 3)) % 2 == 0;
+            default: return false;
+        }
     }
 
-    private Mask createMaskForMe(int maskNo) {
-        var mask = new Mask(this, maskNo);
-        for (int x = 0; x < this.canvas.size().width(); x++) {
-            for (int y = 0; y < this.canvas.size().height(); y++) {
+    private Masking createMaskForMe(int maskNo) {
+        var mask = new Masking(this, maskNo);
+        for (int x = 0; x < this.canvas.dimensions().width(); x++) {
+            for (int y = 0; y < this.canvas.dimensions().height(); y++) {
                 var point = new Point2d(x,y);
                 if (maskPattern(point, mask.maskNo())) {
-                    this.canvas.flipBitAt(point, Color.GREEN, Color.RED);
-                    mask.incFlippedMask();
+                    if (this.canvas.flipBitAt(point, Color.GREEN, Color.PINK, Color.CYAN, Color.RED)) {
+                        mask.incFlippedMask();
+                    }
                 }
             }
         }
+        if (Qr.verbose2())
+            System.out.println("Nof masks flipped "+mask.flippedMasks());
         return mask;
     }
 
 
-    private Mask createMaskFor(int maskNo) {
-        return this.cloneForMasking().createMaskForMe(maskNo);
+    private Masking createMaskFor(int maskNo) {
+        var mask = this.cloneForMasking().createMaskForMe(maskNo);
+
+        // we need to add now per masked generator the version and format information.
+        // the masking is based on this
+        mask.generator().drawFormatInformation();
+        mask.generator().drawVersionInformation();
+        return mask;
     }
 
     private QrCodeGenerator drawBestMask() {
@@ -87,11 +133,13 @@ public class QrCodeGenerator {
     }
 
     private QrCodeGenerator getBestMask() {
-        this.canvas().draw();
+        //this.canvas().draw();
         var minPenalties = Integer.MAX_VALUE;
         var bestMaskNo = -1;
         for (int maskNo = 0; maskNo < 8; maskNo++) {
             var mask = this.createMaskFor(maskNo);
+            if (Qr.verbose3())
+                mask.generator().canvas.draw();
             masks.put(maskNo, mask);
             var penalty = mask.evaluateConditions();
             if (penalty < minPenalties) {
@@ -99,7 +147,8 @@ public class QrCodeGenerator {
                 minPenalties = penalty;
             }
         }
-        System.out.println("Choose Mask no '"+bestMaskNo+"', pentalty = "+minPenalties);
+        if (Qr.verbose2())
+            System.out.println("Choose Mask no '"+bestMaskNo+"', pentalty = "+minPenalties);
         return masks.get(bestMaskNo).generator();
     }
 
@@ -107,7 +156,7 @@ public class QrCodeGenerator {
         var bitIndex = 0;
         var bits = this.qr.bits();
         var iterator = new CanvasBitIterator(this);
-        Color[] colors = { /* 0 */ Color.GREEN, /* 1 */ Color.RED };
+        Color[] colors = { /* 0 */ Color.GREEN, /* 1 */ Color.PINK };
         while (iterator.hasNext()) {
             var pos = iterator.next();
             if (pos != null) {
@@ -167,9 +216,31 @@ public class QrCodeGenerator {
         }
     }
 
+    // fill https://www.thonky.com/qr-code-tutorial/format-version-information
+    private void drawFormatInformation() {
+        this.canvas.overwriteEnabled(); // allow to overwrite timing pattern.
+        try {
+
+            var mask = Mask.get(this.qr.quality(), this.maskNo);
+            this.modules.reserveFormatInformation.draw(this.canvas, mask.informationBits());
+        } finally {
+            this.canvas.overwriteDisabled();
+        }
+    }
+
     private void drawReservedVersionInformation() {
-        for (var rect : this.modules.reserveVersionInformation) {
+        for (var rect : this.modules.reserveVersionInformation.rectangles) {
             this.canvas.drawReq(rect, true, Color.BLUE);
+        }
+    }
+
+    // fill https://www.thonky.com/qr-code-tutorial/format-version-information
+    private void drawVersionInformation() {
+        this.canvas.overwriteEnabled(); // allow to overwrite timing pattern.
+        try {
+            this.modules.reserveVersionInformation.draw(this.canvas, BitHelper.reverseString(this.qr.version().informationBits()));
+        } finally {
+            this.canvas.overwriteDisabled();
         }
     }
 
@@ -179,4 +250,8 @@ public class QrCodeGenerator {
     public QrCode qrCode() { return this.qr; }
 
     public Modules modules() { return this.modules;}
+
+    public void mask(int maskNo) {
+        this.maskNo = maskNo;
+    }
 }

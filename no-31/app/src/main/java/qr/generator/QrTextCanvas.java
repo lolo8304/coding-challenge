@@ -5,6 +5,7 @@ import qr.Rect;
 import qr.Region;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class QrTextCanvas extends  QrCanvas {
 
@@ -22,7 +23,7 @@ public class QrTextCanvas extends  QrCanvas {
             }
         }
     }
-    protected String mapColor(Color color) {
+    public String mapColor(Color color) {
         var c = super.mapColor(color);
         return this.stretch ? c + c + c: c;
     }
@@ -82,27 +83,62 @@ public class QrTextCanvas extends  QrCanvas {
     }
 
     @Override
-    public void flipBitAt(Point2d point, Color colorBit0, Color colorBit1) {
-        var mappedBit0 = mapColor(colorBit0);
-        var mappedBit1 = mapColor(colorBit1);
+    public boolean flipBitAt(Point2d point, Color bit0Color, Color bit1Color, Color replBit0Color, Color replBit1Color) {
+        var equalBit0 = mapColor(bit0Color);
+        var equalBit1 = mapColor(bit1Color);
+        var mappedBit0 = mapColor(replBit0Color);
+        var mappedBit1 = mapColor(replBit1Color);
         // if bit0 --> bit 1
         // if bit1 --> bit 0
         // if all else --> keep it
         var oldColor = this.canvas[point.x][point.y];
-        var newColor = oldColor.equals(mappedBit0) ?
+        var newColor = oldColor.equals(equalBit0) ?
                 mappedBit1
                 :
-                (oldColor.equals(mappedBit1) ?
+                (oldColor.equals(equalBit1) ?
                         mappedBit0
                         :
                         oldColor);
-        this.canvas[point.x][point.y] = newColor;
+        if (Objects.equals(newColor, oldColor)) {
+            return false;
+        } else {
+            this.canvas[point.x][point.y] = newColor;
+            return true;
+        }
+    }
+
+    @Override
+    public void finalize() {
+
     }
 
     @Override
     public boolean isWhite(Point2d point2d) {
         var color = this.canvas[point2d.x][point2d.y];
-        return color.equals(this.mapColor(Color.WHITE)) || color.equals(this.mapColor(Color.GREEN));
+        return color.equals(this.mapColor(Color.WHITE))
+                || color.equals(this.mapColor(Color.GREEN))
+                || color.equals(this.mapColor(Color.BLUE))
+                || color.equals(this.mapColor(Color.CYAN));
+    }
+
+    @Override
+    public Color getColor(Point2d point2d) {
+        var color = this.canvas[point2d.x][point2d.y];
+        if (color.equals(this.mapColor(Color.WHITE))) return Color.WHITE;
+        if (color.equals(this.mapColor(Color.BLACK))) return Color.BLACK;
+        if (color.equals(this.mapColor(Color.BLUE))) return Color.BLUE;
+        if (color.equals(this.mapColor(Color.GREEN))) return Color.GREEN;
+        if (color.equals(this.mapColor(Color.RED))) return Color.RED;
+        if (color.equals(this.mapColor(Color.DARK_GRAY))) return Color.DARK_GRAY;
+        if (color.equals(this.mapColor(Color.YELLOW))) return Color.YELLOW;
+        if (color.equals(this.mapColor(Color.ORANGE))) return Color.ORANGE;
+        if (color.equals(this.mapColor(Color.GRAY))) return Color.GRAY;
+        return Color.PINK;
+    }
+
+    @Override
+    public void saveFile(String outputFileName) {
+
     }
 
     @Override
@@ -143,16 +179,34 @@ public class QrTextCanvas extends  QrCanvas {
     @Override
     public void draw() {
         if (this.stretch) {
-            System.out.println("Attention: "+mapColor(Color.BLACK)+" = 1 pixel");
+            System.out.println("Attention: "+mapColor(Color.BLACK)+" = 1 pixel ("+this.hashCode()+")");
         }
         System.out.println("------------------------------------------------------------------------------------------------------");
+        var fullLengthWhiteBuilder = new StringBuilder();
+        for (int i = 0; i < this.dimensions().width() + 2 * this.quietZone; i++) {
+            fullLengthWhiteBuilder.append(this.mapColor(Color.WHITE));
+        }
+        var fullLengthWhite = fullLengthWhiteBuilder.toString();
+
+        var length4WhiteBuilder = new StringBuilder();
+        for (int i = 0; i < this.quietZone; i++) {
+            length4WhiteBuilder.append(this.mapColor(Color.WHITE));
+        }
+        var length4White = length4WhiteBuilder.toString();
+
+        for (int i = 0; i < 4; i++) {
+            System.out.println(fullLengthWhite);
+        }
         for (int y = 0; y < this.canvas.length; y++) {
+            System.out.print(length4White);
             for (int x = 0; x < this.canvas.length; x++) {
                 System.out.print(this.canvas[x][y]);
             }
+            System.out.print(length4White);
             System.out.println();
         }
+        for (int i = 0; i < 4; i++) {
+            System.out.println(fullLengthWhite);
+        }
     }
-
-
 }

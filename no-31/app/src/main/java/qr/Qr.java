@@ -11,9 +11,31 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
 import qr.generator.QrCodeGenerator;
+import qr.generator.QrImageCanvasFactory;
 
 @Command(name = "qr", mixinStandardHelpOptions = true, version = "qr 1.0", description = "This challenge is to build your own QR Code Generator")
 public class Qr implements Callable<Result> {
+
+    private static int VERBOSE_LEVEL = 0;
+
+    public static int verboseLevel() {
+        return VERBOSE_LEVEL;
+    }
+    public static boolean verbose() {
+        return VERBOSE_LEVEL > 0;
+    }
+    public static boolean verbose1() {
+        return VERBOSE_LEVEL >= 1;
+    }
+
+    public static boolean verbose2() {
+        return VERBOSE_LEVEL >= 2;
+    }
+
+    public static boolean verbose3() {
+        return VERBOSE_LEVEL >= 3;
+    }
+
 
     public static void main(String[] args) {
         var compress = new Qr();
@@ -35,15 +57,35 @@ public class Qr implements Callable<Result> {
     @Option(names = "-q", description = "-q specificies an optional quality name: L M Q H")
     String quality = "Q";
 
+    @Option(names = "-s", description = "-s specifies an optional size of each pixel - default 5")
+    int squareSize = 5;
+
+    @Option(names = "-v", description = "-v specifies verbose mode level 1 included in 2 and 3- default none")
+    boolean verboseLevel1 = false;
+
+    @Option(names = "-vv", description = "-vv specifies verbose mode level 2 included in 3 - default none")
+    boolean verboseLevel2 = false;
+
+    @Option(names = "-vvv", description = "-vvv specifies verbose mode level 3 - default none")
+    boolean verboseLevel3 = false;
+
     @Override
     public Result call() {
         if (data == null) {
             return null;
         }
+        VERBOSE_LEVEL = 0;
+        if (this.verboseLevel1) VERBOSE_LEVEL = 1;
+        if (this.verboseLevel2) VERBOSE_LEVEL = 2;
+        if (this.verboseLevel3) VERBOSE_LEVEL = 3;
         var qr = new QrCode(this.data, Quality.valueOf(quality != null ? quality : "Q"));
         qr.encode();
-        var generator = new QrCodeGenerator(qr).drawBestGenerator();
-        generator.canvas().draw();
+        var generator = QrCodeGenerator.buildBestGenerator(qr);
+        if (Qr.verbose2())
+            generator.canvas().draw();
+        var imageCanvas = new QrImageCanvasFactory().newCanvasFromQrCode(qr);
+        generator.canvas().draw(imageCanvas);
+        imageCanvas.saveFile(this.outputFileName);
         return new Result(this.outputFileName);
     }
 }
