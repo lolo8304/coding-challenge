@@ -70,7 +70,7 @@ public class QrImageCanvas extends QrCanvas {
     }
 
     @Override
-    protected void finalize() {
+    protected void finalizeDraw() {
         this.g2d.dispose();
     }
 

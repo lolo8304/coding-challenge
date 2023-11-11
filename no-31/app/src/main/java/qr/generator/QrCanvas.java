@@ -173,7 +173,7 @@ public abstract class QrCanvas {
 
     public abstract boolean flipBitAt(Point2d point, Color bit0Color, Color bit1Color, Color replBit0Color, Color replBit1Color);
 
-    protected abstract void finalize();
+    protected abstract void finalizeDraw();
 
     public abstract boolean isWhite(Point2d point2d);
     public abstract Color getColor(Point2d point2d);

@@ -35,7 +35,7 @@ public class Masking {
             this.totalPenalties += penalty;
         }
 
-        if (Qr.verbose()) {
+        if (Qr.verbose1()) {
             System.out.println("Mask "+maskNo+" total   = "+this.totalPenalties);
         }
         return this.totalPenalties;
@@ -58,7 +58,7 @@ public class Masking {
                 } else {
                     if (countConsecutive >= 5) {
                         penalties = penalties + 3 + (countConsecutive - 5);
-                        if (Qr.verbose2())
+                        if (Qr.verbose4())
                             System.out.println("Found "+countConsecutive +" "+ (lastIsWhite ? "WHITE" : "BLACK") + " +"+(3 + (countConsecutive - 5)) +" lastpos="+pos.x+","+pos.y);
                     }
                     countConsecutive = 1;
@@ -67,11 +67,11 @@ public class Masking {
             }
             if (countConsecutive >= 5) {
                 penalties = penalties + 3 + (countConsecutive - 5);
-                if (Qr.verbose2())
+                if (Qr.verbose4())
                     System.out.println("Found "+countConsecutive +" "+ (lastIsWhite ? "WHITE" : "BLACK") + " +"+(3 + (countConsecutive - 5)) +" lastpos="+pos.x+","+pos.y);
             }
         }
-        if (Qr.verbose2())
+        if (Qr.verbose4())
             System.out.println(this.maskNo+".1 horizontal = "+penalties);
         for (int x = 0; x < rect.width(); x++) {
             var countConsecutive = 1;
@@ -85,7 +85,7 @@ public class Masking {
                 } else {
                     if (countConsecutive >= 5) {
                         penalties = penalties + 3 + (countConsecutive - 5);
-                        if (Qr.verbose2())
+                        if (Qr.verbose4())
                             System.out.println("Found "+countConsecutive +" "+ (lastIsWhite ? "WHITE" : "BLACK") + " +"+(3 + (countConsecutive - 5)) +" lastpos="+pos.x+","+pos.y);
                     }
                     countConsecutive = 1;
@@ -94,11 +94,11 @@ public class Masking {
             }
             if (countConsecutive >= 5) {
                 penalties = penalties + 3 + (countConsecutive - 5);
-                if (Qr.verbose2())
+                if (Qr.verbose4())
                     System.out.println("Found "+countConsecutive +" "+ (lastIsWhite ? "WHITE" : "BLACK") + " +"+(3 + (countConsecutive - 5)) +" lastpos="+pos.x+","+pos.y);
             }
         }
-        if (Qr.verbose1())
+        if (Qr.verbose2())
             System.out.println(this.maskNo+".1 = "+penalties);
         return penalties;
     }
@@ -137,7 +137,7 @@ public class Masking {
         for (var block : this.condition2Blocks) {
             penalties += (3 * (block.rect().width() - 1) * (block.rect().height() - 1));
         }
-        if (Qr.verbose1())
+        if (Qr.verbose2())
             System.out.println(this.maskNo+".2 = "+penalties);
 
         return penalties;
@@ -159,7 +159,7 @@ public class Masking {
                 if (currentBlock.isSameColor()) {
                     condition2Blocks.add(currentBlock);
                     penalties += 3;
-                    if (Qr.verbose2())
+                    if (Qr.verbose4())
                         System.out.println("Pos: "+currentBlock.rect().x()+","+currentBlock.rect().y());
                 }
                 currentBlock = currentBlock.translateX(1);
@@ -167,7 +167,7 @@ public class Masking {
             rootBlock = rootBlock.translateY(1);
             currentBlock = rootBlock;
         }
-        if (Qr.verbose1())
+        if (Qr.verbose2())
             System.out.println(this.maskNo+".2 = "+penalties);
 
         return penalties;
@@ -205,7 +205,7 @@ public class Masking {
             root = root.translateX(1);
             block = root;
         }
-        if (Qr.verbose1())
+        if (Qr.verbose2())
             System.out.println(this.maskNo+".3 = "+penalties);
 
         return penalties;
@@ -227,7 +227,7 @@ public class Masking {
                 }
             }
         }
-        if (Qr.verbose2())
+        if (Qr.verbose4())
             System.out.println("Total BLACK="+totalBlack+", WHITE="+totalWhite);
 
         var blackPercentage = Math.min(totalBlack,totalWhite) * 100.0 / Math.max(totalBlack, totalWhite);
@@ -238,7 +238,7 @@ public class Masking {
         var blackMinDiv5 = blackMin50 / 5;
         var blackMaxDiv5 = blackMax50 / 5;
         var min = Math.min(blackMinDiv5, blackMaxDiv5) * 10;
-        if (Qr.verbose1())
+        if (Qr.verbose2())
             System.out.println(this.maskNo+".4 = "+min);
         return min;
     }

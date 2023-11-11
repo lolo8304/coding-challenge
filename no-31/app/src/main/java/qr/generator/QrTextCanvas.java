@@ -106,7 +106,7 @@ public class QrTextCanvas extends  QrCanvas {
     }
 
     @Override
-    protected void finalize() {
+    protected void finalizeDraw() {
 
     }
 

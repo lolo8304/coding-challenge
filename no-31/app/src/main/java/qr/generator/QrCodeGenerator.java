@@ -41,14 +41,22 @@ public class QrCodeGenerator {
     // https://www.thonky.com/qr-code-tutorial/module-placement-matrix
     // print all modules into the Rectangle
     public QrCodeGenerator drawBestGenerator(boolean withMasking) {
+        if (Qr.verbose3()) this.canvas.draw();
         drawFinderModules();
+        if (Qr.verbose3()) this.canvas.draw();
         drawSeparatorModules();
+        if (Qr.verbose3()) this.canvas.draw();
         drawTimingModules();
+        if (Qr.verbose3()) this.canvas.draw();
         drawAlignmentModules();
+        if (Qr.verbose3()) this.canvas.draw();
         drawDarkModule();
+        if (Qr.verbose3()) this.canvas.draw();
 
         drawReservedFormatInformation();
+        if (Qr.verbose3()) this.canvas.draw();
         drawReservedVersionInformation();
+        if (Qr.verbose3()) this.canvas.draw();
         drawBitStream();
         if (withMasking) {
             return drawBestMask();
@@ -238,7 +246,7 @@ public class QrCodeGenerator {
     private void drawVersionInformation() {
         this.canvas.overwriteEnabled(); // allow to overwrite timing pattern.
         try {
-            this.modules.reserveVersionInformation.draw(this.canvas, BitHelper.reverseString(this.qr.version().informationBits()));
+            this.modules.reserveVersionInformation.draw(this.canvas, BitConverter.reverseString(this.qr.version().informationBits()));
         } finally {
             this.canvas.overwriteDisabled();
         }

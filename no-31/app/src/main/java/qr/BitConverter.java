@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BitHelper {
+public class BitConverter {
 
     public static String intToBits(int value) {
         return intToBits(value, 0);
@@ -133,7 +133,7 @@ public class BitHelper {
     private static Map<Character,Integer> ALPHA_ENCODING_TO_NUMBER;
 
     private static void initializeAlphaNumericTable() {
-        var stream = BitHelper.class.getResourceAsStream("/alphanumeric-map.txt");
+        var stream = BitConverter.class.getResourceAsStream("/alphanumeric-map.txt");
         if (stream != null) {
             var reader = new BufferedReader(new InputStreamReader(stream));
             var lines = reader.lines().toList();

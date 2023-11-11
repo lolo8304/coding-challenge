@@ -5,7 +5,7 @@
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import qr.BitHelper;
+import qr.BitConverter;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -14,12 +14,12 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BitsHelperTest {
+public class BitConverterTest {
 
     private Reader reader;
 
     void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = BitsHelperTest.class.getResource("tests/"+testfile);
+        URL resource = BitConverterTest.class.getResource("tests/"+testfile);
         if (resource != null) {
             File file = Paths.get(resource.toURI()).toFile();
             reader = new FileReader(file);
@@ -38,7 +38,7 @@ public class BitsHelperTest {
         // Arrange
         var bits = "0101"; // 5
         // Act
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
         // Assert
         assertEquals(5,i);
 
@@ -49,7 +49,7 @@ public class BitsHelperTest {
         // Arrange
         var bits = "00011111"; // 31
         // Act
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
         // Assert
         assertEquals(31,i);
 
@@ -60,7 +60,7 @@ public class BitsHelperTest {
         // Arrange
         var bits = "000111110001111100011111"; // 2039583
         // Act
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
         // Assert
         assertEquals(2039583,i);
 
@@ -70,10 +70,10 @@ public class BitsHelperTest {
     public void int2bit2_simple_ok() throws URISyntaxException, IOException {
         // Arrange
         var bits = "0101"; // 5
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
 
         // Act
-        var bits2 = BitHelper.intToBits(i);
+        var bits2 = BitConverter.intToBits(i);
 
 
         // Assert
@@ -86,10 +86,10 @@ public class BitsHelperTest {
     public void int2largerbit2_simple_ok() throws URISyntaxException, IOException {
         // Arrange
         var bits = "00011111"; // 31
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
 
         // Act
-        var bits2 = BitHelper.intToBits(i);
+        var bits2 = BitConverter.intToBits(i);
 
 
         // Assert
@@ -101,10 +101,10 @@ public class BitsHelperTest {
     public void int2verrylargerbit2_simple_ok() throws URISyntaxException, IOException {
         // Arrange
         var bits = "000111110001111100011111"; // 2039583
-        var i = BitHelper.bitsToInt(bits);
+        var i = BitConverter.bitsToInt(bits);
 
         // Act
-        var bits2 = BitHelper.intToBits(i);
+        var bits2 = BitConverter.intToBits(i);
 
 
         // Assert
@@ -119,8 +119,8 @@ public class BitsHelperTest {
         var str2 = "hello cc world".toUpperCase();
 
         // Act
-        var bits = BitHelper.alphaNumericStringToBits(str);
-        var bits2 = BitHelper.alphaNumericStringToBits(str2);
+        var bits = BitConverter.alphaNumericStringToBits(str);
+        var bits2 = BitConverter.alphaNumericStringToBits(str2);
 
 
         // Assert
@@ -136,7 +136,7 @@ public class BitsHelperTest {
         var str = "HE";
 
         // Act
-        var bits = BitHelper.alphaNumericStringToBits(str);
+        var bits = BitConverter.alphaNumericStringToBits(str);
 
 
         // Assert
@@ -149,10 +149,10 @@ public class BitsHelperTest {
     public void bitsToAlphaNumeric2_HE_ok() throws URISyntaxException, IOException {
         // Arrange
         var compare = "HE";
-        var bits = BitHelper.alphaNumericStringToBits(compare);
+        var bits = BitConverter.alphaNumericStringToBits(compare);
 
         // Act
-        var str = BitHelper.bitsToAlphaNumericString(bits);
+        var str = BitConverter.bitsToAlphaNumericString(bits);
 
         // Assert
         assertEquals(compare, str);
@@ -169,9 +169,9 @@ public class BitsHelperTest {
         var str6 = "867530";
 
         // Act
-        var bits8 = BitHelper.numericStringToBits(str8);
-        var bits7 = BitHelper.numericStringToBits(str7);
-        var bits6 = BitHelper.numericStringToBits(str6);
+        var bits8 = BitConverter.numericStringToBits(str8);
+        var bits7 = BitConverter.numericStringToBits(str7);
+        var bits6 = BitConverter.numericStringToBits(str6);
 
 
         // Assert
@@ -190,14 +190,14 @@ public class BitsHelperTest {
         var str8 = "86753091";
         var str7 = "8675309";
         var str6 = "867530";
-        var bits8 = BitHelper.numericStringToBits(str8);
-        var bits7 = BitHelper.numericStringToBits(str7);
-        var bits6 = BitHelper.numericStringToBits(str6);
+        var bits8 = BitConverter.numericStringToBits(str8);
+        var bits7 = BitConverter.numericStringToBits(str7);
+        var bits6 = BitConverter.numericStringToBits(str6);
 
         // Act
-        var num8 = BitHelper.bitsToNumericString(bits8);
-        var num7 = BitHelper.bitsToNumericString(bits7);
-        var num6 = BitHelper.bitsToNumericString(bits6);
+        var num8 = BitConverter.bitsToNumericString(bits8);
+        var num7 = BitConverter.bitsToNumericString(bits7);
+        var num6 = BitConverter.bitsToNumericString(bits6);
 
         // Assert
         assertEquals(str8, num8);
@@ -213,7 +213,7 @@ public class BitsHelperTest {
         var compare = "01001000011001010110110001101100011011110010110000100000011101110110111101110010011011000110010000100001";
 
         // Action
-        var bits = BitHelper.byteStringToBits(txt);
+        var bits = BitConverter.byteStringToBits(txt);
 
         // Assert
         assertEquals(compare, bits);
@@ -227,7 +227,7 @@ public class BitsHelperTest {
         var bits = "01001000011001010110110001101100011011110010110000100000011101110110111101110010011011000110010000100001";
 
         // Action
-        var txt = BitHelper.bitsToByteString(bits);
+        var txt = BitConverter.bitsToByteString(bits);
 
         // Assert
         assertEquals(compare, txt);
@@ -241,7 +241,7 @@ public class BitsHelperTest {
         var compare = "11010101010100011010010111";
 
         // Action
-        var bits = BitHelper.kanjiStringToBits(kanji);
+        var bits = BitConverter.kanjiStringToBits(kanji);
 
         // Assert
         assertEquals(compare, bits);
@@ -253,7 +253,7 @@ public class BitsHelperTest {
         var kanjibits = "11010101010100011010010111";
 
         // Action
-        var str = BitHelper.bitsToKanjiString(kanjibits);
+        var str = BitConverter.bitsToKanjiString(kanjibits);
 
         // Assert
         assertEquals(compare, str);

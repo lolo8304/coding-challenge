@@ -170,6 +170,7 @@ public class Version {
         }
     }
 
+    // from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#reserve-the-version-information-area
     private static void initVersionInformationString() {
         var stream = Version.class.getResourceAsStream("/version-information-string.txt");
         if (stream != null) {
@@ -185,6 +186,7 @@ public class Version {
         }
     }
 
+    // from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#step-1-add-the-finder-patterns
     private static void initFinderPatterns() {
         /*
         The top-left finder pattern's top left corner is always placed at (0,0).
@@ -219,6 +221,7 @@ public class Version {
         }
     }
 
+    // from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#step-4-add-the-timing-patterns
     private static void initTimingPatterns() {
 
         for (Version v: VERSIONS) {
@@ -238,6 +241,7 @@ public class Version {
 
     }
 
+    // from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#dark-module
     private static void initDarkModule() {
 
         for (Version v: VERSIONS) {
@@ -251,6 +255,7 @@ public class Version {
 
     }
 
+    // from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#step-3-add-the-alignment-patterns
     private static void initAlignmentPatterns() {
         var stream = Version.class.getResourceAsStream("/alignment-pattners.txt");
         if (stream != null) {
@@ -275,7 +280,7 @@ public class Version {
                         // only add alignment pattern if has not intersection with any of the finder patterns
                         r.intersection(v.finderPatterns).isEmpty()
                 ).toList();
-                if (Qr.verbose2())
+                if (Qr.verbose4())
                     System.out.println("V: "+v.version+"="+v.alignmentPatterns.size()+" alignment patterns to draw");
             }
         }

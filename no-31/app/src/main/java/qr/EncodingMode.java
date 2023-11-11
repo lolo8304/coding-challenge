@@ -16,7 +16,7 @@ public enum EncodingMode implements BitAppender {
 
 
     EncodingMode(String bitString, int[] characterCountInBits) {
-        this.value = BitHelper.bitsToInt(bitString);
+        this.value = BitConverter.bitsToInt(bitString);
         this.characterCountInBits = characterCountInBits;
     }
 
@@ -30,7 +30,7 @@ public enum EncodingMode implements BitAppender {
     @Override
     public StringBuilder appendBits(StringBuilder builder) {
         return builder
-                .append(BitHelper.intToBits(this.value, 4));
+                .append(BitConverter.intToBits(this.value, 4));
     }
 
     public int getBitLen(int version) {

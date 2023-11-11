@@ -100,7 +100,7 @@ public class RegionTest {
         var region = new Region(rect1, rect2);
 
         var bits = "01010000";
-        var string = BitHelper.bitsToString(bits);
+        var string = BitConverter.bitsToString(bits);
         var qr = new QrCode(string);
         var canvas = new QrTextCanvasFactory().newCanvasFromQrCode(qr);
 
@@ -128,7 +128,7 @@ public class RegionTest {
         var region = new Region(rect1, rect2);
 
         var bits = "11010000";
-        var string = BitHelper.bitsToString(bits);
+        var string = BitConverter.bitsToString(bits);
         var qr = new QrCode(string);
         var canvas = new QrTextCanvasFactory().newCanvasFromQrCode(qr);
 

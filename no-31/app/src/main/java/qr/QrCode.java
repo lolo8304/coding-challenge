@@ -88,7 +88,7 @@ public class QrCode implements BitAppender {
         var metadata = this.version.metaData(this.quality);
         this.groups = new byte[metadata.group1NumberOfBlocks + metadata.group2NumberOfBlocks][];
         var index = 0;
-        var bytes = BitHelper.bitsToByteArray(bits.toString());
+        var bytes = BitConverter.bitsToByteArray(bits.toString());
         for (int i = 0; i < metadata.group1NumberOfBlocks; i++) {
             this.groups[i] = Arrays.copyOfRange(bytes, index, index + metadata.group1NumberOfDataCodewordsInEachOfGroupBlocks);
             index += metadata.group1NumberOfDataCodewordsInEachOfGroupBlocks;
@@ -125,14 +125,14 @@ public class QrCode implements BitAppender {
         for (int i = 0; i < this.longestGroups; i++) {
             for (int j = 0; j < this.groups.length; j++) {
                 if (this.groups[j].length > i) {
-                    this.bits.append(BitHelper.byteToBits(groups[j][i]));
+                    this.bits.append(BitConverter.byteToBits(groups[j][i]));
                 }
             }
         }
         int eccCodeWords = version.metaData(this.quality).codewordsPerBlock;
         for (int i = 0; i < eccCodeWords; i++) {
             for (int j = 0; j < this.errorCorrectionCode.length; j++) {
-                bits.append(BitHelper.byteToBits(this.errorCorrectionCode[j][i]));
+                bits.append(BitConverter.byteToBits(this.errorCorrectionCode[j][i]));
             }
         }
         bits.append("00000000");
@@ -152,7 +152,7 @@ public class QrCode implements BitAppender {
         // fill 236 / 17 until full
         var alternateFiller = 236;
         while (this.bits.length() < bitsCapacity) {
-            this.bits.append(BitHelper.intToBits(alternateFiller));
+            this.bits.append(BitConverter.intToBits(alternateFiller));
             alternateFiller = alternateFiller == 236 ? 17 : 236;
         }
     }
@@ -183,12 +183,12 @@ public class QrCode implements BitAppender {
     public StringBuilder appendBits(StringBuilder builder) {
         this.mode
                 .appendBits(builder)
-                .append(BitHelper.intToBits(this.data.length(), this.mode.characterCountInBits(this.version)));
+                .append(BitConverter.intToBits(this.data.length(), this.mode.characterCountInBits(this.version)));
         switch (this.mode) {
-            case ALPHA_NUMERIC -> builder.append(BitHelper.alphaNumericStringToBits(this.data));
-            case NUMERIC -> builder.append(BitHelper.numericStringToBits(this.data));
-            case KANJI -> builder.append(BitHelper.kanjiStringToBits(this.data));
-            case BYTE -> builder.append(BitHelper.byteStringToBits(this.data));
+            case ALPHA_NUMERIC -> builder.append(BitConverter.alphaNumericStringToBits(this.data));
+            case NUMERIC -> builder.append(BitConverter.numericStringToBits(this.data));
+            case KANJI -> builder.append(BitConverter.kanjiStringToBits(this.data));
+            case BYTE -> builder.append(BitConverter.byteStringToBits(this.data));
         }
         return builder;
     }
