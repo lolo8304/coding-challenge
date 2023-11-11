@@ -109,8 +109,8 @@ here you can find all my implementation
   - additional idea: build interpreter to build this again
 - 31 QR Code Generator
   - https://github.com/lolo8304/coding-challenge/tree/main/no-31
-  - implemted full doectrum codes: alpha, byte, kanji
-  - with all versions support
+  - implemted full spectrum of codes: alpha, byte, kanji
+  - with all versions support, quality
   - impl debug support with text canvas
   - impl regions algorithm of rectangles to impl positioning of bits automatic
   - masking tutorial awesome but some missing tips
