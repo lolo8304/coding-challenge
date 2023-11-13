@@ -101,7 +101,7 @@ QR code created: Congratulations-Challenge-Complete.png
 here you see an example for the built masks before any data field is filled.
 ![debugging.qr.png](debugging.qr.png)
 
-additionally see different "characters" (1 0 i B)
+additionally see different "characters" (1 0 i B o l for some flipping bits and maskinfo)
 ![debugging2.qr.png](debugging2.qr.png)
 
 ## TODO / Bugs
