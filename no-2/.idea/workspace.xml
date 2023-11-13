@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="45ea8a13-1f5b-4e77-9e0f-3d84a2603bdf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/$PROJECT_FILE$" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/qaplug_profiles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/.idea/$PROJECT_FILE$" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/.idea/checkstyle-idea.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/jq/FileInput.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/jq/Input.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/jq/JsonQuery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/jq/SystemIn.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/Json.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/JsonParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/JsonParserException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/JsonSerializeOptions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/Lexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JArray.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JElement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JMember.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JValue.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JValueBoolean.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JValueNull.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JValueNumber.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JValueString.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/JsonBuilder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-34/app/src/main/java/json/model/Serializer.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2Y8OZ91FTZyf1wG226Vqzz9bVuL" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="compactDirectories" value="true" />
+    <option name="flattenModules" value="true" />
+    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/Lolo/git/coding-challenge/no-2",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="45ea8a13-1f5b-4e77-9e0f-3d84a2603bdf" name="Changes" comment="" />
+      <created>1699903792349</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699903792349</updated>
+    </task>
+    <servers />
+  </component>
+</project>
