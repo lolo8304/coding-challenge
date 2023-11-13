@@ -82,9 +82,9 @@ clisp>>
 ```
 
 ### checkou builtin: pure
-I have implemented a pure function as a built-in to be able to cash results. The two defined examples from John fib and fact had been implemented in the recursive way. and for large numbers, it will kill your machine.  
+I have implemented a pure function as a built-in to be able to cash results. The two defined examples from John fib and fact had been implemented in the recursive way and for large numbers, it will kill your machine.  
 
-The idea behind the cashing off a pure function is that the pure function only uses information via parameter point. This means we could cash the result of same parameters. 
+The idea behind the caching of a pure function is that the pure function only uses information via its parameters. This means we could cache the result with same parameters. 
 
 run this first in interactive mode: 
 ```lisp
@@ -96,12 +96,12 @@ run this first in interactive mode:
 ```
 
 
-try without pure : 
+try without pure : kills your PC
 ```lisp
 (fib 100)
 ```
 
-or with plugin. The plucking is embedded in the run time interpreter to return cash results for same parameters  
+or with plugin. The plugin is embedded in the run time interpreter to return cached results with same parameters  
 
 ```lisp
 (pure fib)
