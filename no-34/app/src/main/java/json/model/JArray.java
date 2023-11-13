@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JArray extends JValue {
 
-    private List<JValue> values = new ArrayList<>();
+    private final List<JValue> values = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -17,7 +17,7 @@ public class JArray extends JValue {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        JObject other = (JObject) obj;
+        JArray other = (JArray) obj;
         return other.toString().equals(this.toString());
     }
 
@@ -39,7 +39,7 @@ public class JArray extends JValue {
         return builder;
     }
 
-    public List<JValue> addValues(List<JValue> newValues) throws JsonParserException {
+    public List<JValue> addValues(List<JValue> newValues) {
         this.values.addAll(newValues);
         return this.values;
     }

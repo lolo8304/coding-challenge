@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JObject extends JValue {
 
-    private List<JMember> members = new ArrayList<>();
+    private final List<JMember> members = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
