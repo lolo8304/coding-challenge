@@ -57,7 +57,7 @@ This challenge is to build your own QR Code Generator
 ### Examples: 
 
 
-run for "HELLO WORLD" and open the random generated qr code
+run for "HELLO WORLD" and open the random generated name for qr code file
 ```bash
 ./qr.sh "HELLO WORLD" -q L -o "HELLO_WORLD.png"
 QR code created: qr-e6a30564-2798-4b4a-ac31-4f2b9c2e6b20.png
