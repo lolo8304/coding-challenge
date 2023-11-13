@@ -2,8 +2,8 @@ package json.model;
 
 public class JMember extends JElement {
     
-    private String key;
-    private JValue value;
+    private final String key;
+    private final JValue value;
 
     public JMember(String key, JValue value) {
         this.key = key;
@@ -16,7 +16,7 @@ public class JMember extends JElement {
     @Override
     public JsonBuilder serialize(JsonBuilder builder) {
         builder.append("\"").append(this.key).append("\": ");
-        this.value.serialize(builder);
+        this.getValue().serialize(builder);
         return builder;
     }
 
