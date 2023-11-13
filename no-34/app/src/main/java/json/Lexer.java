@@ -12,9 +12,9 @@ public class Lexer {
 
     private static final String validNumberRegexp = "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$";
 
-    private Reader reader;
-    private LinkedList<Character> nextCharQueue;
-    private Pattern validNumberPattern;
+    private final Reader reader;
+    private final LinkedList<Character> nextCharQueue;
+    private final Pattern validNumberPattern;
 
     public Lexer(Reader reader) {
         this.reader = reader;
@@ -48,7 +48,7 @@ public class Lexer {
         EOF
     }
 
-    public class TokenValue {
+    public static class TokenValue {
         public final Token token;
         public final Object value;
         public final String string;
@@ -102,68 +102,61 @@ public class Lexer {
             return new TokenValue(Token.EOF);
         }
         switch (ch) {
-            case '{':
+            case '{' -> {
                 this.readNext();
                 return new TokenValue(Token.OPEN_OBJECT);
-            case '}':
+            }
+            case '}' -> {
                 this.readNext();
                 return new TokenValue(Token.CLOSE_OBJECT);
-            case '[':
+            }
+            case '[' -> {
                 this.readNext();
                 return new TokenValue(Token.OPEN_ARRAY);
-            case ']':
+            }
+            case ']' -> {
                 this.readNext();
                 return new TokenValue(Token.CLOSE_ARRAY);
-            case ':':
+            }
+            case ':' -> {
                 this.readNext();
                 return new TokenValue(Token.COLON);
-            case ',':
+            }
+            case ',' -> {
                 this.readNext();
                 return new TokenValue(Token.COMMA);
-            case '"':
+            }
+            case '"' -> {
                 this.readNext();
                 var str = this.readString(ch);
                 return new TokenValue(Token.STRING, str);
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case '-':
+            }
+            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' -> {
                 this.readNext();
                 var number = this.parseNumber(ch);
                 return new TokenValue(Token.NUMBER, number);
-
-            case 't':
+            }
+            case 't' -> {
                 this.readNext();
                 this.parseConstant(ch, "true");
                 return new TokenValue(Token.TRUE);
-
-            case 'f':
+            }
+            case 'f' -> {
                 this.readNext();
                 this.parseConstant(ch, "false");
                 return new TokenValue(Token.FALSE);
-
-            case 'n':
+            }
+            case 'n' -> {
                 this.readNext();
                 this.parseConstant(ch, "null");
                 return new TokenValue(Token.NULL);
-
-            case ' ':
-            case '\n':
-            case '\r':
-            case '\t':
+            }
+            case ' ', '\n', '\r', '\t' -> {
                 this.readNext();
                 this.readWhitespace(ch);
                 return this.parseNextToken();
-
-            default:
-                throw new IOException("invalid character parsing '"+ch+"'");
+            }
+            default -> throw new IOException("invalid character parsing '" + ch + "'");
         }
     }
 
@@ -218,7 +211,7 @@ public class Lexer {
             }
         }
         if (ch == null) {
-            throw new IOException("Illegal string parsing - so far='"+str.toString()+"'");
+            throw new IOException("Illegal string parsing - so far='"+str+"'");
         }
         // dont add quotes
         readNext();
