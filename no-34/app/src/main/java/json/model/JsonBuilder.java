@@ -2,8 +2,6 @@ package json.model;
 
 import json.JsonSerializeOptions;
 
-import java.io.IOException;
-
 public class JsonBuilder implements java.io.Serializable, Appendable, CharSequence {
 
     private final StringBuilder builder;

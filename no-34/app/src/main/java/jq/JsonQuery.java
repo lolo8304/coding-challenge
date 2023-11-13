@@ -1,10 +1,12 @@
 package jq;
 
-import json.*;
+import json.JsonParser;
+import json.JsonParserException;
+import json.JsonSerializeOptions;
+import json.Lexer;
 import json.model.JObject;
 import json.model.JsonBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
