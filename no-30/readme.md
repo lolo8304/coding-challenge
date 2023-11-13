@@ -81,6 +81,33 @@ clisp>>
 
 ```
 
+### checkou builtin: pure
+I have implemented a pure function as a built-in to be able to cash results. The two defined examples from John fib and fact had been implemented in the recursive way. and for large numbers, it will kill your machine.  
+
+The idea behind the cashing off a pure function is that the pure function only uses information via parameter point. This means we could cash the result of same parameters. 
+
+run this first in interactive mode: 
+```lisp
+(defun fib (n)
+  (if (< n 2)
+      n
+      (+ (fib (- n 1))
+         (fib (- n 2)))))
+```
+
+
+try without pure : 
+```lisp
+(fib 100)
+```
+
+or with plugin. The plucking is embedded in the run time interpreter to return cash results for same parameters  
+
+```lisp
+(pure fib)
+(fib 100)
+```
+
 
 ## TODO
 
