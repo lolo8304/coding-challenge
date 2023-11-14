@@ -14,11 +14,14 @@ I decided to implement it back with Java. I have been working with Java since v1
 
 # Write your own
 
-Some feedback and a complexity rating * = simple, **** = quite big
-
 Here you can find all my implementation, challenge see: https://codingchallenges.fyi
 
 See also other solutions implemented: https://github.com/CodingChallegesFYI/SharedSolutions
+
+Some feedback and and my personal complexity rating
+
+    1 * = simple, 5 ***** = a real challenge
+
 
 | **no** | **Build Your Own**                   |                             **Link code**                             | **Description**                                                                                                                                                                                                                                                                                           | **Complexity** |
 |:------:|:-------------------------------------|:---------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------:|
