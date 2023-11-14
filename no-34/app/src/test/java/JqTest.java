@@ -3,7 +3,12 @@
  */
 
 
+import jq.FileInput;
+import jq.JsonQuery;
+import jq.ReaderInput;
+import json.JsonParserException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -28,9 +33,49 @@ class JqTest {
         }
     }
 
-    @Test void test() throws URISyntaxException, IOException {
+    @Test void execute_currentindex0() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0]");
+        // Assert
+    }
 
+    @Test void execute_index0_authorname() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0].commit.author.name");
+        // Assert
     }
 
 
+    @Test void execute_index0_object_name_email() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0].commit.author | { name, email }");
+        // Assert
+    }
+
+
+    @Test void execute_indexnamed() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0].[\"commit\"]");
+        // Assert
+    }
+    @Test void execute_indexnameddoubled() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0].[\"commit\"].author.email");
+        // Assert
+    }
 }

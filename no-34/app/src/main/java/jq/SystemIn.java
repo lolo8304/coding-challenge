@@ -1,6 +1,8 @@
 package jq;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class SystemIn implements Input {
 
@@ -15,9 +17,9 @@ public class SystemIn implements Input {
     }
 
     @Override
-    public InputStream next() {
+    public Reader next() {
         var in = this.stream;
         this.stream = null;
-        return in;
+        return new InputStreamReader(in);
     }
 }

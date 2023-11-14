@@ -15,4 +15,14 @@ public class JValueNull extends JValue {
         builder.append("null");
         return builder;
     }
+
+    @Override
+    public JValue get(int index) {
+        return null;
+    }
+
+    @Override
+    public JValue get(String key) {
+        return null;
+    }
 }

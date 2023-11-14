@@ -20,4 +20,17 @@ public class JMember extends JElement {
         return builder;
     }
 
+    @Override
+    public JValue get(int index) {
+        return this.get(String.valueOf(index));
+    }
+
+    @Override
+    public JValue get(String key) {
+        if (this.key.equals(key)) {
+            return this.getValue();
+        } else {
+            return null;
+        }
+    }
 }

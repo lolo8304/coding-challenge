@@ -81,7 +81,10 @@ public class JsonParser {
         return new JMember(string.string, value);
     }
 
-    private JValue parseValue(Lexer.TokenValue nextToken) throws IOException, JsonParserException {
+    public JValue parseValue() throws IOException, JsonParserException {
+        return this.parseValue(null);
+    }
+    public JValue parseValue(Lexer.TokenValue nextToken) throws IOException, JsonParserException {
         if (nextToken == null) { nextToken = this.nextToken(); }
         return switch (nextToken.token) {
             case OPEN_OBJECT -> this.parseObject(nextToken);

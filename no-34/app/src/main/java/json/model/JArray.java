@@ -28,14 +28,14 @@ public class JArray extends JValue {
 
     @Override
     public JsonBuilder serialize(JsonBuilder builder) {
-        builder.append('[').indentPlus().indentPlus();
+        builder.append('[').newLineIfNotCompact().indentPlus();
         var second = false;
         for (JValue jValue : values) {
             if (second) { builder.append(", ").newLineIfNotCompact(); }
             jValue.serialize(builder);
             second = true;
         }
-        builder.newLineIfNotCompact().indentMinus().append(']').indentMinus();
+        builder.newLineIfNotCompact().indentMinus().append(']');
         return builder;
     }
 
@@ -48,6 +48,27 @@ public class JArray extends JValue {
     public Object value() {
         return this;
     }
-    
 
+    public JValue[] values () {
+        return this.values.toArray(JValue[]::new);
+    }
+
+
+    @Override
+    public JValue get(int index) {
+        return this.values.get(index);
+    }
+
+    @Override
+    public JValue get(String key) {
+        return this.values.get(this.indexFromString(key));
+    }
+
+    private int indexFromString(String key) {
+        try {
+            return Integer.parseInt(key);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Key '"+key+"' is not a number for index access in array");
+        }
+    }
 }

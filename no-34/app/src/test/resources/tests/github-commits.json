@@ -1,0 +1,239 @@
+[
+  {
+    "sha": "47f575e23feb2770e035593c0e9ee110affdf67d",
+    "node_id": "C_kwDOKUpeI9oAKDQ3ZjU3NWUyM2ZlYjI3NzBlMDM1NTkzYzBlOWVlMTEwYWZmZGY2N2Q",
+    "commit": {
+      "author": {
+        "name": "Lorenz aka Lolo Hänggi",
+        "email": "lolo8304@gmail.com",
+        "date": "2023-11-13T07:20:58Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2023-11-13T07:20:58Z"
+      },
+      "message": "Added QR code generator  (#72)\n\n* Create challenge-qr-generator.md\r\n\r\n* Update README.md with QR code generator",
+      "tree": {
+        "sha": "b930bb3319f13e863acd6f80f10067662912eeab",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/trees/b930bb3319f13e863acd6f80f10067662912eeab"
+      },
+      "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/commits/47f575e23feb2770e035593c0e9ee110affdf67d",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJlUc5aCRBK7hj4Ov3rIwAAw00IAAnns5Rt4MarMlwLZd/8I9pQ\nQSe4oWC9batYL6ob/1U85pfrCFOY6u2wlCgxSmwEV2PRwFd4YLbu8ewvIK+lF+Xr\nGWu1u3wsXKETuhQm09TfRz18YHivsfHBDWHACy2f+33Jkdfdf4wYYgxPLrOZXQjG\nb+OIxk+4MWSS6NAP/499ToVPGthEnnGClKnyzGyoFHrgP9ZF/f4piO4uOkKG8DCq\nxAaAKUXGUp5EaPIdU8Wwm5ehu+QGqQVcnFiVEiFUY7QIkbSgd0+erg+TuTftqUJF\nJyIU9vHyT25k0ZbTVlgcTS51pF96xiiNX05poztOhGWLi+8SW6YJENi9+Xzc0kg=\n=W7j1\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree b930bb3319f13e863acd6f80f10067662912eeab\nparent ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0\nauthor Lorenz aka Lolo Hänggi <lolo8304@gmail.com> 1699860058 +0100\ncommitter GitHub <noreply@github.com> 1699860058 +0000\n\nAdded QR code generator  (#72)\n\n* Create challenge-qr-generator.md\r\n\r\n* Update README.md with QR code generator"
+      }
+    },
+    "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/47f575e23feb2770e035593c0e9ee110affdf67d",
+    "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/47f575e23feb2770e035593c0e9ee110affdf67d",
+    "comments_url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/47f575e23feb2770e035593c0e9ee110affdf67d/comments",
+    "author": {
+      "login": "lolo8304",
+      "id": 5243791,
+      "node_id": "MDQ6VXNlcjUyNDM3OTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5243791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lolo8304",
+      "html_url": "https://github.com/lolo8304",
+      "followers_url": "https://api.github.com/users/lolo8304/followers",
+      "following_url": "https://api.github.com/users/lolo8304/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lolo8304/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lolo8304/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lolo8304/subscriptions",
+      "organizations_url": "https://api.github.com/users/lolo8304/orgs",
+      "repos_url": "https://api.github.com/users/lolo8304/repos",
+      "events_url": "https://api.github.com/users/lolo8304/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lolo8304/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+        "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0"
+      }
+    ]
+  },
+  {
+    "sha": "ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+    "node_id": "C_kwDOKUpeI9oAKGNhNmZmMDJjYWU5ZjExMmFlMWJjZjVkMzQyYTFkMDE4MjAxYWQ0ZjA",
+    "commit": {
+      "author": {
+        "name": "Ethan Costa",
+        "email": "88796846+dethancosta@users.noreply.github.com",
+        "date": "2023-11-10T17:18:02Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2023-11-10T17:18:02Z"
+      },
+      "message": "Update challenge-wc.md (#70)",
+      "tree": {
+        "sha": "5f8596d59b782bdbb57530ed6dbf60e1645481b3",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/trees/5f8596d59b782bdbb57530ed6dbf60e1645481b3"
+      },
+      "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/commits/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJlTmXKCRBK7hj4Ov3rIwAA1nAIABi0W2c/QKSh5FEO2gaA8jMJ\njazdsraulw2zmnejXmki++WT9+S+76ZqEtjHJVYQxgv/jxBvcTAWS2y0XwFxyGUK\nqWmgVo3VSG2rXn0EI3PgIp8B9Jp1YfjgHvFAqoZNalWf9ak3mQowj8no40fWkDI8\nL6WTJgysawx66AyS2O5LJKRAMWR1vonD57mxPnOTZfyYFu2c/ShF+ti60btKym9x\nQhpfs9p7PYaVYj/+esQKpXL81+ov20OsrxPHAegYLvkINaG83qCjte9jItqcJvHr\n1hu5Fk86OQPROD7pM/Bi0al4XqnEYx0ZrbKmwFsPLNx3BG6JM8d15Lxb0P98vYo=\n=d6BG\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 5f8596d59b782bdbb57530ed6dbf60e1645481b3\nparent b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8\nauthor Ethan Costa <88796846+dethancosta@users.noreply.github.com> 1699636682 -0500\ncommitter GitHub <noreply@github.com> 1699636682 +0000\n\nUpdate challenge-wc.md (#70)\n\n"
+      }
+    },
+    "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+    "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0",
+    "comments_url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/ca6ff02cae9f112ae1bcf5d342a1d018201ad4f0/comments",
+    "author": {
+      "login": "dethancosta",
+      "id": 88796846,
+      "node_id": "MDQ6VXNlcjg4Nzk2ODQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88796846?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dethancosta",
+      "html_url": "https://github.com/dethancosta",
+      "followers_url": "https://api.github.com/users/dethancosta/followers",
+      "following_url": "https://api.github.com/users/dethancosta/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dethancosta/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dethancosta/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dethancosta/subscriptions",
+      "organizations_url": "https://api.github.com/users/dethancosta/orgs",
+      "repos_url": "https://api.github.com/users/dethancosta/repos",
+      "events_url": "https://api.github.com/users/dethancosta/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dethancosta/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+        "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8"
+      }
+    ]
+  },
+  {
+    "sha": "b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+    "node_id": "C_kwDOKUpeI9oAKGIxNmM2N2FhNzJlNmIwY2VkOTZkZTQ1ZjdkMmE0ZGU5OWEyY2I1Yzg",
+    "commit": {
+      "author": {
+        "name": "Carlos Gómez",
+        "email": "60867448+carlex05@users.noreply.github.com",
+        "date": "2023-11-10T17:17:20Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2023-11-10T17:17:20Z"
+      },
+      "message": "Update challenge-lisp.md. Adding a new solution for 'Write Your Own Lisp Interpreter' clojure version. (#69)",
+      "tree": {
+        "sha": "d0f0f10b921a7895aefa5bb4a583be5ecc13d4eb",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/trees/d0f0f10b921a7895aefa5bb4a583be5ecc13d4eb"
+      },
+      "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/git/commits/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJlTmWgCRBK7hj4Ov3rIwAAnmEIAKpEGUDa0DiUPUvYzIaf0St0\nB+9r1EEZ+BpHm8fKGZNqnJbMGm26YAFWzau2ESRTJ0nEklApAnwmiBoBOWGkxN2j\nP0ITLTv1eLzv/h9v5+skR+vWPp5AVzIsiINLvsWxmjVB0yEIDTfPkBoEL6a+zd51\nkj2eujKMd/cG0qoVC+r199Juw3ndCmFPaYtXhzQ3ZyWOfG3tGtsNofO6/QIy79bd\n2kV2OMTxOjM9UykA5RO3rhyeSW8S7hBg1bH8QR/9RsqfyXp+U6LvwBfCEV58XDJH\nQths0xMszkBxJr/hFJ/73XYsxud/JK3tcJTd1zOWM48dJI5knZQeNc6HJn+Gm+U=\n=6evl\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree d0f0f10b921a7895aefa5bb4a583be5ecc13d4eb\nparent d7b06506f7ef4ee57d3d406f31b539bfa97e4db7\nauthor Carlos Gómez <60867448+carlex05@users.noreply.github.com> 1699636640 -0500\ncommitter GitHub <noreply@github.com> 1699636640 +0000\n\nUpdate challenge-lisp.md. Adding a new solution for 'Write Your Own Lisp Interpreter' clojure version. (#69)\n\n"
+      }
+    },
+    "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+    "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8",
+    "comments_url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/b16c67aa72e6b0ced96de45f7d2a4de99a2cb5c8/comments",
+    "author": {
+      "login": "carlex05",
+      "id": 60867448,
+      "node_id": "MDQ6VXNlcjYwODY3NDQ4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60867448?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/carlex05",
+      "html_url": "https://github.com/carlex05",
+      "followers_url": "https://api.github.com/users/carlex05/followers",
+      "following_url": "https://api.github.com/users/carlex05/following{/other_user}",
+      "gists_url": "https://api.github.com/users/carlex05/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/carlex05/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/carlex05/subscriptions",
+      "organizations_url": "https://api.github.com/users/carlex05/orgs",
+      "repos_url": "https://api.github.com/users/carlex05/repos",
+      "events_url": "https://api.github.com/users/carlex05/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/carlex05/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "d7b06506f7ef4ee57d3d406f31b539bfa97e4db7",
+        "url": "https://api.github.com/repos/CodingChallegesFYI/SharedSolutions/commits/d7b06506f7ef4ee57d3d406f31b539bfa97e4db7",
+        "html_url": "https://github.com/CodingChallegesFYI/SharedSolutions/commit/d7b06506f7ef4ee57d3d406f31b539bfa97e4db7"
+      }
+    ]
+  }
+]

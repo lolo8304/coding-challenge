@@ -32,11 +32,16 @@ public class JObject extends JValue {
         var second = false;
         for (JMember jMember : members) {
             if (second) { builder.append(", ").newLineIfNotCompact(); }
-            builder.append(jMember.toString());
+            jMember.serialize(builder);
             second = true;
         }
         builder.indentMinus().append('}');
         return builder;
+    }
+
+    public List<JMember> addMember(JMember newMember) throws JsonParserException {
+        this.addMeber(newMember);
+        return this.members;
     }
 
     public List<JMember> addMembers(List<JMember> newMembers) throws JsonParserException {
@@ -60,6 +65,15 @@ public class JObject extends JValue {
     public Object value() {
         return this;
     }
-    
 
+    @Override
+    public JValue get(int index) {
+        return this.get(String.valueOf(index));
+    }
+
+    @Override
+    public JValue get(String key) {
+        var member = this.members.stream().filter(x -> x.getKey().equals(key)).findAny();
+        return member.map(JMember::getValue).orElse(null);
+    }
 }
