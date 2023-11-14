@@ -27,10 +27,14 @@ public class JsonQueryParser {
         if (this.reader.ready()) {
             var token = this.nextToken();
             if (token.isPresent()) {
-                if (token.get().token != Token.CURRENT) {
-                    throw new IllegalArgumentException("Must always start with .");
+                JsonQueryNode root;
+                if (token.get().token == Token.CURRENT) {
+                    root = new JsonQueryNodeCurrent(token.get());
+                } else if (token.get().token == Token.OPEN_ARRAY) {
+                    root = new JsonQueryNodeArrayBuilder(token.get());
+                } else {
+                    throw new IllegalArgumentException("Must always start with . or [");
                 }
-                JsonQueryNode root = new JsonQueryNodeCurrent(token.get());
                 token = this.nextToken();
                 while (token.isPresent()) {
                     Optional<JsonQueryNode> elem = Optional.empty();
@@ -79,6 +83,21 @@ public class JsonQueryParser {
 
     private Optional<JsonQueryNode> parseIndexed(JsonQueryNode root, TokenValue token) throws IOException {
         List<TokenValue> list = new ArrayList<>();
+        var next = this.nextToken();
+        while (next.isPresent() && next.get().token != Token.CLOSE_ARRAY) {
+            list.add(next.get());
+            next = this.nextToken();
+        }
+        if (next.isPresent()) {
+            return Optional.of(new JsonQueryNodeIndexed(list.size() == 0 ? null : list.get(0), root));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<JsonQueryNode> parseArrayBuilder(JsonQueryNodeArrayBuilder root, TokenValue tokenValue) throws IOException {
+        List<TokenValue> list = new ArrayList<>();
+        list.add(tokenValue);
         var next = this.nextToken();
         while (next.isPresent() && next.get().token != Token.CLOSE_ARRAY) {
             list.add(next.get());

@@ -78,4 +78,22 @@ class JqTest {
         jq.execute(".[0].[\"commit\"].author.email");
         // Assert
     }
+
+    @Test void execute_withpipe() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute(".[0] | .commit.message");
+        // Assert
+    }
+
+    @Test void execute_witharraybuilder() throws URISyntaxException, IOException, JsonParserException {
+        // Arrange
+        ReadReader("github-commits.json");
+        var jq = new JsonQuery(new ReaderInput(this.reader));
+        // Action
+        jq.execute("[.[].[\"commit\"].author | { name, email }]");
+        // Assert
+    }
 }

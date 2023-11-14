@@ -43,6 +43,10 @@ public class JArray extends JValue {
         this.values.addAll(newValues);
         return this.values;
     }
+    public List<JValue> addValue(JValue newValues) {
+        this.values.add(newValues);
+        return this.values;
+    }
 
     @Override
     public Object value() {
