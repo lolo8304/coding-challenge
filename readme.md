@@ -2,13 +2,14 @@
 
 These great challenges are published at https://codingchallenges.fyi by John Cricket [Twitter](https://twitter.com/johncrickett)
 
-Checkout the newsletter also here on [Substack](https://codingchallenges.fyi/)
+Checkout the newsletter also here on https://codingchallenges.fyi/
 
-I have started on week 1 in the implementing the challenges starting march 2023. Since then John published every week a new challenge.
+I have started on week 1 in implementing the challenges starting March 2023. Since then John published every week a new challenge.
 
 I love the most the real world applications as Redis, load balancer, webserver, IRC client, json parse, url shortener and more to come ....
 
-I started to use Discort and [Twitter](https://twitter.com/Lolo46822032) to share some solutions.
+
+I started to use Discort and [Twitter](https://twitter.com/Lolo46822032) and https://github.com/CodingChallegesFYI/SharedSolutions to share my solutions.
 
 I decided to implement it back with Java. I have been working with Java since v1.0 back in 2000 and worked with it professionally for more than 18 years. Then I started with C# and powershell working with Azure Cloud.
 
