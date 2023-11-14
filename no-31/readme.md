@@ -1,6 +1,6 @@
 # Challenge 31 - Write Your Own QR Code Generator
 
-This is the challenge 30 from the Coding Challenges by John Crickett https://codingchallenges.fyi/challenges/challenge-qr-generator
+This is the challenge 31 from the Coding Challenges by John Crickett https://codingchallenges.fyi/challenges/challenge-qr-generator
 
 ## Description
 
