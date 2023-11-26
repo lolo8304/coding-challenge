@@ -25,5 +25,9 @@ do
 
 done
 
+echo "wait 10s to see test.sh spread across less servers"
+sleep 10
+echo "start the missing ones again"
+
 ${scriptpath}/be-servers.sh -nokill
 
