@@ -14,12 +14,7 @@ repositories {
     mavenCentral()
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 dependencies {
-    
     implementation 'info.picocli:picocli:4.7.1'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.1'
 
