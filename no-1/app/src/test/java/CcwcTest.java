@@ -5,6 +5,7 @@
 
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
+import wc.Ccwc;
 import wc.Result;
 
 import java.io.File;
@@ -29,8 +30,8 @@ class CcwcTest {
         var cmd = new CommandLine(classUnderTest);
         cmd.execute(args);
         Result result = cmd.getExecutionResult();
-        assertEquals(0, result.countLines, "line count is 0");
-        assertEquals(0, result.countWords, "word count is 0");
+        assertEquals(-1, result.countLines, "line count is 0");
+        assertEquals(-1, result.countWords, "word count is 0");
         assertEquals(341836, result.countChars, "byte count is 341836");
     }
 
@@ -48,8 +49,8 @@ class CcwcTest {
         cmd.execute(args);
         Result result = cmd.getExecutionResult();
         assertEquals(7137, result.countLines, "line count is 7137");
-        assertEquals(0, result.countWords, "word count is 0");
-        assertEquals(0, result.countChars, "byte count is 0");
+        assertEquals(-1, result.countWords, "word count is 0");
+        assertEquals(-1, result.countChars, "byte count is 0");
     }
 
     @Test
@@ -65,9 +66,9 @@ class CcwcTest {
         var cmd = new CommandLine(classUnderTest);
         cmd.execute(args);
         Result result = cmd.getExecutionResult();
-        assertEquals(0, result.countLines, "line count is 0");
+        assertEquals(-1, result.countLines, "line count is 0");
         assertEquals(58159, result.countWords, "word count is 58159");
-        assertEquals(0, result.countChars, "byte count is 0");
+        assertEquals(-1, result.countChars, "byte count is 0");
     }
 
 

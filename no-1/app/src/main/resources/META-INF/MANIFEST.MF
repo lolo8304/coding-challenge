@@ -1,1 +1,1 @@
-Main-Class: Ccwc
+Main-Class: wc.Ccwc
