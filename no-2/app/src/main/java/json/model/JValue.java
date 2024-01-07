@@ -20,8 +20,17 @@ public abstract class JValue extends JElement {
     public abstract Object value();
 
     @Override
-    public String toString() {
-        return this.value().toString();
+    public JsonBuilder serialize(JsonBuilder builder) {
+        builder.append(this.value().toString());
+        return builder;
+    }
+    @Override
+    public JValue get(int index) {
+        throw new IllegalArgumentException("Cannot access index of a basic value");
     }
 
+    @Override
+    public JValue get(String key) {
+        throw new IllegalArgumentException("Cannot access index of a basic value");
+    }
 }

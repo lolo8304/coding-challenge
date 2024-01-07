@@ -3,11 +3,9 @@ package json.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import json.JsonParserException;
-
 public class JArray extends JValue {
 
-    private List<JValue> values = new ArrayList<>();
+    private final List<JValue> values = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -17,7 +15,7 @@ public class JArray extends JValue {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        JObject other = (JObject) obj;
+        JArray other = (JArray) obj;
         return other.toString().equals(this.toString());
     }
 
@@ -27,28 +25,50 @@ public class JArray extends JValue {
     }
 
     @Override
-    public String toString() {
-        var buffer = new StringBuilder();
-        buffer.append('[');
+    public JsonBuilder serialize(JsonBuilder builder) {
+        builder.append('[').newLineIfNotCompact().indentPlus();
         var second = false;
         for (JValue jValue : values) {
-            if (second) { buffer.append(','); }
-            buffer.append(jValue.toString());
+            if (second) { builder.append(", ").newLineIfNotCompact(); }
+            jValue.serialize(builder);
             second = true;
         }
-        buffer.append(']');
-        return buffer.toString();
+        builder.newLineIfNotCompact().indentMinus().append(']');
+        return builder;
     }
 
-    public List<JValue> addValues(List<JValue> newValues) throws JsonParserException {
+    public void addValues(List<JValue> newValues) {
         this.values.addAll(newValues);
-        return this.values;
+    }
+    public void addValue(JValue newValues) {
+        this.values.add(newValues);
     }
 
     @Override
     public Object value() {
         return this;
     }
-    
 
+    public JValue[] values () {
+        return this.values.toArray(JValue[]::new);
+    }
+
+
+    @Override
+    public JValue get(int index) {
+        return this.values.get(index);
+    }
+
+    @Override
+    public JValue get(String key) {
+        return this.values.get(this.indexFromString(key));
+    }
+
+    private int indexFromString(String key) {
+        try {
+            return Integer.parseInt(key);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Key '"+key+"' is not a number for index access in array");
+        }
+    }
 }

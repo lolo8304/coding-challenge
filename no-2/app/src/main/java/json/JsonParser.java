@@ -1,16 +1,17 @@
 package json;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import json.model.JArray;
 import json.model.JMember;
 import json.model.JObject;
 import json.model.JValue;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class JsonParser {
 
-    private Lexer lexer;
+    private final Lexer lexer;
 
     public JsonParser(Lexer lexer) {
         this.lexer = lexer;
@@ -80,29 +81,24 @@ public class JsonParser {
         return new JMember(string.string, value);
     }
 
-    private JValue parseValue(Lexer.TokenValue nextToken) throws IOException, JsonParserException {
+    public JValue parseValue() throws IOException, JsonParserException {
+        return this.parseValue(null);
+    }
+    public JValue parseValue(Lexer.TokenValue nextToken) throws IOException, JsonParserException {
         if (nextToken == null) { nextToken = this.nextToken(); }
-        switch (nextToken.token) {
-            case OPEN_OBJECT:
-                return this.parseObject(nextToken);
-            case OPEN_ARRAY:
-                return this.parseArray(nextToken);
-            case STRING:
-                return JValue.String(nextToken.string);
-            case NUMBER:
-                return JValue.Number((Number)nextToken.value);
-            case FALSE:
-                return JValue.False();
-            case TRUE:
-                return JValue.True();
-            case NULL:
-                return JValue.Null();
-            default:
-                throw new JsonParserException("Token "+nextToken.token+" is not expected as a value");
-        }
+        return switch (nextToken.token) {
+            case OPEN_OBJECT -> this.parseObject(nextToken);
+            case OPEN_ARRAY -> this.parseArray(nextToken);
+            case STRING -> JValue.String(nextToken.string);
+            case NUMBER -> JValue.Number((Number) nextToken.value);
+            case FALSE -> JValue.False();
+            case TRUE -> JValue.True();
+            case NULL -> JValue.Null();
+            default -> throw new JsonParserException("Token " + nextToken.token + " is not expected as a value");
+        };
     }
 
-    private Lexer.TokenValue tokenAssert(Lexer.TokenValue nextToken, Lexer.Token assertToken) throws JsonParserException, IOException {
+    private Lexer.TokenValue tokenAssert(Lexer.TokenValue nextToken, Lexer.Token assertToken) throws JsonParserException {
         if (nextToken.token == assertToken) {
             return nextToken;
         }

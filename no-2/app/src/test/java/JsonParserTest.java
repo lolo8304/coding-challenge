@@ -3,29 +3,23 @@
  */
 
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.platform.commons.annotation.Testable;
-
 import json.JsonParser;
 import json.JsonParserException;
 import json.Lexer;
-import json.model.JObject;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonParserTest {
 
@@ -39,9 +33,7 @@ class JsonParserTest {
         URL resource = JsonParserTest.class.getResource("tests/"+testfile);
         if (resource != null) {
             File file = Paths.get(resource.toURI()).toFile();
-            if (file != null) {
-                reader = new FileReader(file);
-            }
+            reader = new FileReader(file);
         }
     }
 
@@ -113,7 +105,7 @@ class JsonParserTest {
         } else {
             //Action
             //Assert
-            assertThrows(JsonParserException.class, () -> parser.parse());
+            assertThrows(JsonParserException.class, parser::parse);
 
         }
 

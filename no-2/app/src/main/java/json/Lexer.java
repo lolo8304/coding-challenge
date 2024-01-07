@@ -12,9 +12,9 @@ public class Lexer {
 
     private static final String validNumberRegexp = "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$";
 
-    private Reader reader;
-    private LinkedList<Character> nextCharQueue;
-    private Pattern validNumberPattern;
+    private final Reader reader;
+    private final LinkedList<Character> nextCharQueue;
+    private final Pattern validNumberPattern;
 
     public Lexer(Reader reader) {
         this.reader = reader;
@@ -48,15 +48,15 @@ public class Lexer {
         EOF
     }
 
-    public class TokenValue {
-        public final Lexer.Token token;
+    public static class TokenValue {
+        public final Token token;
         public final Object value;
         public final String string;
 
-        public TokenValue(Lexer.Token token) {
+        public TokenValue(Token token) {
             this(token, null);
         }
-        public TokenValue(Lexer.Token token, Object value) {
+        public TokenValue(Token token, Object value) {
             this.token = token;
             this.value = value;
             this.string = value == null ? "" : value.toString();
@@ -99,71 +99,64 @@ public class Lexer {
     private TokenValue parseNextToken() throws IOException {
         var ch = this.peekNext();
         if (ch == null) {
-            return new TokenValue(Lexer.Token.EOF);
+            return new TokenValue(Token.EOF);
         }
         switch (ch) {
-            case '{':
+            case '{' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.OPEN_OBJECT);
-            case '}':
+                return new TokenValue(Token.OPEN_OBJECT);
+            }
+            case '}' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.CLOSE_OBJECT);
-            case '[':
+                return new TokenValue(Token.CLOSE_OBJECT);
+            }
+            case '[' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.OPEN_ARRAY);
-            case ']':
+                return new TokenValue(Token.OPEN_ARRAY);
+            }
+            case ']' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.CLOSE_ARRAY);
-            case ':':
+                return new TokenValue(Token.CLOSE_ARRAY);
+            }
+            case ':' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.COLON);
-            case ',':
+                return new TokenValue(Token.COLON);
+            }
+            case ',' -> {
                 this.readNext();
-                return new TokenValue(Lexer.Token.COMMA);
-            case '"':
+                return new TokenValue(Token.COMMA);
+            }
+            case '"' -> {
                 this.readNext();
                 var str = this.readString(ch);
-                return new TokenValue(Lexer.Token.STRING, str);
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case '-':
+                return new TokenValue(Token.STRING, str);
+            }
+            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' -> {
                 this.readNext();
                 var number = this.parseNumber(ch);
-                return new TokenValue(Lexer.Token.NUMBER, number);
-
-            case 't':
+                return new TokenValue(Token.NUMBER, number);
+            }
+            case 't' -> {
                 this.readNext();
                 this.parseConstant(ch, "true");
-                return new TokenValue(Lexer.Token.TRUE);
-
-            case 'f':
+                return new TokenValue(Token.TRUE);
+            }
+            case 'f' -> {
                 this.readNext();
                 this.parseConstant(ch, "false");
-                return new TokenValue(Lexer.Token.FALSE);
-
-            case 'n':
+                return new TokenValue(Token.FALSE);
+            }
+            case 'n' -> {
                 this.readNext();
                 this.parseConstant(ch, "null");
-                return new TokenValue(Lexer.Token.NULL);
-
-            case ' ':
-            case '\n':
-            case '\r':
-            case '\t':
+                return new TokenValue(Token.NULL);
+            }
+            case ' ', '\n', '\r', '\t' -> {
                 this.readNext();
                 this.readWhitespace(ch);
                 return this.parseNextToken();
-
-            default:
-                throw new IOException("invalid character parsing '"+ch+"'");
+            }
+            default -> throw new IOException("invalid character parsing '" + ch + "'");
         }
     }
 
@@ -218,7 +211,7 @@ public class Lexer {
             }
         }
         if (ch == null) {
-            throw new IOException("Illegal string parsing - so far='"+str.toString()+"'");
+            throw new IOException("Illegal string parsing - so far='"+str+"'");
         }
         // dont add quotes
         readNext();

@@ -1,13 +1,13 @@
 package json.model;
 
+import json.JsonParserException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import json.JsonParserException;
-
 public class JObject extends JValue {
 
-    private List<JMember> members = new ArrayList<>();
+    private final List<JMember> members = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -27,17 +27,21 @@ public class JObject extends JValue {
     }
 
     @Override
-    public String toString() {
-        var buffer = new StringBuilder();
-        buffer.append('{');
+    public JsonBuilder serialize(JsonBuilder builder) {
+        builder.append('{').indentPlus();
         var second = false;
         for (JMember jMember : members) {
-            if (second) { buffer.append(','); }
-            buffer.append(jMember.toString());
+            if (second) { builder.append(", ").newLineIfNotCompact(); }
+            jMember.serialize(builder);
             second = true;
         }
-        buffer.append('}');
-        return buffer.toString();
+        builder.indentMinus().append('}');
+        return builder;
+    }
+
+    public List<JMember> addMember(JMember newMember) throws JsonParserException {
+        this.addMeber(newMember);
+        return this.members;
     }
 
     public List<JMember> addMembers(List<JMember> newMembers) throws JsonParserException {
@@ -61,6 +65,15 @@ public class JObject extends JValue {
     public Object value() {
         return this;
     }
-    
 
+    @Override
+    public JValue get(int index) {
+        return this.get(String.valueOf(index));
+    }
+
+    @Override
+    public JValue get(String key) {
+        var member = this.members.stream().filter(x -> x.getKey().equals(key)).findAny();
+        return member.map(JMember::getValue).orElse(null);
+    }
 }

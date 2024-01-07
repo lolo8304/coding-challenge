@@ -11,7 +11,18 @@ public class JValueNull extends JValue {
     }
 
     @Override
-    public java.lang.String toString() {
-        return "null";
+    public JsonBuilder serialize(JsonBuilder builder) {
+        builder.append("null");
+        return builder;
+    }
+
+    @Override
+    public JValue get(int index) {
+        return null;
+    }
+
+    @Override
+    public JValue get(String key) {
+        return null;
     }
 }

@@ -3,23 +3,16 @@
  */
 
 
+import json.Lexer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import json.Lexer;
-import json.model.JObject;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LexerTest {
 
