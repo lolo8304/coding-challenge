@@ -4,16 +4,15 @@
 
 
 import org.junit.jupiter.api.Test;
-
 import picocli.CommandLine;
 import wc.Result;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CcwcTest {
     
