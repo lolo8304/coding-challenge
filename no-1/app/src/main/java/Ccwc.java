@@ -3,42 +3,27 @@
  */
 
 import java.io.File;
-import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
+import java.io.FileNotFoundException;
 import java.util.concurrent.Callable;
-import java.util.stream.IntStream;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import wc.Result;
+import wc.Wc;
 
 @Command(name = "ccwc", mixinStandardHelpOptions = true, version = "ccwc 1.0",
 description = "counts the number for lines, words, characters ")
 public class Ccwc implements Callable<Result>{
 
     public static void main(String[] args) {
-        var cwcc = new Ccwc();
-        var cmd = new CommandLine(cwcc);
-        var exitCode = cmd.execute(args);
+        var cmd = new CommandLine(new Ccwc());
+        cmd.execute(args);
         Result result = cmd.getExecutionResult();
-        var resultString = new StringBuffer();
-        resultString.append(" ");
-        if (cwcc.switchLines) {
-            resultString.append(" ").append(result.countLines);
+        if (result != null) {
+            System.out.println(result);
         }
-        if (cwcc.switchWords) {
-            resultString.append(" ").append(result.countWords);
-        }
-        if (cwcc.switchCharacters) {
-            resultString.append(" ").append(result.countChars);
-        }
-        resultString.append(" ").append(cwcc.file.getName());
-        System.out.println(resultString.toString());
-        System.exit(exitCode);
     }
 
 
@@ -49,54 +34,17 @@ public class Ccwc implements Callable<Result>{
     private boolean switchLines; 
 
     @Option(names = {"-w"}, description = "-l for counting words")
-    private boolean switchWords; 
-
-    private boolean switchAll;
+    private boolean switchWords;
 
     @Parameters(index = "0", description = "The file to calculate for.")
     private File file;
 
     @Override
     public Result call() throws Exception {
-        var result = new Result();
-        var bytes = Files.readAllBytes(Path.of(this.file.toURI()));
-        this.switchAll = (this.switchCharacters == this.switchLines) && (this.switchLines == this.switchWords);
-        if (this.switchAll) {
-            this.switchCharacters = true;
-            this.switchLines = true;
-            this.switchWords = true;
+        if (!this.file.exists()) {
+            throw new FileNotFoundException("File "+this.file.getAbsolutePath()+" does not exist");
         }
-        if (this.switchCharacters) {
-            result.countChars = bytes.length;                
-        }
-        if (this.switchLines) {
-            var i = 0;
-            for (byte byte2 : bytes) {
-                if (byte2 == '\n') {
-                    i++;
-                }
-            }
-            result.countLines = i;
-        }
-        if (this.switchWords) {
-            var i = 0;
-            var lastWordCount = 0;
-            for (byte byte2 : bytes) {
-                if (Character.isWhitespace(byte2)) {
-                    if (lastWordCount > 0) {
-                        i++;
-                        lastWordCount = 0;
-                    }
-                } else {
-                    lastWordCount++;
-                }
-            }
-            if (lastWordCount > 0){
-                i++;
-            }
-            result.countWords = i;
-        }
-        return result;
+        return new Wc(this.file).count(this.switchLines, this.switchWords, this.switchCharacters);
     }
 
 }
