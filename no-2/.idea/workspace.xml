@@ -5,22 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45ea8a13-1f5b-4e77-9e0f-3d84a2603bdf" name="Changes" comment="refactor new json parser">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/json/Result.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step2/invalid3.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step2/invalid4.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step2/invalid5.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/json.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/$PROJECT_FILE$" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/checkstyle-idea.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/app/src/test/resources/tests/135-0.txt.1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/json/Json.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/json/Json.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/json/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/json/Lexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/json/model/JObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/json/model/JObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/JsonParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/JsonParserTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/JsonTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step2/invalid2.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step2/invalid2.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/resources/tests/step3/valid.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/resources/tests/step3/valid.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../no-3/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../no-3/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../no-30/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../no-30/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,15 +92,15 @@
     <option name="flattenPackages" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/Lolo/git/coding-challenge/no-2/app/src/test/resources/tests/step2",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/Lolo/git/coding-challenge/no-2/app/src/test/resources/tests/step2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="json" />
@@ -202,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704656082361</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="refactor new json parser">
+      <option name="closed" value="true" />
+      <created>1704836784146</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1704836784146</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

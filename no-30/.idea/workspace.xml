@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0411ef4-ddcc-42fe-956c-f26b91988400" name="Changes" comment="document¯ed readme.md">
-      <change afterPath="$PROJECT_DIR$/../.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/qaplug_profiles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/$PROJECT_FILE$" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/checkstyle-idea.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../no-3/app/src/test/resources/tests/135-0.txt.1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../no-3/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../no-3/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
