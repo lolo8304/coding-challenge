@@ -7,7 +7,7 @@
  */
 apply plugin: "application"
 
-mainClassName = "Json"
+mainClassName = "json.Json"
 
 repositories {
     // Use Maven Central for resolving dependencies.

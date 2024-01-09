@@ -1,6 +1,5 @@
 package json;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -16,6 +15,9 @@ public class Lexer {
     private final LinkedList<Character> nextCharQueue;
     private final Pattern validNumberPattern;
 
+    public Lexer(File file) throws FileNotFoundException {
+        this(new FileReader(file));
+    }
     public Lexer(Reader reader) {
         this.reader = reader;
         this.nextCharQueue = new LinkedList<>();

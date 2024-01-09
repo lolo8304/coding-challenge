@@ -54,7 +54,7 @@ public class JObject extends JValue {
     private JMember addMeber(JMember member) throws JsonParserException {
         for (JMember jMember : members) {
             if (jMember.getKey().equals(member.getKey())) {
-                throw new JsonParserException(member.getKey() + " already exists in the members of this object");
+                throw new JsonParserException("'"+member.getKey() + "' already exists in the members of this object");
             }
         }
         this.members.add(member);

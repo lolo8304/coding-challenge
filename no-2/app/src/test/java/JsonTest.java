@@ -6,8 +6,42 @@
 import json.Json;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.StringReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+
 class JsonTest {
-    @Test void step1_empty() {
-        Json classUnderTest = new Json();
+    @Test
+    void step1_empty_error() throws URISyntaxException {
+        URL resource = JsonParserTest.class.getResource("tests/step1/invalid.json");
+        File file = Paths.get(resource.toURI()).toFile();
+        String[] args = { file.getAbsolutePath() };
+        Json.main( args );
     }
+
+    @Test void step1_emptyjson() throws URISyntaxException {
+        URL resource = JsonParserTest.class.getResource("tests/step1/valid.json");
+        File file = Paths.get(resource.toURI()).toFile();
+        String[] args = { file.getAbsolutePath() };
+        Json.main( args );
+    }
+
+
+    @Test void step1_emptyjson_verbose() throws URISyntaxException {
+        URL resource = JsonParserTest.class.getResource("tests/step5/valid5.json");
+        File file = Paths.get(resource.toURI()).toFile();
+        String[] args = { file.getAbsolutePath(), "-v" };
+        Json.main( args );
+    }
+
+
+    @Test void step1_empty3json_verbose() throws URISyntaxException {
+        URL resource = JsonParserTest.class.getResource("tests/step3/valid.json");
+        File file = Paths.get(resource.toURI()).toFile();
+        String[] args = { file.getAbsolutePath(), "-v" };
+        Json.main( args );
+    }
+
 }

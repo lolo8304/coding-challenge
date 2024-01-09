@@ -57,6 +57,9 @@ class JsonParserTest {
         "valid, step2, 2", 
         "invalid, step2, 1",
         "invalid, step2, 2",
+        "invalid, step2, 3",
+            "invalid, step2, 4",
+            "invalid, step2, 5",
 
         "valid, step3, 1", 
         "invalid, step3, 1",
