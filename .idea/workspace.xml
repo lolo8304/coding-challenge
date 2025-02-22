@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="" />
+    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/no-30/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/no-30/.idea/modules/app/no-30.app.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-3/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-30/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-30/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-30/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-30/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-5/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-5/.idea/misc.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,14 +33,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/Lolo/git/coding-challenge"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/Lolo/git/coding-challenge&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

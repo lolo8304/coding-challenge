@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45ea8a13-1f5b-4e77-9e0f-3d84a2603bdf" name="Changes" comment="refactor new json parser">
-      <change afterPath="$PROJECT_DIR$/../no-3/.idea/$PROJECT_FILE$" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../no-3/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../no-3/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../no-3/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../no-3/app/src/test/resources/tests/135-0.txt.1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../no-3/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../no-3/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../no-3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../no-3/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../no-30/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../no-30/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
