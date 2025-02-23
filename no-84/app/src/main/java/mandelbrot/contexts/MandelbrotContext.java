@@ -5,7 +5,7 @@ public interface MandelbrotContext {
 
     void draw(int iterations, int index);
 
-    void printContext();
+    void printContext(long timeInMs);
 
     int maxIterations();
 

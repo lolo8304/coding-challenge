@@ -25,11 +25,14 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
     }
 
     @Override
-    public void printContext() {
+    public void printContext(long timeInMs) {
+        int kPixelsPerS = (int)(this.context.length * 1000.0 / timeInMs) / 1000;
+        int mPixelsPerS = kPixelsPerS / 1000;
+        var pixelsSpeed = mPixelsPerS >= 10 ? mPixelsPerS+"M" : kPixelsPerS+"k";
         final boolean[] opened = new boolean[1];
         opened[0] = false;
         SwingUtilities.invokeLater(() -> {
-            var frame = new JFrame("Mandelbrot explorer");
+            var frame = new JFrame("Mandelbrot explorer: "+pixelsSpeed+" pixels/s");
             var panel = new MandelbrotPanel(this);
 
             // Frame settings

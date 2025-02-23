@@ -26,6 +26,7 @@ public class MandelbrotExplorer {
 
     public void run() {
 
+        var startTimeInMs = System.currentTimeMillis();
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             var i = 0;
             for (int y = 0; y < this.width; y++) {
@@ -33,8 +34,9 @@ public class MandelbrotExplorer {
                     executor.submit(new Mandel(this.context, this.start, this.end, new Pixel(x, y, i++), this.width, this.width, maxIterations));
                 }
             }
-            context.printContext();
         }
+        var diffInMs = System.currentTimeMillis() - startTimeInMs;
+        context.printContext(diffInMs);
     }
 
 }

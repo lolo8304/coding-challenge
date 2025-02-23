@@ -23,7 +23,7 @@ public class MandelbrotTerminalContext extends MandelbrotAbstractContext {
     }
 
     @Override
-    public void printContext() {
+    public void printContext(long timeInMs) {
         var endIndex = this.context.length;
         var w = 0;
         var alternate = false;
@@ -39,6 +39,10 @@ public class MandelbrotTerminalContext extends MandelbrotAbstractContext {
                 }
             }
         }
+        int kPixelsPerS = (int)(endIndex * 1000.0 / timeInMs) / 1000;
+        int mPixelsPerS = kPixelsPerS / 1000;
+        var pixelsSpeed = mPixelsPerS >= 10 ? mPixelsPerS+"M" : kPixelsPerS+"k";
+        System.out.println(pixelsSpeed+" pixels/s calculated");
     }
 
 }
