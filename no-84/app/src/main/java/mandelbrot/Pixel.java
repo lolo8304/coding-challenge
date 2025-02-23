@@ -4,10 +4,16 @@ public class Pixel {
 
     double x;
     double y;
+    int i;
 
     public Pixel(double x, double y) {
+        this(x, y, 0);
+    }
+
+    public Pixel(double x, double y, int i) {
         this.x = x;
         this.y = y;
+        this.i = i;
     }
 
     public Pixel add(Pixel step) {

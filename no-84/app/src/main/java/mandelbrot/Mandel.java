@@ -1,5 +1,8 @@
 package mandelbrot;
 
+import mandelbrot.contexts.MandelbrotContext;
+import mandelbrot.contexts.MandelbrotTerminalContext;
+
 public class Mandel implements Runnable {
 
     private final Pixel p;
@@ -31,7 +34,7 @@ public class Mandel implements Runnable {
         double b = ymin + p.y * (ymax - ymin) / (height - 1);
 
         int iterations = mandelbrot(a, b);
-        this.context.draw(iterations, (int)p.x, (int)p.y);
+        this.context.draw(iterations, p.i);
 
      }
 

@@ -6,6 +6,9 @@ package mandelbrot;
 import java.io.File;
 import java.util.concurrent.Callable;
 
+import mandelbrot.contexts.MandelbrotContext;
+import mandelbrot.contexts.MandelbrotGuiContext;
+import mandelbrot.contexts.MandelbrotTerminalContext;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -36,11 +39,17 @@ public class Mandelbrot implements Callable<Result> {
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
 
-    @Option(names = "-w", description = "width in pixel - default 400px")
-    int width = 400;
+    @Option(names = "-c", description = "console output - default false")
+    boolean consoleOutput = false;
 
-    @Option(names = "-i", description = "max iterations - default 100")
-    int maxIterations = 100;
+    @Option(names = "-g", description = "GUI output - default true")
+    boolean guiOutput = false;
+
+    @Option(names = "-w", description = "width in pixel - default 100px if terminal out, 1000px if GUI out")
+    int width = 100;
+
+    @Option(names = "-i", description = "max iterations - default 1000")
+    int maxIterations = 1000;
 
     @Option(names = "-d", description = "dpi in pixel - default 72dpi")
     int dpi = 72;
@@ -52,7 +61,12 @@ public class Mandelbrot implements Callable<Result> {
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
-        new MandelbrotExplorer(this.maxIterations, this.width, this.dpi, this.outputFileName).run();
+        if (!this.consoleOutput && !this.guiOutput) this.guiOutput = true;
+        if (this.guiOutput) this.consoleOutput = false;
+        if (this.guiOutput) this.width = width != 100 ? this.width : 1000;
+        if (this.consoleOutput) this.width = width != 100 ? this.width : 100;
+        var context = this.consoleOutput ? new MandelbrotTerminalContext(this.width, this.maxIterations) : new MandelbrotGuiContext(this.width, this.maxIterations);
+        new MandelbrotExplorer(context, this.dpi, this.outputFileName).run();
         return new Result();
     }
 }
