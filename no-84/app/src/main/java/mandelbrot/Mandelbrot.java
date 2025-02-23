@@ -36,11 +36,23 @@ public class Mandelbrot implements Callable<Result> {
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
 
+    @Option(names = "-w", description = "width in pixel - default 400px")
+    int width = 400;
+
+    @Option(names = "-i", description = "max iterations - default 100")
+    int maxIterations = 100;
+
+    @Option(names = "-d", description = "dpi in pixel - default 72dpi")
+    int dpi = 72;
+
+    @Option(names = "-o", description = "outpuf file name - default mandelbrot.png")
+    String outputFileName = "mandelbrot.png";
+
     @Override
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
-        new MandelbrotExplorer().show();
+        new MandelbrotExplorer(this.maxIterations, this.width, this.dpi, this.outputFileName).run();
         return new Result();
     }
 }
