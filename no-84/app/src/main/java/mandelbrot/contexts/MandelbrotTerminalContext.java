@@ -1,12 +1,14 @@
 package mandelbrot.contexts;
 
+import mandelbrot.MandelbrotExplorer;
+
 public class MandelbrotTerminalContext extends MandelbrotAbstractContext {
     private final char[] context;
     private int printedIndex;
     private String chars;
 
-    public MandelbrotTerminalContext(int width, int max) {
-        super(width, max);
+    public MandelbrotTerminalContext(MandelbrotExplorer explorer, int width, int max) {
+        super(explorer, width, max);
         this.context = new char[width * width];
         var w2 = width * width;
         for (int i = 0; i < w2; i++) {

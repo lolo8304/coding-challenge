@@ -64,8 +64,10 @@ public class Mandelbrot implements Callable<Result> {
         if (this.guiOutput) this.consoleOutput = false;
         if (this.guiOutput) this.width = width != 100 ? this.width : 1000;
         if (this.consoleOutput) this.width = width != 100 ? this.width : 100;
-        var context = this.consoleOutput ? new MandelbrotTerminalContext(this.width, this.maxIterations) : new MandelbrotGuiContext(this.width, this.maxIterations);
-        new MandelbrotExplorer(context, this.dpi, this.outputFileName).run();
+        var explorer = new MandelbrotExplorer(this.dpi, this.outputFileName);
+        var context = this.consoleOutput ? new MandelbrotTerminalContext(explorer, this.width, this.maxIterations) : new MandelbrotGuiContext(explorer, this.width, this.maxIterations);
+        explorer.setContext(context);
+        explorer.run();
         return new Result();
     }
 }

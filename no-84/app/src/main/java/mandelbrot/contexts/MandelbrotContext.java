@@ -1,5 +1,7 @@
 package mandelbrot.contexts;
 
+import mandelbrot.MandelbrotExplorer;
+
 public interface MandelbrotContext {
     void draw(int iterations, int x, int y);
 
@@ -10,4 +12,6 @@ public interface MandelbrotContext {
     int maxIterations();
 
     int width();
+
+    MandelbrotExplorer explorer();
 }

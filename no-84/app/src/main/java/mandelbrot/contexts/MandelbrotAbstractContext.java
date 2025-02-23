@@ -1,11 +1,15 @@
 package mandelbrot.contexts;
 
+import mandelbrot.MandelbrotExplorer;
+
 public abstract class MandelbrotAbstractContext implements  MandelbrotContext {
 
     private final int width;
     private final float max;
+    private final MandelbrotExplorer explorer;
 
-    public MandelbrotAbstractContext(int width, int max) {
+    public MandelbrotAbstractContext(MandelbrotExplorer explorer, int width, int max) {
+        this.explorer = explorer;
         this.width = width;
         this.max = (float) max;
     }
@@ -23,5 +27,10 @@ public abstract class MandelbrotAbstractContext implements  MandelbrotContext {
     @Override
     public int width() {
         return this.width;
+    }
+
+    @Override
+    public MandelbrotExplorer explorer() {
+        return this.explorer;
     }
 }

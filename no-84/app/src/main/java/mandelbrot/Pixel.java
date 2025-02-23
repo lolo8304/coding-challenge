@@ -2,9 +2,9 @@ package mandelbrot;
 
 public class Pixel {
 
-    double x;
-    double y;
-    int i;
+    public double x;
+    public double y;
+    public int i;
 
     public Pixel(double x, double y) {
         this(x, y, 0);

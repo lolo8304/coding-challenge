@@ -1,13 +1,19 @@
 package mandelbrot.contexts;
 
+import mandelbrot.MandelbrotExplorer;
+import mandelbrot.Pixel;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MandelbrotGuiContext extends MandelbrotAbstractContext {
     final int[] context;
+    private JFrame frame;
 
-    public MandelbrotGuiContext(int width, int max) {
-        super(width, max);
+    public MandelbrotGuiContext(MandelbrotExplorer explorer, int width, int max) {
+        super(explorer, width, max);
         this.context = new int[width * width];
         var w2 = width * width;
         for (int i = 0; i < w2; i++) {
@@ -29,6 +35,11 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
         int kPixelsPerS = (int)(this.context.length * 1000.0 / timeInMs) / 1000;
         int mPixelsPerS = kPixelsPerS / 1000;
         var pixelsSpeed = mPixelsPerS >= 10 ? mPixelsPerS+"M" : kPixelsPerS+"k";
+        if (this.frame != null) {
+            this.frame.repaint();
+            this.frame.revalidate();
+            return;
+        }
         final boolean[] opened = new boolean[1];
         opened[0] = false;
         SwingUtilities.invokeLater(() -> {
@@ -44,6 +55,7 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
             frame.revalidate();
             frame.setVisible(true);
             opened[0] = false;
+            this.frame = frame;
         });
         // wait to not close automatically
         while (!opened[0]) {
@@ -58,9 +70,29 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
     class MandelbrotPanel extends JPanel {
 
         private final MandelbrotGuiContext context;
+        private Pixel mouseClicked;
+        private Pixel mouseMoved;
 
         public MandelbrotPanel(MandelbrotGuiContext context) {
             this.context = context;
+            // Add MouseListener to capture click events
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // Get the x and y coordinates of the mouse click
+                    int x = e.getX();
+                    int y = e.getY();
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        explorer().zoomBack();
+                    } else if (e.getButton() == MouseEvent.BUTTON2) {
+                        explorer().zoomInitial();
+                    } else if (e.getButton() == MouseEvent.BUTTON1) {
+                        System.out.println("Mouse clicked at: (" + x + ", " + y + ")");
+                        mouseClicked = new Pixel(x, y);
+                        explorer().zoomInAt(mouseClicked);
+                    }
+                }
+            });
         }
 
         @Override
@@ -73,12 +105,16 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
             var i = 0;
             for (int y = 0; y < this.context.width(); y++) {
                 for (int x = 0; x < this.context.width(); x++) {
-                    // Draw each pixel as a small rectangle
-                    var density = this.context.context[i++];
-                    if (density == Interpolator.MAX_DENSITY) {
-                        g.setColor(Color.BLACK);
+                    if (this.mouseClicked != null && x == this.mouseClicked.x && y == this.mouseClicked.y) {
+                        g.setColor(Color.white);
                     } else {
-                        g.setColor(interpolator.fromDensity(density));
+                        // Draw each pixel as a small rectangle
+                        var density = this.context.context[i++];
+                        if (density == Interpolator.MAX_DENSITY) {
+                            g.setColor(Color.BLACK);
+                        } else {
+                            g.setColor(interpolator.fromDensity(density));
+                        }
                     }
                     g.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
                 }
