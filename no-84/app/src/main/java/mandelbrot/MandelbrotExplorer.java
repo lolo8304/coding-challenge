@@ -1,7 +1,6 @@
 package mandelbrot;
 
 import mandelbrot.contexts.MandelbrotContext;
-import mandelbrot.contexts.MandelbrotTerminalContext;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

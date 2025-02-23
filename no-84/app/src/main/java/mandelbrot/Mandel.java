@@ -1,7 +1,6 @@
 package mandelbrot;
 
 import mandelbrot.contexts.MandelbrotContext;
-import mandelbrot.contexts.MandelbrotTerminalContext;
 
 public class Mandel implements Runnable {
 

@@ -26,9 +26,9 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
 
     @Override
     public void printContext() {
-        System.out.println("Starting application...");
+        final boolean[] opened = new boolean[1];
+        opened[0] = false;
         SwingUtilities.invokeLater(() -> {
-            System.out.println("invoked later...");
             var frame = new JFrame("Mandelbrot explorer");
             var panel = new MandelbrotPanel(this);
 
@@ -40,9 +40,10 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
             frame.repaint();
             frame.revalidate();
             frame.setVisible(true);
-            System.out.println("JFrame should be visible now.");
+            opened[0] = false;
         });
-        while (true) {
+        // wait to not close automatically
+        while (!opened[0]) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -62,7 +63,7 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            var interpolator = new Interpolator(Color.ORANGE, Color.MAGENTA);
+            var interpolator = new Interpolator("#9E0141", "#F1FAA9");
 
             // Draw a 40x40 pixel grid
             int pixelSize = 1; // Size of each pixel on the screen (adjust for visibility)
@@ -90,6 +91,25 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
         private Color[] cache;
         private float maxRatio;
 
+        public static Color hexToColor(String hex) {
+            // Remove the '#' if present
+            if (hex.startsWith("#")) {
+                hex = hex.substring(1);
+            }
+
+            // Parse the hex string to get RGB values
+            int red = Integer.parseInt(hex.substring(0, 2), 16);
+            int green = Integer.parseInt(hex.substring(2, 4), 16);
+            int blue = Integer.parseInt(hex.substring(4, 6), 16);
+
+            // Create and return the Color object
+            return new Color(red, green, blue);
+        }
+
+
+        public Interpolator(String from, String to) {
+            this(hexToColor(from), hexToColor(to));
+        }
         public Interpolator(Color from, Color to) {
             this.from = from;
             this.to = to;
