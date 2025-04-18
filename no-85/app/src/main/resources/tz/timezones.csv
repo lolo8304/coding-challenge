@@ -1,0 +1,599 @@
+﻿Country code(s);TZ identifier;Embedded comments;Type;UTC-Offset-SDT;UTC-Offset-DST;Timezone-SDT;Timezone-DST;Source;Notes
+CI, BF, GH, GM, GN, IS, ML, MR, SH, SL, SN, TG;Africa/Abidjan;;Canonical;+00:00;+00:00;GMT;;africa;
+GH;Africa/Accra;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+ET;Africa/Addis_Ababa;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+DZ;Africa/Algiers;;Canonical;+01:00;+01:00;CET;;africa;
+ER;Africa/Asmara;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+ER;Africa/Asmera;;Link;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+ML;Africa/Bamako;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+CF;Africa/Bangui;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+GM;Africa/Banjul;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+GW;Africa/Bissau;;Canonical;+00:00;+00:00;GMT;;africa;
+MW;Africa/Blantyre;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+CG;Africa/Brazzaville;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+BI;Africa/Bujumbura;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+EG;Africa/Cairo;;Canonical;+02:00;+03:00;EET;EEST;africa;
+MA;Africa/Casablanca;;Canonical;+01:00;+00:00;1;0;africa;
+ES;Africa/Ceuta;Ceuta, Melilla;Canonical;+01:00;+02:00;CET;CEST;europe;
+GN;Africa/Conakry;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+SN;Africa/Dakar;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+TZ;Africa/Dar_es_Salaam;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+DJ;Africa/Djibouti;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+CM;Africa/Douala;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+EH;Africa/El_Aaiun;;Canonical;+01:00;+00:00;1;0;africa;
+SL;Africa/Freetown;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+BW;Africa/Gaborone;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+ZW;Africa/Harare;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+ZA, LS, SZ;Africa/Johannesburg;;Canonical;+02:00;+02:00;SAST;;africa;
+SS;Africa/Juba;;Canonical;+02:00;+02:00;CAT;;africa;
+UG;Africa/Kampala;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+SD;Africa/Khartoum;;Canonical;+02:00;+02:00;CAT;;africa;
+RW;Africa/Kigali;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+CD;Africa/Kinshasa;Dem. Rep. of Congo (west);Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+NG, AO, BJ, CD, CF, CG, CM, GA, GQ, NE;Africa/Lagos;West Africa Time;Canonical;+01:00;+01:00;WAT;;africa;
+GA;Africa/Libreville;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+TG;Africa/Lome;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+AO;Africa/Luanda;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+CD;Africa/Lubumbashi;Dem. Rep. of Congo (east);Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+ZM;Africa/Lusaka;;Link†;+02:00;+02:00;CAT;;backward;Link to Africa/Maputo
+GQ;Africa/Malabo;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+MZ, BI, BW, CD, MW, RW, ZM, ZW;Africa/Maputo;Central Africa Time;Canonical;+02:00;+02:00;CAT;;africa;
+LS;Africa/Maseru;;Link†;+02:00;+02:00;SAST;;backward;Link to Africa/Johannesburg
+SZ;Africa/Mbabane;;Link†;+02:00;+02:00;SAST;;backward;Link to Africa/Johannesburg
+SO;Africa/Mogadishu;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+LR;Africa/Monrovia;;Canonical;+00:00;+00:00;GMT;;africa;
+KE, DJ, ER, ET, KM, MG, SO, TZ, UG, YT;Africa/Nairobi;;Canonical;+03:00;+03:00;EAT;;africa;
+TD;Africa/Ndjamena;;Canonical;+01:00;+01:00;WAT;;africa;
+NE;Africa/Niamey;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+MR;Africa/Nouakchott;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+BF;Africa/Ouagadougou;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+BJ;Africa/Porto-Novo;;Link†;+01:00;+01:00;WAT;;backward;Link to Africa/Lagos
+ST;Africa/Sao_Tome;;Canonical;+00:00;+00:00;GMT;;africa;
+ML;Africa/Timbuktu;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+LY;Africa/Tripoli;;Canonical;+02:00;+02:00;EET;;africa;
+TN;Africa/Tunis;;Canonical;+01:00;+01:00;CET;;africa;
+NA;Africa/Windhoek;;Canonical;+02:00;+02:00;CAT;;africa;
+US;America/Adak;Alaska - western Aleutians;Canonical;−10:00;−09:00;HST;HDT;northamerica;
+US;America/Anchorage;Alaska (most areas);Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+AI;America/Anguilla;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+AG;America/Antigua;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BR;America/Araguaina;Tocantins;Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Buenos_Aires;Buenos Aires (BA, CF);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Catamarca;Catamarca (CT), Chubut (CH);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/ComodRivadavia;;Link†;−03:00;−03:00;-3;;backward;Link to America/Argentina/Catamarca
+AR;America/Argentina/Cordoba;most areas: CB, CC, CN, ER, FM, MN, SE, SF;Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Jujuy;Jujuy (JY);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/La_Rioja;La Rioja (LR);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Mendoza;Mendoza (MZ);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Rio_Gallegos;Santa Cruz (SC);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Salta;Salta (SA, LP, NQ, RN);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/San_Juan;San Juan (SJ);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/San_Luis;San Luis (SL);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Tucuman;Tucumán (TM);Canonical;−03:00;−03:00;-3;;southamerica;
+AR;America/Argentina/Ushuaia;Tierra del Fuego (TF);Canonical;−03:00;−03:00;-3;;southamerica;
+AW;America/Aruba;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+PY;America/Asuncion;;Canonical;−03:00;−03:00;-3;;southamerica;
+CA;America/Atikokan;EST - ON (Atikokan), NU (Coral H);Link†;−05:00;−05:00;EST;;backward;Link to America/Panama
+US;America/Atka;;Link;−10:00;−09:00;HST;HDT;backward;Link to America/Adak
+BR;America/Bahia;Bahia;Canonical;−03:00;−03:00;-3;;southamerica;
+MX;America/Bahia_Banderas;Bahía de Banderas;Canonical;−06:00;−06:00;CST;;northamerica;
+BB;America/Barbados;;Canonical;−04:00;−04:00;AST;;northamerica;
+BR;America/Belem;Pará (east), Amapá;Canonical;−03:00;−03:00;-3;;southamerica;
+BZ;America/Belize;;Canonical;−06:00;−06:00;CST;;northamerica;
+CA;America/Blanc-Sablon;AST - QC (Lower North Shore);Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BR;America/Boa_Vista;Roraima;Canonical;−04:00;−04:00;-4;;southamerica;
+CO;America/Bogota;;Canonical;−05:00;−05:00;-5;;southamerica;
+US;America/Boise;Mountain - ID (south), OR (east);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+AR;America/Buenos_Aires;;Link;−03:00;−03:00;-3;;backward;Link to America/Argentina/Buenos_Aires
+CA;America/Cambridge_Bay;Mountain - NU (west);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+BR;America/Campo_Grande;Mato Grosso do Sul;Canonical;−04:00;−04:00;-4;;southamerica;
+MX;America/Cancun;Quintana Roo;Canonical;−05:00;−05:00;EST;;northamerica;
+VE;America/Caracas;;Canonical;−04:00;−04:00;-4;;southamerica;
+AR;America/Catamarca;;Link;−03:00;−03:00;-3;;backward;Link to America/Argentina/Catamarca
+GF;America/Cayenne;;Canonical;−03:00;−03:00;-3;;southamerica;
+KY;America/Cayman;;Link†;−05:00;−05:00;EST;;backward;Link to America/Panama
+US;America/Chicago;Central (most areas);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+MX;America/Chihuahua;Chihuahua (most areas);Canonical;−06:00;−06:00;CST;;northamerica;
+MX;America/Ciudad_Juarez;Chihuahua (US border - west);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+CA;America/Coral_Harbour;;Link†;−05:00;−05:00;EST;;backward;Link to America/Panama
+AR;America/Cordoba;;Link;−03:00;−03:00;-3;;backward;Link to America/Argentina/Cordoba
+CR;America/Costa_Rica;;Canonical;−06:00;−06:00;CST;;northamerica;
+CL;America/Coyhaique;Aysén Region;Canonical;−03:00;−03:00;-3;;southamerica;
+CA;America/Creston;MST - BC (Creston);Link†;−07:00;−07:00;MST;;backward;Link to America/Phoenix
+BR;America/Cuiaba;Mato Grosso;Canonical;−04:00;−04:00;-4;;southamerica;
+CW;America/Curacao;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+GL;America/Danmarkshavn;National Park (east coast);Canonical;+00:00;+00:00;GMT;;europe;
+CA;America/Dawson;MST - Yukon (west);Canonical;−07:00;−07:00;MST;;northamerica;
+CA;America/Dawson_Creek;MST - BC (Dawson Cr, Ft St John);Canonical;−07:00;−07:00;MST;;northamerica;
+US;America/Denver;Mountain (most areas);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+US;America/Detroit;Eastern - MI (most areas);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+DM;America/Dominica;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+CA;America/Edmonton;Mountain - AB, BC(E), NT(E), SK(W);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+BR;America/Eirunepe;Amazonas (west);Canonical;−05:00;−05:00;-5;;southamerica;
+SV;America/El_Salvador;;Canonical;−06:00;−06:00;CST;;northamerica;
+MX;America/Ensenada;;Link†;−08:00;−07:00;PST;PDT;backward;Link to America/Tijuana
+CA;America/Fort_Nelson;MST - BC (Ft Nelson);Canonical;−07:00;−07:00;MST;;northamerica;
+US;America/Fort_Wayne;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Indiana/Indianapolis
+BR;America/Fortaleza;Brazil (northeast: MA, PI, CE, RN, PB);Canonical;−03:00;−03:00;-3;;southamerica;
+CA;America/Glace_Bay;Atlantic - NS (Cape Breton);Canonical;−04:00;−03:00;AST;ADT;northamerica;
+GL;America/Godthab;;Link;−02:00;−01:00;-2;-1;backward;Link to America/Nuuk
+CA;America/Goose_Bay;Atlantic - Labrador (most areas);Canonical;−04:00;−03:00;AST;ADT;northamerica;
+TC;America/Grand_Turk;;Canonical;−05:00;−04:00;EST;EDT;northamerica;
+GD;America/Grenada;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+GP;America/Guadeloupe;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+GT;America/Guatemala;;Canonical;−06:00;−06:00;CST;;northamerica;
+EC;America/Guayaquil;Ecuador (mainland);Canonical;−05:00;−05:00;-5;;southamerica;
+GY;America/Guyana;;Canonical;−04:00;−04:00;-4;;southamerica;
+CA;America/Halifax;Atlantic - NS (most areas), PE;Canonical;−04:00;−03:00;AST;ADT;northamerica;
+CU;America/Havana;;Canonical;−05:00;−04:00;CST;CDT;northamerica;
+MX;America/Hermosillo;Sonora;Canonical;−07:00;−07:00;MST;;northamerica;
+US;America/Indiana/Indianapolis;Eastern - IN (most areas);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indiana/Knox;Central - IN (Starke);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+US;America/Indiana/Marengo;Eastern - IN (Crawford);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indiana/Petersburg;Eastern - IN (Pike);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indiana/Tell_City;Central - IN (Perry);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+US;America/Indiana/Vevay;Eastern - IN (Switzerland);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indiana/Vincennes;Eastern - IN (Da, Du, K, Mn);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indiana/Winamac;Eastern - IN (Pulaski);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Indianapolis;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Indiana/Indianapolis
+CA;America/Inuvik;Mountain - NT (west);Canonical;−07:00;−06:00;MST;MDT;northamerica;
+CA;America/Iqaluit;Eastern - NU (most areas);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+JM;America/Jamaica;;Canonical;−05:00;−05:00;EST;;northamerica;
+AR;America/Jujuy;;Link;−03:00;−03:00;-3;;backward;Link to America/Argentina/Jujuy
+US;America/Juneau;Alaska - Juneau area;Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+US;America/Kentucky/Louisville;Eastern - KY (Louisville area);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Kentucky/Monticello;Eastern - KY (Wayne);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+US;America/Knox_IN;;Link;−06:00;−05:00;CST;CDT;backward;Link to America/Indiana/Knox
+BQ;America/Kralendijk;;Link;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BO;America/La_Paz;;Canonical;−04:00;−04:00;-4;;southamerica;
+PE;America/Lima;;Canonical;−05:00;−05:00;-5;;southamerica;
+US;America/Los_Angeles;Pacific;Canonical;−08:00;−07:00;PST;PDT;northamerica;
+US;America/Louisville;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Kentucky/Louisville
+SX;America/Lower_Princes;;Link;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BR;America/Maceio;Alagoas, Sergipe;Canonical;−03:00;−03:00;-3;;southamerica;
+NI;America/Managua;;Canonical;−06:00;−06:00;CST;;northamerica;
+BR;America/Manaus;Amazonas (east);Canonical;−04:00;−04:00;-4;;southamerica;
+MF;America/Marigot;;Link;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+MQ;America/Martinique;;Canonical;−04:00;−04:00;AST;;northamerica;
+MX;America/Matamoros;Coahuila, Nuevo León, Tamaulipas (US border);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+MX;America/Mazatlan;Baja California Sur, Nayarit (most areas), Sinaloa;Canonical;−07:00;−07:00;MST;;northamerica;
+AR;America/Mendoza;;Link;−03:00;−03:00;-3;;backward;Link to America/Argentina/Mendoza
+US;America/Menominee;Central - MI (Wisconsin border);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+MX;America/Merida;Campeche, Yucatán;Canonical;−06:00;−06:00;CST;;northamerica;
+US;America/Metlakatla;Alaska - Annette Island;Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+MX;America/Mexico_City;Central Mexico;Canonical;−06:00;−06:00;CST;;northamerica;
+PM;America/Miquelon;;Canonical;−03:00;−02:00;-3;-2;northamerica;
+CA;America/Moncton;Atlantic - New Brunswick;Canonical;−04:00;−03:00;AST;ADT;northamerica;
+MX;America/Monterrey;"Durango; Coahuila, Nuevo León, Tamaulipas (most areas)";Canonical;−06:00;−06:00;CST;;northamerica;
+UY;America/Montevideo;;Canonical;−03:00;−03:00;-3;;southamerica;
+CA;America/Montreal;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/Toronto
+MS;America/Montserrat;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BS;America/Nassau;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/Toronto
+US;America/New_York;Eastern (most areas);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+CA;America/Nipigon;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/Toronto
+US;America/Nome;Alaska (west);Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+BR;America/Noronha;Atlantic islands;Canonical;−02:00;−02:00;-2;;southamerica;
+US;America/North_Dakota/Beulah;Central - ND (Mercer);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+US;America/North_Dakota/Center;Central - ND (Oliver);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+US;America/North_Dakota/New_Salem;Central - ND (Morton rural);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+GL;America/Nuuk;most of Greenland;Canonical;−02:00;−01:00;-2;-1;europe;
+MX;America/Ojinaga;Chihuahua (US border - east);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+PA, CA, KY;America/Panama;EST - ON (Atikokan), NU (Coral H);Canonical;−05:00;−05:00;EST;;northamerica;
+CA;America/Pangnirtung;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/Iqaluit
+SR;America/Paramaribo;;Canonical;−03:00;−03:00;-3;;southamerica;
+US, CA;America/Phoenix;MST - AZ (most areas), Creston BC;Canonical;−07:00;−07:00;MST;;northamerica;
+HT;America/Port-au-Prince;;Canonical;−05:00;−04:00;EST;EDT;northamerica;
+TT;America/Port_of_Spain;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+BR;America/Porto_Acre;;Link;−05:00;−05:00;-5;;backward;Link to America/Rio_Branco
+BR;America/Porto_Velho;Rondônia;Canonical;−04:00;−04:00;-4;;southamerica;
+PR, AG, CA, AI, AW, BL, BQ, CW, DM, GD, GP, KN, LC, MF, MS, SX, TT, VC, VG, VI;America/Puerto_Rico;AST - QC (Lower North Shore);Canonical;−04:00;−04:00;AST;;northamerica;
+CL;America/Punta_Arenas;Magallanes Region;Canonical;−03:00;−03:00;-3;;southamerica;Magallanes Region
+CA;America/Rainy_River;;Link†;−06:00;−05:00;CST;CDT;backward;Link to America/Winnipeg
+CA;America/Rankin_Inlet;Central - NU (central);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+BR;America/Recife;Pernambuco;Canonical;−03:00;−03:00;-3;;southamerica;
+CA;America/Regina;CST - SK (most areas);Canonical;−06:00;−06:00;CST;;northamerica;
+CA;America/Resolute;Central - NU (Resolute);Canonical;−06:00;−05:00;CST;CDT;northamerica;
+BR;America/Rio_Branco;Acre;Canonical;−05:00;−05:00;-5;;southamerica;
+AR;America/Rosario;;Link†;−03:00;−03:00;-3;;backward;Link to America/Argentina/Cordoba
+MX;America/Santa_Isabel;;Link;−08:00;−07:00;PST;PDT;backward;Link to America/Tijuana
+BR;America/Santarem;Pará (west);Canonical;−03:00;−03:00;-3;;southamerica;
+CL;America/Santiago;most of Chile;Canonical;−04:00;−03:00;-4;-3;southamerica;
+DO;America/Santo_Domingo;;Canonical;−04:00;−04:00;AST;;northamerica;
+BR;America/Sao_Paulo;Brazil (southeast: GO, DF, MG, ES, RJ, SP, PR, SC, RS);Canonical;−03:00;−03:00;-3;;southamerica;
+GL;America/Scoresbysund;Scoresbysund/Ittoqqortoormiit;Canonical;−02:00;−01:00;-2;-1;europe;
+US;America/Shiprock;;Link;−07:00;−06:00;MST;MDT;backward;Link to America/Denver
+US;America/Sitka;Alaska - Sitka area;Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+BL;America/St_Barthelemy;;Link;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+CA;America/St_Johns;Newfoundland, Labrador (SE);Canonical;−03:30;−02:30;NST;NDT;northamerica;
+KN;America/St_Kitts;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+LC;America/St_Lucia;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+VI;America/St_Thomas;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+VC;America/St_Vincent;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+CA;America/Swift_Current;CST - SK (midwest);Canonical;−06:00;−06:00;CST;;northamerica;
+HN;America/Tegucigalpa;;Canonical;−06:00;−06:00;CST;;northamerica;
+GL;America/Thule;Thule/Pituffik;Canonical;−04:00;−03:00;AST;ADT;europe;
+CA;America/Thunder_Bay;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/Toronto
+MX;America/Tijuana;Baja California;Canonical;−08:00;−07:00;PST;PDT;northamerica;
+CA, BS;America/Toronto;Eastern - ON & QC (most areas);Canonical;−05:00;−04:00;EST;EDT;northamerica;
+VG;America/Tortola;;Link†;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+CA;America/Vancouver;Pacific - BC (most areas);Canonical;−08:00;−07:00;PST;PDT;northamerica;
+VI;America/Virgin;;Link;−04:00;−04:00;AST;;backward;Link to America/Puerto_Rico
+CA;America/Whitehorse;MST - Yukon (east);Canonical;−07:00;−07:00;MST;;northamerica;
+CA;America/Winnipeg;Central - ON (west), Manitoba;Canonical;−06:00;−05:00;CST;CDT;northamerica;
+US;America/Yakutat;Alaska - Yakutat;Canonical;−09:00;−08:00;AKST;AKDT;northamerica;
+CA;America/Yellowknife;;Link†;−07:00;−06:00;MST;MDT;backward;Link to America/Edmonton
+AQ;Antarctica/Casey;Casey;Canonical;+08:00;+08:00;8;;antarctica;
+AQ;Antarctica/Davis;Davis;Canonical;+07:00;+07:00;7;;antarctica;
+AQ;Antarctica/DumontDUrville;Dumont-d'Urville;Link†;+10:00;+10:00;10;;backward;Link to Pacific/Port_Moresby
+AU;Antarctica/Macquarie;Macquarie Island;Canonical;+10:00;+11:00;AEST;AEDT;australasia;
+AQ;Antarctica/Mawson;Mawson;Canonical;+05:00;+05:00;5;;antarctica;
+AQ;Antarctica/McMurdo;New Zealand time - McMurdo, South Pole;Link†;+12:00;+13:00;NZST;NZDT;backward;Link to Pacific/Auckland
+AQ;Antarctica/Palmer;Palmer;Canonical;−03:00;−03:00;-3;;southamerica;Chilean Antarctica Region
+AQ;Antarctica/Rothera;Rothera;Canonical;−03:00;−03:00;-3;;antarctica;
+AQ;Antarctica/South_Pole;;Link;+12:00;+13:00;NZST;NZDT;backward;Link to Pacific/Auckland
+AQ;Antarctica/Syowa;Syowa;Link†;+03:00;+03:00;3;;backward;Link to Asia/Riyadh
+AQ;Antarctica/Troll;Troll;Canonical;+00:00;+02:00;0;2;antarctica;Previously used +01:00 for a brief period between standard and daylight time.[5]
+AQ;Antarctica/Vostok;Vostok;Canonical;+05:00;+05:00;5;;antarctica;
+SJ;Arctic/Longyearbyen;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Berlin
+YE;Asia/Aden;;Link†;+03:00;+03:00;3;;backward;Link to Asia/Riyadh
+KZ;Asia/Almaty;most of Kazakhstan;Canonical;+05:00;+05:00;5;;asia;
+JO;Asia/Amman;;Canonical;+03:00;+03:00;3;;asia;
+RU;Asia/Anadyr;MSK+09 - Bering Sea;Canonical;+12:00;+12:00;12;;europe;
+KZ;Asia/Aqtau;Mangghystaū/Mankistau;Canonical;+05:00;+05:00;5;;asia;
+KZ;Asia/Aqtobe;Aqtöbe/Aktobe;Canonical;+05:00;+05:00;5;;asia;
+TM;Asia/Ashgabat;;Canonical;+05:00;+05:00;5;;asia;
+TM;Asia/Ashkhabad;;Link;+05:00;+05:00;5;;backward;Link to Asia/Ashgabat
+KZ;Asia/Atyrau;Atyraū/Atirau/Gur'yev;Canonical;+05:00;+05:00;5;;asia;
+IQ;Asia/Baghdad;;Canonical;+03:00;+03:00;3;;asia;
+BH;Asia/Bahrain;;Link†;+03:00;+03:00;3;;backward;Link to Asia/Qatar
+AZ;Asia/Baku;;Canonical;+04:00;+04:00;4;;asia;
+TH, CX, KH, LA, VN;Asia/Bangkok;north Vietnam;Canonical;+07:00;+07:00;7;;asia;
+RU;Asia/Barnaul;MSK+04 - Altai;Canonical;+07:00;+07:00;7;;europe;
+LB;Asia/Beirut;;Canonical;+02:00;+03:00;EET;EEST;asia;
+KG;Asia/Bishkek;;Canonical;+06:00;+06:00;6;;asia;
+BN;Asia/Brunei;;Link†;+08:00;+08:00;8;;backward;Link to Asia/Kuching
+IN;Asia/Calcutta;;Link;+05:30;+05:30;IST;;backward;Link to Asia/Kolkata
+RU;Asia/Chita;MSK+06 - Zabaykalsky;Canonical;+09:00;+09:00;9;;europe;
+MN;Asia/Choibalsan;;Link;+08:00;+08:00;8;;backward;Link to Asia/Ulaanbaatar
+CN;Asia/Chongqing;;Link†;+08:00;+08:00;CST;;backward;Link to Asia/Shanghai
+CN;Asia/Chungking;;Link;+08:00;+08:00;CST;;backward;Link to Asia/Shanghai
+LK;Asia/Colombo;;Canonical;+05:30;+05:30;530;;asia;
+BD;Asia/Dacca;;Link;+06:00;+06:00;6;;backward;Link to Asia/Dhaka
+SY;Asia/Damascus;;Canonical;+03:00;+03:00;3;;asia;
+BD;Asia/Dhaka;;Canonical;+06:00;+06:00;6;;asia;
+TL;Asia/Dili;;Canonical;+09:00;+09:00;9;;asia;
+AE, OM, RE, SC, TF;Asia/Dubai;Crozet;Canonical;+04:00;+04:00;4;;asia;
+TJ;Asia/Dushanbe;;Canonical;+05:00;+05:00;5;;asia;
+CY;Asia/Famagusta;Northern Cyprus;Canonical;+02:00;+03:00;EET;EEST;asia;
+PS;Asia/Gaza;Gaza Strip;Canonical;+02:00;+03:00;EET;EEST;asia;
+CN;Asia/Harbin;;Link†;+08:00;+08:00;CST;;backward;Link to Asia/Shanghai
+PS;Asia/Hebron;West Bank;Canonical;+02:00;+03:00;EET;EEST;asia;
+VN;Asia/Ho_Chi_Minh;south Vietnam;Canonical;+07:00;+07:00;7;;asia;
+HK;Asia/Hong_Kong;;Canonical;+08:00;+08:00;HKT;;asia;
+MN;Asia/Hovd;Bayan-Ölgii, Hovd, Uvs;Canonical;+07:00;+07:00;7;;asia;
+RU;Asia/Irkutsk;MSK+05 - Irkutsk, Buryatia;Canonical;+08:00;+08:00;8;;europe;
+TR;Asia/Istanbul;;Link;+03:00;+03:00;3;;backward;Link to Europe/Istanbul
+ID;Asia/Jakarta;Java, Sumatra;Canonical;+07:00;+07:00;WIB;;asia;
+ID;Asia/Jayapura;New Guinea (West Papua / Irian Jaya), Malukus/Moluccas;Canonical;+09:00;+09:00;WIT;;asia;
+IL;Asia/Jerusalem;;Canonical;+02:00;+03:00;IST;IDT;asia;
+AF;Asia/Kabul;;Canonical;+04:30;+04:30;430;;asia;
+RU;Asia/Kamchatka;MSK+09 - Kamchatka;Canonical;+12:00;+12:00;12;;europe;
+PK;Asia/Karachi;;Canonical;+05:00;+05:00;PKT;;asia;
+CN;Asia/Kashgar;;Link†;+06:00;+06:00;6;;backward;Link to Asia/Urumqi[note 1]
+NP;Asia/Kathmandu;;Canonical;+05:45;+05:45;545;;asia;
+NP;Asia/Katmandu;;Link;+05:45;+05:45;545;;backward;Link to Asia/Kathmandu
+RU;Asia/Khandyga;MSK+06 - Tomponsky, Ust-Maysky;Canonical;+09:00;+09:00;9;;europe;
+IN;Asia/Kolkata;;Canonical;+05:30;+05:30;IST;;asia;Note: Different zones in history, see Time in India.
+RU;Asia/Krasnoyarsk;MSK+04 - Krasnoyarsk area;Canonical;+07:00;+07:00;7;;europe;
+MY;Asia/Kuala_Lumpur;Malaysia (peninsula);Link†;+08:00;+08:00;8;;backward;Link to Asia/Singapore
+MY, BN;Asia/Kuching;Sabah, Sarawak;Canonical;+08:00;+08:00;8;;asia;
+KW;Asia/Kuwait;;Link†;+03:00;+03:00;3;;backward;Link to Asia/Riyadh
+MO;Asia/Macao;;Link;+08:00;+08:00;CST;;backward;Link to Asia/Macau
+MO;Asia/Macau;;Canonical;+08:00;+08:00;CST;;asia;
+RU;Asia/Magadan;MSK+08 - Magadan;Canonical;+11:00;+11:00;11;;europe;
+ID;Asia/Makassar;Borneo (east, south), Sulawesi/Celebes, Bali, Nusa Tengarra, Timor (west);Canonical;+08:00;+08:00;WITA;;asia;
+PH;Asia/Manila;;Canonical;+08:00;+08:00;PST;;asia;
+OM;Asia/Muscat;;Link†;+04:00;+04:00;4;;backward;Link to Asia/Dubai
+CY;Asia/Nicosia;most of Cyprus;Canonical;+02:00;+03:00;EET;EEST;asia;
+RU;Asia/Novokuznetsk;MSK+04 - Kemerovo;Canonical;+07:00;+07:00;7;;europe;
+RU;Asia/Novosibirsk;MSK+04 - Novosibirsk;Canonical;+07:00;+07:00;7;;europe;
+RU;Asia/Omsk;MSK+03 - Omsk;Canonical;+06:00;+06:00;6;;europe;
+KZ;Asia/Oral;West Kazakhstan;Canonical;+05:00;+05:00;5;;asia;
+KH;Asia/Phnom_Penh;;Link†;+07:00;+07:00;7;;backward;Link to Asia/Bangkok
+ID;Asia/Pontianak;Borneo (west, central);Canonical;+07:00;+07:00;WIB;;asia;
+KP;Asia/Pyongyang;;Canonical;+09:00;+09:00;KST;;asia;
+QA, BH;Asia/Qatar;;Canonical;+03:00;+03:00;3;;asia;
+KZ;Asia/Qostanay;Qostanay/Kostanay/Kustanay;Canonical;+05:00;+05:00;5;;asia;
+KZ;Asia/Qyzylorda;Qyzylorda/Kyzylorda/Kzyl-Orda;Canonical;+05:00;+05:00;5;;asia;
+MM;Asia/Rangoon;;Link;+06:30;+06:30;630;;backward;Link to Asia/Yangon
+SA, AQ, KW, YE;Asia/Riyadh;Syowa;Canonical;+03:00;+03:00;3;;asia;
+VN;Asia/Saigon;;Link;+07:00;+07:00;7;;backward;Link to Asia/Ho_Chi_Minh
+RU;Asia/Sakhalin;MSK+08 - Sakhalin Island;Canonical;+11:00;+11:00;11;;europe;
+UZ;Asia/Samarkand;Uzbekistan (west);Canonical;+05:00;+05:00;5;;asia;
+KR;Asia/Seoul;;Canonical;+09:00;+09:00;KST;;asia;
+CN;Asia/Shanghai;Beijing Time;Canonical;+08:00;+08:00;CST;;asia;
+SG, AQ, MY;Asia/Singapore;peninsular Malaysia, Concordia;Canonical;+08:00;+08:00;8;;asia;
+RU;Asia/Srednekolymsk;MSK+08 - Sakha (E), N Kuril Is;Canonical;+11:00;+11:00;11;;europe;
+TW;Asia/Taipei;;Canonical;+08:00;+08:00;CST;;asia;
+UZ;Asia/Tashkent;Uzbekistan (east);Canonical;+05:00;+05:00;5;;asia;
+GE;Asia/Tbilisi;;Canonical;+04:00;+04:00;4;;asia;
+IR;Asia/Tehran;;Canonical;+03:30;+03:30;330;;asia;
+IL;Asia/Tel_Aviv;;Link†;+02:00;+03:00;IST;IDT;backward;Link to Asia/Jerusalem
+BT;Asia/Thimbu;;Link;+06:00;+06:00;6;;backward;Link to Asia/Thimphu
+BT;Asia/Thimphu;;Canonical;+06:00;+06:00;6;;asia;
+JP, AU;Asia/Tokyo;Eyre Bird Observatory;Canonical;+09:00;+09:00;JST;;asia;
+RU;Asia/Tomsk;MSK+04 - Tomsk;Canonical;+07:00;+07:00;7;;europe;
+ID;Asia/Ujung_Pandang;;Link;+08:00;+08:00;WITA;;backward;Link to Asia/Makassar
+MN;Asia/Ulaanbaatar;most of Mongolia;Canonical;+08:00;+08:00;8;;asia;
+MN;Asia/Ulan_Bator;;Link;+08:00;+08:00;8;;backward;Link to Asia/Ulaanbaatar
+CN;Asia/Urumqi;Xinjiang Time;Canonical;+06:00;+06:00;6;;asia;The Asia/Urumqi entry in the tz database reflected the use of Xinjiang Time by part of the local population. Consider using Asia/Shanghai for Beijing Time if that is preferred.
+RU;Asia/Ust-Nera;MSK+07 - Oymyakonsky;Canonical;+10:00;+10:00;10;;europe;
+LA;Asia/Vientiane;;Link†;+07:00;+07:00;7;;backward;Link to Asia/Bangkok
+RU;Asia/Vladivostok;MSK+07 - Amur River;Canonical;+10:00;+10:00;10;;europe;
+RU;Asia/Yakutsk;MSK+06 - Lena River;Canonical;+09:00;+09:00;9;;europe;
+MM, CC;Asia/Yangon;;Canonical;+06:30;+06:30;630;;asia;
+RU;Asia/Yekaterinburg;MSK+02 - Urals;Canonical;+05:00;+05:00;5;;europe;
+AM;Asia/Yerevan;;Canonical;+04:00;+04:00;4;;asia;
+PT;Atlantic/Azores;Azores;Canonical;−01:00;+00:00;-1;0;europe;
+BM;Atlantic/Bermuda;;Canonical;−04:00;−03:00;AST;ADT;northamerica;
+ES;Atlantic/Canary;Canary Islands;Canonical;+00:00;+01:00;WET;WEST;europe;
+CV;Atlantic/Cape_Verde;;Canonical;−01:00;−01:00;-1;;africa;
+FO;Atlantic/Faeroe;;Link;+00:00;+01:00;WET;WEST;backward;Link to Atlantic/Faroe
+FO;Atlantic/Faroe;;Canonical;+00:00;+01:00;WET;WEST;europe;
+SJ;Atlantic/Jan_Mayen;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Berlin
+PT;Atlantic/Madeira;Madeira Islands;Canonical;+00:00;+01:00;WET;WEST;europe;
+IS;Atlantic/Reykjavik;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+GS;Atlantic/South_Georgia;;Canonical;−02:00;−02:00;-2;;southamerica;
+SH;Atlantic/St_Helena;;Link†;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+FK;Atlantic/Stanley;;Canonical;−03:00;−03:00;-3;;southamerica;
+AU;Australia/ACT;;Link;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Sydney
+AU;Australia/Adelaide;South Australia;Canonical;+09:30;+10:30;ACST;ACDT;australasia;
+AU;Australia/Brisbane;Queensland (most areas);Canonical;+10:00;+10:00;AEST;;australasia;
+AU;Australia/Broken_Hill;New South Wales (Yancowinna);Canonical;+09:30;+10:30;ACST;ACDT;australasia;
+AU;Australia/Canberra;;Link;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Sydney
+AU;Australia/Currie;;Link†;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Hobart
+AU;Australia/Darwin;Northern Territory;Canonical;+09:30;+09:30;ACST;;australasia;
+AU;Australia/Eucla;Western Australia (Eucla);Canonical;+08:45;+08:45;845;;australasia;
+AU;Australia/Hobart;Tasmania;Canonical;+10:00;+11:00;AEST;AEDT;australasia;
+AU;Australia/LHI;;Link;+10:30;+11:00;1030;11;backward;Link to Australia/Lord_Howe
+AU;Australia/Lindeman;Queensland (Whitsunday Islands);Canonical;+10:00;+10:00;AEST;;australasia;
+AU;Australia/Lord_Howe;Lord Howe Island;Canonical;+10:30;+11:00;1030;11;australasia;This is the only time zone in the world that uses 30-minute DST transitions.
+AU;Australia/Melbourne;Victoria;Canonical;+10:00;+11:00;AEST;AEDT;australasia;
+AU;Australia/North;;Link;+09:30;+09:30;ACST;;backward;Link to Australia/Darwin
+AU;Australia/NSW;;Link;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Sydney
+AU;Australia/Perth;Western Australia (most areas);Canonical;+08:00;+08:00;AWST;;australasia;
+AU;Australia/Queensland;;Link;+10:00;+10:00;AEST;;backward;Link to Australia/Brisbane
+AU;Australia/South;;Link;+09:30;+10:30;ACST;ACDT;backward;Link to Australia/Adelaide
+AU;Australia/Sydney;New South Wales (most areas);Canonical;+10:00;+11:00;AEST;AEDT;australasia;
+AU;Australia/Tasmania;;Link;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Hobart
+AU;Australia/Victoria;;Link;+10:00;+11:00;AEST;AEDT;backward;Link to Australia/Melbourne
+AU;Australia/West;;Link;+08:00;+08:00;AWST;;backward;Link to Australia/Perth
+AU;Australia/Yancowinna;;Link;+09:30;+10:30;ACST;ACDT;backward;Link to Australia/Broken_Hill
+BR;Brazil/Acre;;Link;−05:00;−05:00;-5;;backward;Link to America/Rio_Branco
+BR;Brazil/DeNoronha;;Link;−02:00;−02:00;-2;;backward;Link to America/Noronha
+BR;Brazil/East;;Link;−03:00;−03:00;-3;;backward;Link to America/Sao_Paulo
+BR;Brazil/West;;Link;−04:00;−04:00;-4;;backward;Link to America/Manaus
+CA;Canada/Atlantic;;Link;−04:00;−03:00;AST;ADT;backward;Link to America/Halifax
+CA;Canada/Central;;Link;−06:00;−05:00;CST;CDT;backward;Link to America/Winnipeg
+CA;Canada/Eastern;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Toronto
+CA;Canada/Mountain;;Link;−07:00;−06:00;MST;MDT;backward;Link to America/Edmonton
+CA;Canada/Newfoundland;;Link;−03:30;−02:30;NST;NDT;backward;Link to America/St_Johns
+CA;Canada/Pacific;;Link;−08:00;−07:00;PST;PDT;backward;Link to America/Vancouver
+CA;Canada/Saskatchewan;;Link;−06:00;−06:00;CST;;backward;Link to America/Regina
+CA;Canada/Yukon;;Link;−07:00;−07:00;MST;;backward;Link to America/Whitehorse
+;CET;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Brussels
+CL;Chile/Continental;;Link;−04:00;−03:00;-4;-3;backward;Link to America/Santiago
+CL;Chile/EasterIsland;;Link;−06:00;−05:00;-6;-5;backward;Link to Pacific/Easter
+;CST6CDT;;Link†;−06:00;−05:00;CST;CDT;backward;Link to America/Chicago
+CU;Cuba;;Link;−05:00;−04:00;CST;CDT;backward;Link to America/Havana
+;EET;;Link†;+02:00;+03:00;EET;EEST;backward;Link to Europe/Athens
+EG;Egypt;;Link;+02:00;+03:00;EET;EEST;backward;Link to Africa/Cairo
+IE;Eire;;Link;+00:00;+01:00;GMT;IST;backward;Link to Europe/Dublin
+;EST;;Link†;−05:00;−05:00;EST;;backward;Link to America/Panama
+;EST5EDT;;Link†;−05:00;−04:00;EST;EDT;backward;Link to America/New_York
+;Etc/GMT;;Canonical;+00:00;+00:00;GMT;;etcetera;
+;Etc/GMT+0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;Etc/GMT+1;;Canonical;−01:00;−01:00;-1;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+10;;Canonical;−10:00;−10:00;-10;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+11;;Canonical;−11:00;−11:00;-11;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+12;;Canonical;−12:00;−12:00;-12;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+2;;Canonical;−02:00;−02:00;-2;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+3;;Canonical;−03:00;−03:00;-3;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+4;;Canonical;−04:00;−04:00;-4;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+5;;Canonical;−05:00;−05:00;-5;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+6;;Canonical;−06:00;−06:00;-6;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+7;;Canonical;−07:00;−07:00;-7;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+8;;Canonical;−08:00;−08:00;-8;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT+9;;Canonical;−09:00;−09:00;-9;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;Etc/GMT-1;;Canonical;+01:00;+01:00;1;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-10;;Canonical;+10:00;+10:00;10;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-11;;Canonical;+11:00;+11:00;11;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-12;;Canonical;+12:00;+12:00;12;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-13;;Canonical;+13:00;+13:00;13;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-14;;Canonical;+14:00;+14:00;14;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-2;;Canonical;+02:00;+02:00;2;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-3;;Canonical;+03:00;+03:00;3;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-4;;Canonical;+04:00;+04:00;4;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-5;;Canonical;+05:00;+05:00;5;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-6;;Canonical;+06:00;+06:00;6;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-7;;Canonical;+07:00;+07:00;7;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-8;;Canonical;+08:00;+08:00;8;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT-9;;Canonical;+09:00;+09:00;9;;etcetera;Sign is intentionally inverted. See the Etc area description.
+;Etc/GMT0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;Etc/Greenwich;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;Etc/UCT;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+;Etc/Universal;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+;Etc/UTC;;Canonical;+00:00;+00:00;UTC;;etcetera;
+;Etc/Zulu;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+NL;Europe/Amsterdam;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Brussels
+AD;Europe/Andorra;;Canonical;+01:00;+02:00;CET;CEST;europe;
+RU;Europe/Astrakhan;MSK+01 - Astrakhan;Canonical;+04:00;+04:00;4;;europe;
+GR;Europe/Athens;;Canonical;+02:00;+03:00;EET;EEST;europe;
+GB;Europe/Belfast;;Link†;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+RS, BA, HR, ME, MK, SI;Europe/Belgrade;;Canonical;+01:00;+02:00;CET;CEST;europe;
+DE, DK, NO, SE, SJ;Europe/Berlin;most of Germany;Canonical;+01:00;+02:00;CET;CEST;europe;In 1945, the Trizone did not follow Berlin's switch to DST, see Time in Germany
+SK;Europe/Bratislava;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Prague
+BE, LU, NL;Europe/Brussels;;Canonical;+01:00;+02:00;CET;CEST;europe;
+RO;Europe/Bucharest;;Canonical;+02:00;+03:00;EET;EEST;europe;
+HU;Europe/Budapest;;Canonical;+01:00;+02:00;CET;CEST;europe;
+DE;Europe/Busingen;Busingen;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Zurich
+MD;Europe/Chisinau;;Canonical;+02:00;+03:00;EET;EEST;europe;
+DK;Europe/Copenhagen;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Berlin
+IE;Europe/Dublin;;Canonical;+00:00;+01:00;GMT;IST;europe;As per legislation, Irish Standard Time is UTC+01. Winter time is encoded in the DB as negative 1 hour of daylight saving.
+GI;Europe/Gibraltar;;Canonical;+01:00;+02:00;CET;CEST;europe;
+GG;Europe/Guernsey;;Link†;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+FI, AX;Europe/Helsinki;;Canonical;+02:00;+03:00;EET;EEST;europe;
+IM;Europe/Isle_of_Man;;Link†;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+TR;Europe/Istanbul;;Canonical;+03:00;+03:00;3;;europe;
+JE;Europe/Jersey;;Link†;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+RU;Europe/Kaliningrad;MSK-01 - Kaliningrad;Canonical;+02:00;+02:00;EET;;europe;
+UA;Europe/Kiev;;Link;+02:00;+03:00;EET;EEST;backward;Link to Europe/Kyiv
+RU;Europe/Kirov;MSK+00 - Kirov;Canonical;+03:00;+03:00;MSK;;europe;
+UA;Europe/Kyiv;most of Ukraine;Canonical;+02:00;+03:00;EET;EEST;europe;
+PT;Europe/Lisbon;Portugal (mainland);Canonical;+00:00;+01:00;WET;WEST;europe;
+SI;Europe/Ljubljana;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Belgrade
+GB, GG, IM, JE;Europe/London;;Canonical;+00:00;+01:00;GMT;BST;europe;
+LU;Europe/Luxembourg;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Brussels
+ES;Europe/Madrid;Spain (mainland);Canonical;+01:00;+02:00;CET;CEST;europe;
+MT;Europe/Malta;;Canonical;+01:00;+02:00;CET;CEST;europe;
+AX;Europe/Mariehamn;;Link;+02:00;+03:00;EET;EEST;backward;Link to Europe/Helsinki
+BY;Europe/Minsk;;Canonical;+03:00;+03:00;3;;europe;
+MC;Europe/Monaco;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Paris
+RU;Europe/Moscow;MSK+00 - Moscow area;Canonical;+03:00;+03:00;MSK;;europe;
+CY;Europe/Nicosia;;Link;+02:00;+03:00;EET;EEST;backward;Link to Asia/Nicosia
+NO;Europe/Oslo;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Berlin
+FR, MC;Europe/Paris;;Canonical;+01:00;+02:00;CET;CEST;europe;
+ME;Europe/Podgorica;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Belgrade
+CZ, SK;Europe/Prague;;Canonical;+01:00;+02:00;CET;CEST;europe;
+LV;Europe/Riga;;Canonical;+02:00;+03:00;EET;EEST;europe;
+IT, SM, VA;Europe/Rome;;Canonical;+01:00;+02:00;CET;CEST;europe;
+RU;Europe/Samara;MSK+01 - Samara, Udmurtia;Canonical;+04:00;+04:00;4;;europe;
+SM;Europe/San_Marino;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Rome
+BA;Europe/Sarajevo;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Belgrade
+RU;Europe/Saratov;MSK+01 - Saratov;Canonical;+04:00;+04:00;4;;europe;
+RU, UA;Europe/Simferopol;Crimea;Canonical;+03:00;+03:00;MSK;;europe;Disputed - Reflects data in the TZDB.[note 2]
+MK;Europe/Skopje;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Belgrade
+BG;Europe/Sofia;;Canonical;+02:00;+03:00;EET;EEST;europe;
+SE;Europe/Stockholm;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Berlin
+EE;Europe/Tallinn;;Canonical;+02:00;+03:00;EET;EEST;europe;
+AL;Europe/Tirane;;Canonical;+01:00;+02:00;CET;CEST;europe;
+MD;Europe/Tiraspol;;Link†;+02:00;+03:00;EET;EEST;backward;Link to Europe/Chisinau
+RU;Europe/Ulyanovsk;MSK+01 - Ulyanovsk;Canonical;+04:00;+04:00;4;;europe;
+UA;Europe/Uzhgorod;;Link†;+02:00;+03:00;EET;EEST;backward;Link to Europe/Kyiv
+LI;Europe/Vaduz;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Zurich
+VA;Europe/Vatican;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Rome
+AT;Europe/Vienna;;Canonical;+01:00;+02:00;CET;CEST;europe;
+LT;Europe/Vilnius;;Canonical;+02:00;+03:00;EET;EEST;europe;
+RU;Europe/Volgograd;MSK+00 - Volgograd;Canonical;+03:00;+03:00;MSK;;europe;
+PL;Europe/Warsaw;;Canonical;+01:00;+02:00;CET;CEST;europe;
+HR;Europe/Zagreb;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Belgrade
+UA;Europe/Zaporozhye;;Link†;+02:00;+03:00;EET;EEST;backward;Link to Europe/Kyiv
+CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;
+;Factory;;Canonical;+00:00;+00:00;0;;factory;
+GB;GB;;Link;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+GB;GB-Eire;;Link;+00:00;+01:00;GMT;BST;backward;Link to Europe/London
+;GMT;;Link;+00:00;+00:00;GMT;;etcetera;Link to Etc/GMT
+;GMT+0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;GMT-0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;GMT0;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+;Greenwich;;Link;+00:00;+00:00;GMT;;backward;Link to Etc/GMT
+HK;Hongkong;;Link;+08:00;+08:00;HKT;;backward;Link to Asia/Hong_Kong
+;HST;;Link†;−10:00;−10:00;HST;;backward;Link to Pacific/Honolulu
+IS;Iceland;;Link;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan
+MG;Indian/Antananarivo;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+IO;Indian/Chagos;;Canonical;+06:00;+06:00;6;;asia;
+CX;Indian/Christmas;;Link†;+07:00;+07:00;7;;backward;Link to Asia/Bangkok
+CC;Indian/Cocos;;Link†;+06:30;+06:30;630;;backward;Link to Asia/Yangon
+KM;Indian/Comoro;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+TF;Indian/Kerguelen;;Link†;+05:00;+05:00;5;;backward;Link to Indian/Maldives
+SC;Indian/Mahe;;Link†;+04:00;+04:00;4;;backward;Link to Asia/Dubai
+MV, TF;Indian/Maldives;Kerguelen, St Paul I, Amsterdam I;Canonical;+05:00;+05:00;5;;asia;
+MU;Indian/Mauritius;;Canonical;+04:00;+04:00;4;;africa;
+YT;Indian/Mayotte;;Link†;+03:00;+03:00;EAT;;backward;Link to Africa/Nairobi
+RE;Indian/Reunion;;Link†;+04:00;+04:00;4;;backward;Link to Asia/Dubai
+IR;Iran;;Link;+03:30;+03:30;330;;backward;Link to Asia/Tehran
+IL;Israel;;Link;+02:00;+03:00;IST;IDT;backward;Link to Asia/Jerusalem
+JM;Jamaica;;Link;−05:00;−05:00;EST;;backward;Link to America/Jamaica
+JP;Japan;;Link;+09:00;+09:00;JST;;backward;Link to Asia/Tokyo
+MH;Kwajalein;;Link;+12:00;+12:00;12;;backward;Link to Pacific/Kwajalein
+LY;Libya;;Link;+02:00;+02:00;EET;;backward;Link to Africa/Tripoli
+;MET;;Link†;+01:00;+02:00;CET;CEST;backward;Link to Europe/Brussels
+MX;Mexico/BajaNorte;;Link;−08:00;−07:00;PST;PDT;backward;Link to America/Tijuana
+MX;Mexico/BajaSur;;Link;−07:00;−07:00;MST;;backward;Link to America/Mazatlan
+MX;Mexico/General;;Link;−06:00;−06:00;CST;;backward;Link to America/Mexico_City
+;MST;;Link†;−07:00;−07:00;MST;;backward;Link to America/Phoenix
+;MST7MDT;;Link†;−07:00;−06:00;MST;MDT;backward;Link to America/Denver
+US;Navajo;;Link;−07:00;−06:00;MST;MDT;backward;Link to America/Denver
+NZ;NZ;;Link;+12:00;+13:00;NZST;NZDT;backward;Link to Pacific/Auckland
+NZ;NZ-CHAT;;Link;+12:45;+13:45;1245;1345;backward;Link to Pacific/Chatham
+WS;Pacific/Apia;;Canonical;+13:00;+13:00;13;;australasia;
+NZ, AQ;Pacific/Auckland;New Zealand time;Canonical;+12:00;+13:00;NZST;NZDT;australasia;
+PG;Pacific/Bougainville;Bougainville;Canonical;+11:00;+11:00;11;;australasia;
+NZ;Pacific/Chatham;Chatham Islands;Canonical;+12:45;+13:45;1245;1345;australasia;
+FM;Pacific/Chuuk;Chuuk/Truk, Yap;Link†;+10:00;+10:00;10;;backward;Link to Pacific/Port_Moresby
+CL;Pacific/Easter;Easter Island;Canonical;−06:00;−05:00;-6;-5;southamerica;
+VU;Pacific/Efate;;Canonical;+11:00;+11:00;11;;australasia;
+KI;Pacific/Enderbury;;Link†;+13:00;+13:00;13;;backward;Link to Pacific/Kanton
+TK;Pacific/Fakaofo;;Canonical;+13:00;+13:00;13;;australasia;
+FJ;Pacific/Fiji;;Canonical;+12:00;+12:00;12;;australasia;
+TV;Pacific/Funafuti;;Link†;+12:00;+12:00;12;;backward;Link to Pacific/Tarawa
+EC;Pacific/Galapagos;Galápagos Islands;Canonical;−06:00;−06:00;-6;;southamerica;
+PF;Pacific/Gambier;Gambier Islands;Canonical;−09:00;−09:00;-9;;australasia;
+SB, FM;Pacific/Guadalcanal;Pohnpei;Canonical;+11:00;+11:00;11;;australasia;
+GU, MP;Pacific/Guam;;Canonical;+10:00;+10:00;ChST;;australasia;
+US;Pacific/Honolulu;Hawaii;Canonical;−10:00;−10:00;HST;;northamerica;
+UM;Pacific/Johnston;;Link†;−10:00;−10:00;HST;;backward;Link to Pacific/Honolulu
+KI;Pacific/Kanton;Phoenix Islands;Canonical;+13:00;+13:00;13;;australasia;
+KI;Pacific/Kiritimati;Line Islands;Canonical;+14:00;+14:00;14;;australasia;
+FM;Pacific/Kosrae;Kosrae;Canonical;+11:00;+11:00;11;;australasia;
+MH;Pacific/Kwajalein;Kwajalein;Canonical;+12:00;+12:00;12;;australasia;
+MH;Pacific/Majuro;most of Marshall Islands;Link†;+12:00;+12:00;12;;backward;Link to Pacific/Tarawa
+PF;Pacific/Marquesas;Marquesas Islands;Canonical;−09:30;−09:30;-930;;australasia;
+UM;Pacific/Midway;Midway Islands;Link†;−11:00;−11:00;SST;;backward;Link to Pacific/Pago_Pago
+NR;Pacific/Nauru;;Canonical;+12:00;+12:00;12;;australasia;
+NU;Pacific/Niue;;Canonical;−11:00;−11:00;-11;;australasia;
+NF;Pacific/Norfolk;;Canonical;+11:00;+12:00;11;12;australasia;
+NC;Pacific/Noumea;;Canonical;+11:00;+11:00;11;;australasia;
+AS, UM;Pacific/Pago_Pago;Midway;Canonical;−11:00;−11:00;SST;;australasia;
+PW;Pacific/Palau;;Canonical;+09:00;+09:00;9;;australasia;
+PN;Pacific/Pitcairn;;Canonical;−08:00;−08:00;-8;;australasia;
+FM;Pacific/Pohnpei;Pohnpei/Ponape;Link†;+11:00;+11:00;11;;backward;Link to Pacific/Guadalcanal
+FM;Pacific/Ponape;;Link;+11:00;+11:00;11;;backward;Link to Pacific/Guadalcanal
+PG, AQ, FM;Pacific/Port_Moresby;Papua New Guinea (most areas), Chuuk, Yap, Dumont d'Urville;Canonical;+10:00;+10:00;10;;australasia;
+CK;Pacific/Rarotonga;;Canonical;−10:00;−10:00;-10;;australasia;
+MP;Pacific/Saipan;;Link†;+10:00;+10:00;ChST;;backward;Link to Pacific/Guam
+AS;Pacific/Samoa;;Link;−11:00;−11:00;SST;;backward;Link to Pacific/Pago_Pago
+PF;Pacific/Tahiti;Society Islands;Canonical;−10:00;−10:00;-10;;australasia;
+KI, MH, TV, UM, WF;Pacific/Tarawa;Gilberts, Marshalls, Wake;Canonical;+12:00;+12:00;12;;australasia;
+TO;Pacific/Tongatapu;;Canonical;+13:00;+13:00;13;;australasia;
+FM;Pacific/Truk;;Link;+10:00;+10:00;10;;backward;Link to Pacific/Port_Moresby
+UM;Pacific/Wake;Wake Island;Link†;+12:00;+12:00;12;;backward;Link to Pacific/Tarawa
+WF;Pacific/Wallis;;Link†;+12:00;+12:00;12;;backward;Link to Pacific/Tarawa
+FM;Pacific/Yap;;Link;+10:00;+10:00;10;;backward;Link to Pacific/Port_Moresby
+PL;Poland;;Link;+01:00;+02:00;CET;CEST;backward;Link to Europe/Warsaw
+PT;Portugal;;Link;+00:00;+01:00;WET;WEST;backward;Link to Europe/Lisbon
+CN;PRC;;Link;+08:00;+08:00;CST;;backward;Link to Asia/Shanghai
+;PST8PDT;;Link†;−08:00;−07:00;PST;PDT;backward;Link to America/Los_Angeles
+TW;ROC;;Link;+08:00;+08:00;CST;;backward;Link to Asia/Taipei
+KR;ROK;;Link;+09:00;+09:00;KST;;backward;Link to Asia/Seoul
+SG;Singapore;;Link;+08:00;+08:00;8;;backward;Link to Asia/Singapore
+TR;Turkey;;Link;+03:00;+03:00;3;;backward;Link to Europe/Istanbul
+;UCT;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+;Universal;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+US;US/Alaska;;Link;−09:00;−08:00;AKST;AKDT;backward;Link to America/Anchorage
+US;US/Aleutian;;Link;−10:00;−09:00;HST;HDT;backward;Link to America/Adak
+US;US/Arizona;;Link;−07:00;−07:00;MST;;backward;Link to America/Phoenix
+US;US/Central;;Link;−06:00;−05:00;CST;CDT;backward;Link to America/Chicago
+US;US/East-Indiana;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Indiana/Indianapolis
+US;US/Eastern;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/New_York
+US;US/Hawaii;;Link;−10:00;−10:00;HST;;backward;Link to Pacific/Honolulu
+US;US/Indiana-Starke;;Link;−06:00;−05:00;CST;CDT;backward;Link to America/Indiana/Knox
+US;US/Michigan;;Link;−05:00;−04:00;EST;EDT;backward;Link to America/Detroit
+US;US/Mountain;;Link;−07:00;−06:00;MST;MDT;backward;Link to America/Denver
+US;US/Pacific;;Link;−08:00;−07:00;PST;PDT;backward;Link to America/Los_Angeles
+AS;US/Samoa;;Link;−11:00;−11:00;SST;;backward;Link to Pacific/Pago_Pago
+;UTC;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC
+RU;W-SU;;Link;+03:00;+03:00;MSK;;backward;Link to Europe/Moscow
+;WET;;Link†;+00:00;+01:00;WET;WEST;backward;Link to Europe/Lisbon
+;Zulu;;Link;+00:00;+00:00;UTC;;backward;Link to Etc/UTC

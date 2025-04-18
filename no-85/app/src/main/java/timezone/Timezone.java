@@ -36,10 +36,27 @@ public class Timezone implements Callable<Result> {
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
 
+    @Option(names = "-s", description = "set source timezone abbreviation. default is current timezone in switzerland CET")
+    String sourceTimezone = "CET";
+
+    @Option(names = "-t", arity = "0..N", description = "set target timezone abbreviations separated by ,. default is Canada / EST and London / GTM!")
+    String targetTimezones = "EST,GMT";
+
+    @Option(names = "-c", arity = "0..N", description = "set target timezone abbreviations based on a city name separated by ,")
+    String targetTimezoneCities = "";
+
     @Override
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
+        TimezoneDatabase.instance();
+        if (targetTimezoneCities != null && !targetTimezoneCities.isBlank()) {
+            TimezoneDisplay.fromCities(this.sourceTimezone, this.targetTimezoneCities).run();
+        } else if (targetTimezones != null && !targetTimezones.isBlank()){
+            TimezoneDisplay.fromTimezones(this.sourceTimezone, this.targetTimezones).run();
+        } else {
+            System.out.println("Use at least 1 timezone or city as target");
+        }
         return new Result();
     }
 }
