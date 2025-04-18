@@ -47,7 +47,7 @@ public class Timezone implements Callable<Result> {
     }
 
     @Override
-    public Result call() throws Exception {
+    public Result call() {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
         TimezoneDatabase.instance();

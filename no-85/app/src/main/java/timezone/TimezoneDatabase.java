@@ -60,28 +60,28 @@ public class TimezoneDatabase {
                         // Add timezone to the map using the tzIdentifier as key
                         var alias = tz.backwardAliasName();
                         if (!tz.isBackward()) {
-                            this.timezonesById.computeIfAbsent(tz.tzIdentifier(), k -> new ArrayList<>()).add(tz);
+                            this.timezonesById.computeIfAbsent(tz.tzIdentifier(), _ -> new ArrayList<>()).add(tz);
                             // Add timezone to the map using both standard and daylight saving time abbreviations
                             if (tz.timezoneSdt() != null && !tz.timezoneSdt().isBlank()) {
-                                this.timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(), k -> new ArrayList<>()).add(tz);
+                                this.timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(), _ -> new ArrayList<>()).add(tz);
                             }
                             if (tz.timezoneDst() != null && !tz.timezoneDst().isBlank()) {
                                 if (!tz.timezoneDst().equals(tz.timezoneSdt())) {
-                                    this.timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), k -> new ArrayList<>()).add(tz);
+                                    this.timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), _ -> new ArrayList<>()).add(tz);
                                 }
                             }
                             timezones.add(tz);
                         } else if (alias.isPresent()) {
                             var existingBackLink = timezonesById.get(alias.get());
                             if (existingBackLink != null) {
-                                timezonesById.computeIfAbsent(tz.tzIdentifier(), k -> new ArrayList<>()).add(existingBackLink.getFirst().makeAlias());
+                                timezonesById.computeIfAbsent(tz.tzIdentifier(), _ -> new ArrayList<>()).add(existingBackLink.getFirst().makeAlias());
                             } else {
-                                fill2ndPass.computeIfAbsent(alias.get(), k -> new ArrayList<>()).add(tz);
+                                fill2ndPass.computeIfAbsent(alias.get(), _ -> new ArrayList<>()).add(tz);
                             }
                         }
                         var countries = Arrays.stream(tz.countryCodes().split(",")).map(String::trim).toList();
                         for (var country : countries) {
-                            timezonesByCountry.computeIfAbsent(country, k -> new ArrayList<>()).add(tz);
+                            timezonesByCountry.computeIfAbsent(country, _ -> new ArrayList<>()).add(tz);
                         }
                     }
                 }
