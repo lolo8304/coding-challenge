@@ -8,6 +8,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+import java.time.Instant;
 import java.util.concurrent.Callable;
 
 @Command(name = "timezone", mixinStandardHelpOptions = true, version = "timezone 1.0", description = "This challenge is to build your own timezone converter")
@@ -45,15 +46,22 @@ public class Timezone implements Callable<Result> {
     @Option(names = "-c", arity = "0..N", description = "set target timezone abbreviations based on a city name separated by ,")
     String targetTimezoneCities = "";
 
+    @Option(names = "--cc", arity = "0..N", description = "set target timezone country based separated by ,")
+    String targetTimezoneCountries = "";
+
     @Override
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
         TimezoneDatabase.instance();
+        var now = Instant.now();
+        //now = Instant.parse("2025-03-12T10:00:00Z"); // UTC-Zeit
         if (targetTimezoneCities != null && !targetTimezoneCities.isBlank()) {
-            TimezoneDisplay.fromCities(this.sourceTimezone, this.targetTimezoneCities).run();
+            TimezoneDisplay.fromCities(this.sourceTimezone, this.targetTimezoneCities).run(now);
+        } else if (targetTimezoneCountries != null && !targetTimezoneCountries.isBlank()){
+            TimezoneDisplay.fromCountries(this.sourceTimezone, this.targetTimezoneCountries).run(now);
         } else if (targetTimezones != null && !targetTimezones.isBlank()){
-            TimezoneDisplay.fromTimezones(this.sourceTimezone, this.targetTimezones).run();
+            TimezoneDisplay.fromTimezones(this.sourceTimezone, this.targetTimezones).run(now);
         } else {
             System.out.println("Use at least 1 timezone or city as target");
         }

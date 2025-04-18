@@ -1,5 +1,13 @@
 package timezone;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.zone.ZoneOffsetTransition;
+import java.time.zone.ZoneOffsetTransitionRule;
+import java.time.zone.ZoneRules;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -14,9 +22,13 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
 
     @Override
     public String toString() {
-        return String.format("%s [%s] %s/%s - SDT: %s (%s), DST: %s (%s)",
-                tzIdentifier, countryCodes, timezoneSdt, timezoneDst, utcOffsetSdt, type, utcOffsetDst, type
+        return String.format("%s [%s] %s/%s - SDT: %s (%s), DST: %s (%s) - comment: %s",
+                tzIdentifier, countryCodes, timezoneSdt, timezoneDst, utcOffsetSdt, type, utcOffsetDst, type, comments
         );
+    }
+
+    public String[] countries() {
+        return Arrays.stream(this.countryCodes.split(",")).map(String::trim).toArray(String[]::new);
     }
 
     public boolean isBackward() {
@@ -47,5 +59,24 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         } else {
             return Stream.of();
         }
+    }
+
+    public String timezoneOffset(Instant currentTime) {
+        ZoneId zoneId = ZoneId.of(this.tzIdentifier());
+        ZoneRules rules = zoneId.getRules();
+
+        for (ZoneOffsetTransitionRule transitionRule : rules.getTransitionRules()) {
+            ZoneOffsetTransition transition = transitionRule.createTransition(2025); // Übergang für 2025
+            Instant transitionInstant = transition.getInstant();
+
+            if (currentTime.isBefore(transitionInstant)) {
+                // SDT
+                return this.utcOffsetSdt;
+            } else if (currentTime.equals(transitionInstant) || currentTime.isAfter(transitionInstant)) {
+                // DST
+                return this.utcOffsetDst;
+            }
+        }
+        return this.utcOffsetSdt;
     }
 }

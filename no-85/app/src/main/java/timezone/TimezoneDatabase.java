@@ -9,11 +9,13 @@ public class TimezoneDatabase {
     private final List<TimezoneAbbr> timezones;
     private final Map<String, List<TimezoneAbbr>> timezonesByAbbr;
     private final Map<String, List<TimezoneAbbr>> timezonesById;
+    private final Map<String, List<TimezoneAbbr>> timezonesByCountry;
 
     private TimezoneDatabase() {
         timezones = new ArrayList<>();
         timezonesByAbbr = new HashMap<>();
         timezonesById = new HashMap<>();
+        timezonesByCountry = new HashMap<>();
         loadTimezones();
     }
 
@@ -51,17 +53,18 @@ public class TimezoneDatabase {
                                 parts[8].trim(),
                                 parts[9].trim()
                         );
+                        if (tz.type().equals("Link†")) continue;
                         // Add timezone to the map using the tzIdentifier as key
                         var alias = tz.backwardAliasName();
                         if (!tz.isBackward()) {
-                            timezonesById.computeIfAbsent(tz.tzIdentifier(), k -> new ArrayList<>()).add(tz);
+                            this.timezonesById.computeIfAbsent(tz.tzIdentifier(), k -> new ArrayList<>()).add(tz);
                             // Add timezone to the map using both standard and daylight saving time abbreviations
                             if (tz.timezoneSdt() != null && !tz.timezoneSdt().isBlank()) {
-                                timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(),k -> new ArrayList<>()).add(tz);
+                                this.timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(),k -> new ArrayList<>()).add(tz);
                             }
                             if (tz.timezoneDst() != null && !tz.timezoneDst().isBlank()) {
                                 if (!tz.timezoneDst().equals(tz.timezoneSdt())) {
-                                    timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), k -> new ArrayList<>()).add(tz);
+                                    this.timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), k -> new ArrayList<>()).add(tz);
                                 }
                             }
                             timezones.add(tz);
@@ -72,6 +75,10 @@ public class TimezoneDatabase {
                             } else {
                                 fill2ndPass.computeIfAbsent(alias.get(), k -> new ArrayList<>()).add(tz);
                             }
+                        }
+                        var countries = Arrays.stream(tz.countryCodes().split(",")).map(String::trim).toList();
+                        for (var country : countries) {
+                            timezonesByCountry.computeIfAbsent(country, k -> new ArrayList<>()).add(tz);
                         }
                     }
                 }
@@ -96,18 +103,40 @@ public class TimezoneDatabase {
                 }
             }
         }
-        return result.stream().filter(x -> !x.isAlias()).toList();
+        return result.stream().filter(x -> true).toList();
+    }
+    public List<TimezoneAbbr> getTimezoneByCountries(String[] countries) {
+        List<TimezoneAbbr> result = new ArrayList<>();
+        for (var country : countries) {
+            String cityUpper = country.toUpperCase();
+            var tzCountries = timezonesByCountry.get(cityUpper);
+            if (tzCountries != null) {
+                result.addAll(tzCountries);
+            }
+        }
+        return result;
     }
 
-    public List<String> getTimezoneByNames(String[] names) {
+    public List<String> getTimezoneNamesByNames(String[] names) {
         Set<String> result = new HashSet<>();
         for (var name : names) {
-            var zone = timezonesByAbbr.get(name.toUpperCase());
-            if (zone != null) {
-                result.addAll(zone.stream().flatMap(TimezoneAbbr::timezoneStream).toList());
+            var zones = this.timezonesByAbbr.get(name.toUpperCase());
+            if (zones != null) {
+                result.addAll(zones.stream().flatMap(TimezoneAbbr::timezoneStream).toList());
             }
         }
         return new ArrayList<>(result);
+    }
+
+    public List<TimezoneAbbr> getTimezonesByNames(String[] names) {
+        List<TimezoneAbbr> result = new ArrayList<>();
+        for (var name : names) {
+            var zones = this.timezonesByAbbr.get(name.toUpperCase());
+            if (zones != null) {
+                result.addAll(zones);
+            }
+        }
+        return result;
     }
 
 }
