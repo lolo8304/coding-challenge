@@ -12,9 +12,11 @@
         <module name="no-84.app.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="23" />
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="no-84.app.main" options="-Aproject=no-84/app" />
+    </option>
   </component>
 </project>
