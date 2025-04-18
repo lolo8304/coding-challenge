@@ -15,12 +15,27 @@ import java.util.concurrent.Callable;
 public class Timezone implements Callable<Result> {
 
     public static int _verbose = 0;
+    @Option(names = "-v", description = "verbose model level 1")
+    boolean verbose = false;
+    @Option(names = "-vv", description = "verbose model level 2")
+    boolean verbose2 = false;
+    @Option(names = "-s", description = "set source timezone abbreviation. default is current timezone in switzerland CET")
+    String sourceTimezone = "CET";
+    @Option(names = "-t", arity = "0..N", description = "set target timezone abbreviations separated by ,. default is Canada / EST and London / GTM!")
+    String targetTimezones = "EST,GMT";
+    @Option(names = "-c", arity = "0..N", description = "set target timezone abbreviations based on a city name separated by ,")
+    String targetTimezoneCities = "";
+    @Option(names = "--cc", arity = "0..N", description = "set target timezone country based separated by ,")
+    String targetTimezoneCountries = "";
+
     public static boolean verbose() {
         return _verbose >= 1;
     }
+
     public static boolean verbose2() {
         return _verbose >= 2;
     }
+
     public static void main(String[] args) {
         var timezone = new Timezone();
         var cmd = new CommandLine(timezone);
@@ -31,24 +46,6 @@ public class Timezone implements Callable<Result> {
         }
     }
 
-    @Option(names = "-v", description = "verbose model level 1")
-    boolean verbose = false;
-
-    @Option(names = "-vv", description = "verbose model level 2")
-    boolean verbose2 = false;
-
-    @Option(names = "-s", description = "set source timezone abbreviation. default is current timezone in switzerland CET")
-    String sourceTimezone = "CET";
-
-    @Option(names = "-t", arity = "0..N", description = "set target timezone abbreviations separated by ,. default is Canada / EST and London / GTM!")
-    String targetTimezones = "EST,GMT";
-
-    @Option(names = "-c", arity = "0..N", description = "set target timezone abbreviations based on a city name separated by ,")
-    String targetTimezoneCities = "";
-
-    @Option(names = "--cc", arity = "0..N", description = "set target timezone country based separated by ,")
-    String targetTimezoneCountries = "";
-
     @Override
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
@@ -58,9 +55,9 @@ public class Timezone implements Callable<Result> {
         //now = Instant.parse("2025-03-12T10:00:00Z"); // UTC-Zeit
         if (targetTimezoneCities != null && !targetTimezoneCities.isBlank()) {
             TimezoneDisplay.fromCities(this.sourceTimezone, this.targetTimezoneCities).run(now);
-        } else if (targetTimezoneCountries != null && !targetTimezoneCountries.isBlank()){
+        } else if (targetTimezoneCountries != null && !targetTimezoneCountries.isBlank()) {
             TimezoneDisplay.fromCountries(this.sourceTimezone, this.targetTimezoneCountries).run(now);
-        } else if (targetTimezones != null && !targetTimezones.isBlank()){
+        } else if (targetTimezones != null && !targetTimezones.isBlank()) {
             TimezoneDisplay.fromTimezones(this.sourceTimezone, this.targetTimezones).run(now);
         } else {
             System.out.println("Use at least 1 timezone or city as target");

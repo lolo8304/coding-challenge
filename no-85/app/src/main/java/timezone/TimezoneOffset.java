@@ -1,6 +1,6 @@
 package timezone;
 
-public record TimezoneOffset (String offsetMMHH, boolean plus) implements Comparable {
+public record TimezoneOffset(String offsetMMHH, boolean plus) implements Comparable {
     public TimezoneOffset(String offset) {
         this(offset.substring(1), offset.charAt(0) == '+');
     }
@@ -14,7 +14,7 @@ public record TimezoneOffset (String offsetMMHH, boolean plus) implements Compar
         } else if (o instanceof String s && !s.isBlank()) {
             return this.compareTo(new TimezoneOffset(s));
         }
-        throw new RuntimeException("Cannot compare this object "+o);
+        throw new RuntimeException("Cannot compare this object " + o);
     }
 
     @Override

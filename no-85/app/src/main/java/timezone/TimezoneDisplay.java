@@ -1,8 +1,6 @@
 package timezone;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,22 +14,33 @@ public class TimezoneDisplay {
     private final String[] cities;
     private final List<TimezoneAbbr> targetTimezones;
 
+    public TimezoneDisplay(String source, String[] targets, String[] countries, String[] cities, List<TimezoneAbbr> targetTimezones) {
+        this.source = source;
+        this.targets = targets;
+        this.countries = countries;
+        this.cities = cities;
+        this.targetTimezones = targetTimezones.stream().anyMatch(x -> !x.isAlias()) ? targetTimezones.stream().filter(x -> !x.isAlias()).toList() : targetTimezones;
+    }
+
     public static TimezoneDisplay fromTimezones(String source, String targets) {
         var timezoneArray = Arrays.stream(targets.split(",")).map(String::trim).toArray(String[]::new);
         return fromTimezones(source, timezoneArray);
     }
+
     public static TimezoneDisplay fromTimezones(String source, String[] names) {
         String[] cities = {};
         var validZones = TimezoneDatabase.instance().getTimezoneNamesByNames(names);
         var zones = TimezoneDatabase.instance().getTimezonesByNames(validZones.toArray(String[]::new));
         return new TimezoneDisplay(source, validZones.toArray(String[]::new), cities, cities, zones);
     }
+
     public static TimezoneDisplay fromCities(String source, String[] cities) {
         String[] timezones = {};
         var zones = TimezoneDatabase.instance().getTimezoneLikeCities(cities);
         var timezoneIds = zones.stream().map(TimezoneAbbr::tzIdentifier).toArray(String[]::new);
         return new TimezoneDisplay(source, timezones, timezones, timezoneIds, zones);
     }
+
     public static TimezoneDisplay fromCities(String source, String cities) {
         var cityArray = Arrays.stream(cities.split(",")).map(String::trim).toArray(String[]::new);
         return fromCities(source, cityArray);
@@ -45,25 +54,20 @@ public class TimezoneDisplay {
         countryIds = new HashSet<>(List.of(countryIds)).toArray(String[]::new);
         return new TimezoneDisplay(source, timezones, countryIds, timezones, zones);
     }
+
     public static TimezoneDisplay fromCountries(String source, String countries) {
         var countryArray = Arrays.stream(countries.split(",")).map(String::trim).toArray(String[]::new);
         return fromCountries(source, countryArray);
     }
 
-    public TimezoneDisplay(String source, String[] targets, String[] countries, String[] cities, List<TimezoneAbbr> targetTimezones) {
-        this.source = source;
-        this.targets = targets;
-        this.countries = countries;
-        this.cities = cities;
-        this.targetTimezones = targetTimezones.stream().anyMatch(x -> !x.isAlias()) ? targetTimezones.stream().filter(x->!x.isAlias()).toList() : targetTimezones;
-    }
-
     public String getSource() {
         return source;
     }
+
     public String[] getTargets() {
         return targets;
     }
+
     public String[] getCities() {
         return cities;
     }

@@ -16,7 +16,7 @@ class TimezoneTest {
     private Reader reader;
 
     void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = TimezoneTest.class.getResource("tests/"+testfile);
+        URL resource = TimezoneTest.class.getResource("tests/" + testfile);
         File file = Paths.get(resource.toURI()).toFile();
         reader = new FileReader(file);
     }
@@ -28,7 +28,8 @@ class TimezoneTest {
         }
     }
 
-    @Test void test() throws URISyntaxException, IOException {
+    @Test
+    void test() throws URISyntaxException, IOException {
 
     }
 

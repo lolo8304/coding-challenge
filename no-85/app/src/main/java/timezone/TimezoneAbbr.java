@@ -1,9 +1,7 @@
 package timezone;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.zone.ZoneOffsetTransition;
 import java.time.zone.ZoneOffsetTransitionRule;
 import java.time.zone.ZoneRules;
@@ -12,7 +10,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comments, String type, String utcOffsetSdt,
-                           String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes, boolean isAlias) {
+                           String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes,
+                           boolean isAlias) {
 
     public TimezoneAbbr(String countryCodes, String tzIdentifier, String comments, String type, String utcOffsetSdt,
                         String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes) {
@@ -54,7 +53,7 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
             return Stream.of(timezoneSdt, timezoneDst);
         } else if (timezoneSdt != null && !timezoneSdt.isBlank()) {
             return Stream.of(timezoneSdt);
-        } else if (timezoneDst != null && !timezoneDst.isBlank()){
+        } else if (timezoneDst != null && !timezoneDst.isBlank()) {
             return Stream.of(timezoneDst);
         } else {
             return Stream.of();
