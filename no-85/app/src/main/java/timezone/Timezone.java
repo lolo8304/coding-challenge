@@ -21,12 +21,12 @@ public class Timezone implements Callable<Result> {
     boolean verbose2 = false;
     @Option(names = "-s", description = "set source timezone abbreviation. default is current timezone in switzerland CET")
     String sourceTimezone = "CET";
-    @Option(names = "-t", arity = "0..N", description = "set target timezone abbreviations separated by ,. default is Canada / EST and London / GTM!")
-    String targetTimezones = "EST,GMT";
+    @Option(names = "-t", arity = "0..N", description = "set target timezone abbreviations separated by ,")
+    String targetTimezones = "";
     @Option(names = "-c", arity = "0..N", description = "set target timezone abbreviations based on a city name separated by ,")
     String targetTimezoneCities = "";
-    @Option(names = "--cc", arity = "0..N", description = "set target timezone country based separated by ,")
-    String targetTimezoneCountries = "";
+    @Option(names = "--cc", arity = "0..N", description = "set target timezone country based separated by , default CA,CH")
+    String targetTimezoneCountries = "CA,CH";
 
     public static boolean verbose() {
         return _verbose >= 1;
