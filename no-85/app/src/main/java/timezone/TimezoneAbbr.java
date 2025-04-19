@@ -2,8 +2,6 @@ package timezone;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.zone.ZoneOffsetTransition;
-import java.time.zone.ZoneOffsetTransitionRule;
 import java.time.zone.ZoneRules;
 import java.util.Arrays;
 import java.util.Optional;
@@ -17,7 +15,35 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
                         String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes) {
         this(countryCodes, tzIdentifier, comments, type, utcOffsetSdt, utcOffsetDst, timezoneSdt, timezoneDst, source, notes, false);
     }
-    // Getters
+
+    public static Optional<TimezoneAbbr> fromTzLine(String tzLine) {
+        if (tzLine == null || tzLine.isBlank()) {
+            return Optional.empty();
+        }
+        if (tzLine.endsWith(";")) {
+            tzLine += " ";
+        }
+        String[] parts = tzLine.split(";");
+        if (parts.length < 10) {
+            throw new IllegalArgumentException("Invalid timezone line: " + tzLine);
+        }
+        var tz = new TimezoneAbbr(
+                parts[0].trim(),
+                parts[1].trim(),
+                parts[2].trim(),
+                parts[3].trim(),
+                parts[4].trim(),
+                parts[5].trim(),
+                parts[6].trim(),
+                parts[7].trim(),
+                parts[8].trim(),
+                parts[9].trim()
+        );
+        if (tz.type.equals("Link†")) {
+            return Optional.empty();
+        }
+        return Optional.of(tz);
+    }
 
     @Override
     public String toString() {
@@ -60,19 +86,31 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         }
     }
 
-public String timezoneOffset(Instant currentTime) {
-    ZoneId zoneId = ZoneId.of(this.tzIdentifier());
-    ZoneRules rules = zoneId.getRules();
+    public TimezoneOffset timezoneOffset(Instant currentTime) {
+        ZoneId zoneId = ZoneId.of(this.tzIdentifier());
+        ZoneRules rules = zoneId.getRules();
 
-    ZoneOffset actualOffset = rules.getOffset(currentTime);
-    ZoneOffset standardOffset = rules.getStandardOffset(currentTime);
+        var actualOffset = rules.getOffset(currentTime);
+        var standardOffset = rules.getStandardOffset(currentTime);
 
-    // Compare actual offset with standard to determine DST
-    if (!actualOffset.equals(standardOffset)) {
-        return this.utcOffsetDst; // Daylight Saving Time
-    } else {
-        return this.utcOffsetSdt; // Standard Time
+        // Compare actual offset with standard to determine DST
+        if (!actualOffset.equals(standardOffset)) {
+            return new TimezoneOffset(this.utcOffsetDst); // Daylight Saving Time
+        } else {
+            return new TimezoneOffset(this.utcOffsetSdt); // Standard Time
+        }
     }
-}
+
+    public TimezoneAbbr getAliasTimezone() {
+        if (!isAlias) {
+            return this;
+        }
+        var alias = backwardAliasName();
+        if (alias.isPresent()) {
+            var names = new String[] { alias.get() };
+            return TimezoneDatabase.instance().getTimezonesByNames(names).stream().filter(x -> !x.isAlias()).findFirst().orElse(this);
+        }
+        return this;
+    }
 
 }

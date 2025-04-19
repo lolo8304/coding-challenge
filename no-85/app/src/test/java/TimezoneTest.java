@@ -5,11 +5,14 @@
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import timezone.TimezoneAbbr;
+import timezone.TimezoneOffset;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 class TimezoneTest {
 
@@ -29,7 +32,174 @@ class TimezoneTest {
     }
 
     @Test
-    void test() throws URISyntaxException, IOException {
+    void fromTzLine_Zurich_ok() throws URISyntaxException, IOException {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+
+        // Action
+        var tz = TimezoneAbbr.fromTzLine(zh);
+
+        // Assert
+        assert tz.isPresent();
+        assert tz.get().countryCodes().equals("CH, DE, LI");
+        assert tz.get().tzIdentifier().equals("Europe/Zurich");
+        assert tz.get().comments().equals("Büsingen");
+        assert tz.get().type().equals("Canonical");
+        assert tz.get().utcOffsetSdt().equals("+01:00");
+        assert tz.get().utcOffsetDst().equals("+02:00");
+        assert tz.get().timezoneSdt().equals("CET");
+        assert tz.get().timezoneDst().equals("CEST");
+        assert tz.get().source().equals("europe");
+        assert tz.get().notes().equals("");
+        assert !tz.get().isAlias();
+        assert tz.get().toString().equals("Europe/Zurich [CH, DE, LI] CET/CEST - SDT: +01:00 (Canonical), DST: +02:00 (Canonical) - comment: Büsingen");
+    }
+
+    @Test
+    void fromTzLine_Zurich_alias() throws URISyntaxException, IOException {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Link†;+01:00;+02:00;CET;CEST;europe;";
+
+        // Action
+        var tz = TimezoneAbbr.fromTzLine(zh);
+
+        // Assert
+        assert !tz.isPresent();
+    }
+
+    @Test
+    void countries_Zurich_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+
+        // Action
+        var countries = tz.countries();
+
+        // Assert
+        assert countries.length == 3;
+        assert countries[0].equals("CH");
+        assert countries[1].equals("DE");
+        assert countries[2].equals("LI");
+    }
+
+    @Test
+    void backwardAliasName_Antananarivo_ok() {
+        // Arrange
+        var line = "IS;Iceland;;Link;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan";
+        var tz = TimezoneAbbr.fromTzLine(line).get();
+
+        // Action
+        var alias = tz.backwardAliasName();
+
+        // Assert
+        assert alias.isPresent();
+        assert alias.get().equals("Africa/Abidjan");
+    }
+
+    @Test
+    void isBackward_Antananarivo_ok() {
+        // Arrange
+        var line = "IS;Iceland;;Link;+00:00;+00:00;GMT;;backward;Link to Africa/Abidjan";
+        var tz = TimezoneAbbr.fromTzLine(line).get();
+
+        // Action
+        var backward = tz.isBackward();
+
+        // Assert
+        assert backward;
+    }
+
+    @Test
+    void makeAlias_Zurich_alias() throws URISyntaxException, IOException {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Link;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+
+        // Action
+        var alias = tz.makeAlias();
+
+        // Assert
+        assert alias.isAlias();
+    }
+
+    @Test
+    void timezoneOffset_ZurichbeforeSummerTime_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+        var utcTime = Instant.parse("2025-03-12T10:00:00Z"); // UTC-Zeit
+        var expected = new TimezoneOffset("+01:00");
+
+        // Action
+        var result = tz.timezoneOffset(utcTime);
+
+        // Assert
+        assert result.equals(expected);
+
+    }
+
+    @Test
+    void timezoneOffset_ZurichAfterSummerTime_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+        var utcTime = Instant.parse("2025-05-25T00:00:00Z"); // UTC-Zeit
+        var expected = new TimezoneOffset("+02:00");
+
+        // Action
+        var result = tz.timezoneOffset(utcTime);
+
+        // Assert
+        assert result.equals(expected);
+
+    }
+
+    @Test
+    void timezoneOffset_Zurich1SecBefore_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+        var utcTime = Instant.parse("2025-03-30T00:59:59Z"); // UTC-Zeit
+        var expected = new TimezoneOffset("+01:00");
+
+        // Action
+        var result = tz.timezoneOffset(utcTime);
+
+        // Assert
+        assert result.equals(expected);
+
+    }
+
+    @Test
+    void timezoneOffset_ZurichAtSummerTime_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+        var utcTime = Instant.parse("2025-03-30T01:00:00Z"); // UTC-Zeit
+        var expected = new TimezoneOffset("+02:00");
+
+        // Action
+        var result = tz.timezoneOffset(utcTime);
+
+        // Assert
+        assert result.equals(expected);
+
+    }
+
+    @Test
+    void timezoneOffset_Zurich1SecAfter_ok() {
+        // Arrange
+        var zh = "CH, DE, LI;Europe/Zurich;Büsingen;Canonical;+01:00;+02:00;CET;CEST;europe;";
+        var tz = TimezoneAbbr.fromTzLine(zh).get();
+        var utcTime = Instant.parse("2025-03-30T01:00:01Z"); // UTC-Zeit
+        var expected = new TimezoneOffset("+02:00");
+
+        // Action
+        var result = tz.timezoneOffset(utcTime);
+
+        // Assert
+        assert result.equals(expected);
 
     }
 

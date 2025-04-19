@@ -54,11 +54,11 @@ public class Timezone implements Callable<Result> {
         var now = Instant.now();
         //now = Instant.parse("2025-03-12T10:00:00Z"); // UTC-Zeit
         if (targetTimezoneCities != null && !targetTimezoneCities.isBlank()) {
-            TimezoneDisplay.fromCities(this.sourceTimezone, this.targetTimezoneCities).run(now);
+            TimezoneConverter.fromCities(this.sourceTimezone, this.targetTimezoneCities).run(now);
         } else if (targetTimezoneCountries != null && !targetTimezoneCountries.isBlank()) {
-            TimezoneDisplay.fromCountries(this.sourceTimezone, this.targetTimezoneCountries).run(now);
+            TimezoneConverter.fromCountries(this.sourceTimezone, this.targetTimezoneCountries).run(now);
         } else if (targetTimezones != null && !targetTimezones.isBlank()) {
-            TimezoneDisplay.fromTimezones(this.sourceTimezone, this.targetTimezones).run(now);
+            TimezoneConverter.fromTimezones(this.sourceTimezone, this.targetTimezones).run(now);
         } else {
             System.out.println("Use at least 1 timezone or city as target");
         }
