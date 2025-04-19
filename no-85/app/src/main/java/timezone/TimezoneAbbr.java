@@ -4,16 +4,30 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.zone.ZoneRules;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comments, String type, String utcOffsetSdt,
                            String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes,
-                           boolean isAlias) {
+                           boolean isAlias) implements Comparable<TimezoneAbbr> {
 
     public TimezoneAbbr(String countryCodes, String tzIdentifier, String comments, String type, String utcOffsetSdt,
                         String utcOffsetDst, String timezoneSdt, String timezoneDst, String source, String notes) {
         this(countryCodes, tzIdentifier, comments, type, utcOffsetSdt, utcOffsetDst, timezoneSdt, timezoneDst, source, notes, false);
+    }
+
+    @Override
+    public int compareTo(TimezoneAbbr other) {
+        int result = this.tzIdentifier.compareTo(other.tzIdentifier);
+        if (result == 0) {
+            result = this.countryCodes.compareTo(other.countryCodes);
+        }
+        return result;
+    }
+
+    public static Comparator<TimezoneAbbr> getComparator() {
+        return Comparator.comparing(TimezoneAbbr::timezoneOffsetSdt).thenComparing(TimezoneAbbr::timezoneOffsetDst).thenComparing(TimezoneAbbr::tzIdentifier);
     }
 
     public static Optional<TimezoneAbbr> fromTzLine(String tzLine) {
@@ -113,4 +127,20 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         return this;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || (obj instanceof TimezoneAbbr other && this.tzIdentifier.equals(other.tzIdentifier));
+    }
+
+    @Override
+    public int hashCode() {
+        return tzIdentifier.hashCode();
+    }
+
+    public TimezoneOffset timezoneOffsetSdt() {
+        return new TimezoneOffset(this.timezoneSdt);
+    }
+    public TimezoneOffset timezoneOffsetDst() {
+        return this.timezoneDst != null && !this.timezoneDst.isBlank() ? new TimezoneOffset(this.timezoneDst) : this.timezoneOffsetSdt();
+    }
 }
