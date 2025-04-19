@@ -60,22 +60,19 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         }
     }
 
-    public String timezoneOffset(Instant currentTime) {
-        ZoneId zoneId = ZoneId.of(this.tzIdentifier());
-        ZoneRules rules = zoneId.getRules();
+public String timezoneOffset(Instant currentTime) {
+    ZoneId zoneId = ZoneId.of(this.tzIdentifier());
+    ZoneRules rules = zoneId.getRules();
 
-        for (ZoneOffsetTransitionRule transitionRule : rules.getTransitionRules()) {
-            ZoneOffsetTransition transition = transitionRule.createTransition(2025); // Übergang für 2025
-            Instant transitionInstant = transition.getInstant();
+    ZoneOffset actualOffset = rules.getOffset(currentTime);
+    ZoneOffset standardOffset = rules.getStandardOffset(currentTime);
 
-            if (currentTime.isBefore(transitionInstant)) {
-                // SDT
-                return this.utcOffsetSdt;
-            } else if (currentTime.equals(transitionInstant) || currentTime.isAfter(transitionInstant)) {
-                // DST
-                return this.utcOffsetDst;
-            }
-        }
-        return this.utcOffsetSdt;
+    // Compare actual offset with standard to determine DST
+    if (!actualOffset.equals(standardOffset)) {
+        return this.utcOffsetDst; // Daylight Saving Time
+    } else {
+        return this.utcOffsetSdt; // Standard Time
     }
+}
+
 }
