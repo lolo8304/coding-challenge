@@ -1,7 +1,6 @@
 package timezone;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -90,7 +89,7 @@ public class TimezoneConverter {
         var sourceZone = TimezoneDatabase.instance().getTimezoneById(source);
         if (sourceZone.isPresent()) {
             var zone = sourceZone.get();
-            var results = zone.mapToTimezones(utcTime, this.targetTimezones, 8);
+            var results = zone.mapTimeToTimezones(utcTime, this.targetTimezones, 8);
             for (var result : results) {
                 System.out.println(result);
             }

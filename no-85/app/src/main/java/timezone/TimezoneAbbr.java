@@ -142,12 +142,12 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         return this.utcOffsetDst != null && !this.utcOffsetDst.isBlank() ? new TimezoneOffset(this.utcOffsetDst) : this.timezoneOffsetSdt();
     }
 
-    public List<Map<String, String>> mapToTimezones(
+    public List<Map<String, String>> mapTimeToTimezones(
             Instant startInstant,
             List<TimezoneAbbr> timezones,
             int hoursIncrement
     ) {
-        return this.timezoneOffset(startInstant).mapToTimezones(startInstant, timezones, hoursIncrement).stream().map(x -> {
+        return this.timezoneOffset(startInstant).mapTimeToTimezones(startInstant, timezones, hoursIncrement).stream().map(x -> {
             x.put("source_id", this.tzIdentifier);
             return x;
         }).toList();

@@ -68,25 +68,25 @@ public record TimezoneOffset(String offsetMMHH, boolean plus) implements Compara
         return this.offsetMMHH.hashCode() + (this.plus ? 1 : -1);
     }
 
-    public List<Map<String, String>> mapToTimezones(
-            Instant startInstant,
+    public List<Map<String, String>> mapTimeToTimezones(
+            Instant time,
             List<TimezoneAbbr> timezones,
             int hoursIncrement
     ) {
         int sourceOffsetMin = this.toMinutes();
         var targetOffsets = timezones.stream()
-                .map( x-> x.timezoneOffset(startInstant))
+                .map( x-> x.timezoneOffset(time))
                 .toList();
         var targetOffsetsMin = targetOffsets.stream()
                 .map( x-> x.toMinutes())
                 .toList();
 
-        List<Map<String, String>> result = new ArrayList<>();
+        var result = new ArrayList<Map<String, String>>();
 
         for (int i = 0; i < hoursIncrement; i++) {
             var row = new LinkedHashMap<String, String>();
 
-            var utc = startInstant.plus(Duration.ofHours(i));
+            var utc = time.plus(Duration.ofHours(i));
             var sourceTime = utc.plus(Duration.ofMinutes(sourceOffsetMin))
                     .atOffset(ZoneOffset.UTC);
 
