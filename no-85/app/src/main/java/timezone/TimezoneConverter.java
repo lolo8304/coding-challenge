@@ -87,15 +87,15 @@ public class TimezoneConverter {
         System.out.println("Target countries: " + String.join(", ", countries));
         System.out.println("Target cities: " + String.join(", ", cities));
         System.out.println("Zones: \n" + String.join("\n", targetTimezones.stream().map(TimezoneAbbr::toString).toList()));
-        var sortedList = new HashSet<TimezoneOffset>();
-        for (var zone : targetTimezones) {
-            var currentZone = zone.timezoneOffset(utcTime);
-            sortedList.add(currentZone);
-        }
-        var list = new ArrayList<>(sortedList.stream().toList());
-        list.sort(TimezoneOffset::compareTo);
-        for (var zone : list) {
-            System.out.println(zone);
+        var sourceZone = TimezoneDatabase.instance().getTimezoneById(source);
+        if (sourceZone.isPresent()) {
+            var zone = sourceZone.get();
+            var results = zone.mapToTimezones(utcTime, this.targetTimezones, 8);
+            for (var result : results) {
+                System.out.println(result);
+            }
+        } else {
+            System.out.println("Source timezone not found.");
         }
     }
 

@@ -88,7 +88,7 @@ public class TimezoneDatabase {
         return new UniqueList<>(TimezoneAbbr.getComparator());
     }
 
-    public Optional<Object> getTimezoneById(String id) {
+    public Optional<TimezoneAbbr> getTimezoneById(String id) {
         var tz = this.timezonesById.get(id);
         if (tz != null && !tz.isEmpty()) {
             return Optional.of(tz.getFirst());

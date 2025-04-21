@@ -3,9 +3,7 @@ package timezone;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.zone.ZoneRules;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comments, String type, String utcOffsetSdt,
@@ -143,4 +141,16 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
     public TimezoneOffset timezoneOffsetDst() {
         return this.utcOffsetDst != null && !this.utcOffsetDst.isBlank() ? new TimezoneOffset(this.utcOffsetDst) : this.timezoneOffsetSdt();
     }
+
+    public List<Map<String, String>> mapToTimezones(
+            Instant startInstant,
+            List<TimezoneAbbr> timezones,
+            int hoursIncrement
+    ) {
+        return this.timezoneOffset(startInstant).mapToTimezones(startInstant, timezones, hoursIncrement).stream().map(x -> {
+            x.put("source_id", this.tzIdentifier);
+            return x;
+        }).toList();
+    }
+
 }
