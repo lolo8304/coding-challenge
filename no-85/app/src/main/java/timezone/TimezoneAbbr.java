@@ -138,9 +138,9 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
     }
 
     public TimezoneOffset timezoneOffsetSdt() {
-        return new TimezoneOffset(this.timezoneSdt);
+        return new TimezoneOffset(this.utcOffsetSdt);
     }
     public TimezoneOffset timezoneOffsetDst() {
-        return this.timezoneDst != null && !this.timezoneDst.isBlank() ? new TimezoneOffset(this.timezoneDst) : this.timezoneOffsetSdt();
+        return this.utcOffsetDst != null && !this.utcOffsetDst.isBlank() ? new TimezoneOffset(this.utcOffsetDst) : this.timezoneOffsetSdt();
     }
 }

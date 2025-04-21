@@ -52,4 +52,12 @@ class TimezoneDatabaseTest {
         assert countries.size() > 2;
     }
 
+    @Test
+    void testGetTimezoneByCountries_CA_ok() {
+        var db = TimezoneDatabase.instance();
+        var countries = db.getTimezoneByCountries(new String[]{"CA"});
+        assert countries.size() > 2;
+    }
+
+
 }

@@ -58,7 +58,8 @@ public class TimezoneDatabase {
                             timezones.add(tz);
                             var countries = Arrays.stream(tz.countryCodes().split(",")).map(String::trim).toList();
                             for (var country : countries) {
-                                timezonesByCountry.computeIfAbsent(country, _ -> newTimezoneAbbrList()).add(tz);
+                                var debugList = timezonesByCountry.computeIfAbsent(country, _ -> newTimezoneAbbrList());
+                                debugList.add(tz);
                             }
                         } else alias.ifPresent(s -> fill2ndPass.computeIfAbsent(s, _ -> newTimezoneAbbrList()).add(tz));
                     });
