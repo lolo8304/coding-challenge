@@ -94,3 +94,9 @@ the order of the command line parameters is important.
 - search for countries
 - search for timezones
 
+# TODO
+
+- add more test cases
+- impl better return values
+- impllement frontend using react
+- 0d00
