@@ -87,8 +87,7 @@ public record TimezoneOffset(String offsetMMHH, boolean plus) implements Compara
             var row = new LinkedHashMap<String, String>();
 
             var utc = time.plus(Duration.ofHours(i));
-            var sourceTime = utc.plus(Duration.ofMinutes(sourceOffsetMin))
-                    .atOffset(ZoneOffset.UTC);
+            var sourceTime = utc.plus(Duration.ofMinutes(sourceOffsetMin));
 
             row.put("source_time", sourceTime.toString());
             row.put("source_offset", this.fromMinutes(sourceOffsetMin).toString());
@@ -97,8 +96,7 @@ public record TimezoneOffset(String offsetMMHH, boolean plus) implements Compara
                 var targetOffsetMin = targetOffsetsMin.get(j);
 
                 // Compute time in target
-                var targetTime = utc.plus(Duration.ofMinutes(targetOffsetMin))
-                        .atOffset(ZoneOffset.UTC);
+                var targetTime = utc.plus(Duration.ofMinutes(targetOffsetMin));
 
                 // Offsets
                 var offsetToUtc = fromMinutes(targetOffsetMin);
