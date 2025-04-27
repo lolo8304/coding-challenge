@@ -15,7 +15,9 @@ repositories {
 }
 
 dependencies {
-    
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
     implementation 'info.picocli:picocli:4.7.1'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.1'
 
@@ -23,6 +25,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 
     // This dependency is used by the application.
+    implementation("com.sparkjava:spark-core:2.9.4")
+    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
 }
 
 tasks.named('test') {

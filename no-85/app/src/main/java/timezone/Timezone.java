@@ -7,8 +7,11 @@ package timezone;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import timezone.api.TimeZoneRequest;
+import timezone.api.TimezoneConverterController;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 @Command(name = "timezone", mixinStandardHelpOptions = true, version = "timezone 1.0", description = "This challenge is to build your own timezone converter")
@@ -46,22 +49,31 @@ public class Timezone implements Callable<Result> {
         }
     }
 
+    private String[] split(String input) {
+        if (input == null || input.isBlank()) {
+            return new String[]{};
+        }
+        return Arrays.stream(input.split(",")).filter(x -> !x.isBlank()).map(String::trim).toArray(String[]::new);
+    }
+
     @Override
     public Result call() {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
         TimezoneDatabase.instance();
         var now = Instant.now();
-        //now = Instant.parse("2025-03-12T10:00:00Z"); // UTC-Zeit
-        if (targetTimezoneCities != null && !targetTimezoneCities.isBlank()) {
-            TimezoneConverter.fromCities(this.sourceTimezone, this.targetTimezoneCities).run(now);
-        } else if (targetTimezoneCountries != null && !targetTimezoneCountries.isBlank()) {
-            TimezoneConverter.fromCountries(this.sourceTimezone, this.targetTimezoneCountries).run(now);
-        } else if (targetTimezones != null && !targetTimezones.isBlank()) {
-            TimezoneConverter.fromTimezones(this.sourceTimezone, this.targetTimezones).run(now);
+        var request = TimeZoneRequest.builder()
+                .source(this.sourceTimezone)
+                .countries(this.split(this.targetTimezoneCities))
+                .cities(this.split(this.targetTimezoneCountries))
+                .timezones(this.split(this.targetTimezones))
+                .build();
+        if (request.hasAnyParameters()) {
+            request.toTimezoneConverter().run(now);
+            return new Result();
         } else {
-            System.out.println("Use at least 1 timezone or city as target");
+            new TimezoneConverterController();
+            return null;
         }
-        return new Result();
     }
 }

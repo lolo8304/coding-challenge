@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class TimezoneConverter {
 
@@ -79,22 +80,13 @@ public class TimezoneConverter {
         System.out.println("Current time: " + utcTime);
     }
 
-    public void run(Instant utcTime) {
-        logCurrentTime(utcTime);
-        System.out.println("Source timezone: " + source);
-        System.out.println("Target timezones: " + String.join(", ", targets));
-        System.out.println("Target countries: " + String.join(", ", countries));
-        System.out.println("Target cities: " + String.join(", ", cities));
-        System.out.println("Zones: \n" + String.join("\n", targetTimezones.stream().map(TimezoneAbbr::toString).toList()));
+    public List<Map<String, String>> run(Instant utcTime) {
         var sourceZone = TimezoneDatabase.instance().getTimezoneById(source);
         if (sourceZone.isPresent()) {
             var zone = sourceZone.get();
-            var results = zone.mapTimeToTimezones(utcTime, this.targetTimezones, 8);
-            for (var result : results) {
-                System.out.println(result);
-            }
+            return zone.mapTimeToTimezones(utcTime, this.targetTimezones, 8);
         } else {
-            System.out.println("Source timezone not found.");
+            return null;
         }
     }
 

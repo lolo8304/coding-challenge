@@ -1,0 +1,24 @@
+meta {
+  name: CET -> Toronot
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:4567/timezone-converter
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "source": "Europe/Zurich",
+    "countries": [
+      "US"
+    ]
+  }
+}
