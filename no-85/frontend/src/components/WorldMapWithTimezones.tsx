@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-
-const geoUrl =
-  "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+} from "react-simple-maps";
 
 interface WorldMapProps {
   timezones: string[];
@@ -12,6 +14,8 @@ interface MarkerData {
   name: string;
   coordinates: [number, number]; // [lng, lat]
 }
+
+const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 const WorldMapWithTimezones: React.FC<WorldMapProps> = ({ timezones }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
@@ -24,7 +28,7 @@ const WorldMapWithTimezones: React.FC<WorldMapProps> = ({ timezones }) => {
         timezones.map(async (tz) => {
           try {
             const res = await fetch(
-              `https://secure.geonames.org/timezoneJSON?username=demo&tz=${encodeURIComponent(
+              `https://secure.geonames.org/timezoneJSON?username=lolo8304&tz=${encodeURIComponent(
                 tz
               )}`
             );
@@ -54,7 +58,12 @@ const WorldMapWithTimezones: React.FC<WorldMapProps> = ({ timezones }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => (
-              <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC" stroke="#D6D6DA" />
+              <Geography
+                key={geo.rsmKey}
+                geography={geo}
+                fill="#EAEAEC"
+                stroke="#D6D6DA"
+              />
             ))
           }
         </Geographies>

@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { Hours, TimeZoneResult, TimeZoneResults } from "./models";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4567";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -48,7 +48,7 @@ export async function timezoneConverter(
   const utcString = utc ? "?utc=" + utc : "";
   const queryString = (utcString ? utcString : "?") + "&hours=24";
   const response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/timezone-converter${queryString}`,
+    `${BASE_URL}/timezone-converter${queryString}`,
     {
       method: "POST",
       headers: {

@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { timezoneConverter, TimezoneConverterRequest } from "./api-hooks";
 import { Hours, TimeZoneResults } from "./models";
+import WorldMapWithTimezones from "./WorldMapWithTimezones";
 
 const timeZoneConverterRequest = {
-  source: "Europe/London",
+  source: "Europe/Zurich",
   cities: [
     "GMT+12",
     "Honolulu",
     "Toronto",
-    "Zurich",
+    "London",
+    "Madrid",
+    "Los_Angeles",
+    "Paris",
+    "Berlin",
+    "Rome",
+    "Mexico_City",
     "Dubai",
     "Tokyo",
+    "New_York",
     "Sydney",
-    "GMT-14"
+    "GMT-14",
   ],
 } as TimezoneConverterRequest;
 
@@ -67,7 +75,14 @@ const TimeZoneComparison: React.FC = () => {
     }, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
-
+/*
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentUtcHour((prev) => (prev + 1) % 24);
+    }, 2000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
+*/
   return (
     <div
       style={{
@@ -129,7 +144,7 @@ const TimeZoneComparison: React.FC = () => {
                     >
                       <div>{formatHour(hour.hour)}</div>
                       <div style={{ fontSize: "10px", color: "#999" }}>
-                        {"Mon"}
+                        {"Day X"}
                       </div>
                     </div>
                   );
@@ -137,6 +152,11 @@ const TimeZoneComparison: React.FC = () => {
               </div>
             </div>
           ))}
+        <div className="w-400px">
+          <WorldMapWithTimezones
+            timezones={["Europe/Zurich", "America/Toronto"]}
+          />
+        </div>
       </div>
     </div>
   );
