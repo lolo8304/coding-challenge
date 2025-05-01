@@ -4,7 +4,16 @@ import { Hours, TimeZoneResults } from "./models";
 
 const timeZoneConverterRequest = {
   source: "Europe/London",
-  cities: ["Toronto", "Zurich", "Dubai", "Tokyo", "Sydney"],
+  cities: [
+    "GMT+12",
+    "Honolulu",
+    "Toronto",
+    "Zurich",
+    "Dubai",
+    "Tokyo",
+    "Sydney",
+    "GMT-14"
+  ],
 } as TimezoneConverterRequest;
 
 const formatHour = (hour: number) => {
@@ -12,28 +21,29 @@ const formatHour = (hour: number) => {
   const suffix = hour < 12 ? "am" : "pm";
   return `${h} ${suffix}`;
 };
+const currentUtcHours = () => {
+  return new Date().getUTCHours();
+};
+const currentUtcString = () => {
+  const currentDate = new Date();
+  const utcDate = new Date(
+    currentDate.getUTCFullYear(),
+    currentDate.getUTCMonth(),
+    currentDate.getUTCDate(),
+    currentDate.getUTCHours(),
+    currentDate.getUTCMinutes(),
+    currentDate.getUTCSeconds()
+  );
+  return utcDate.toISOString();
+};
 
 const TimeZoneComparison: React.FC = () => {
   const [currentUtc, setCurrentUtc] = useState(() => {
-    // get the current UTC time when the component mounts
-    const currentDate = new Date();
-    const utcDate = new Date(
-      currentDate.getUTCFullYear(),
-      currentDate.getUTCMonth(),
-      currentDate.getUTCDate(),
-      currentDate.getUTCHours(),
-      currentDate.getUTCMinutes(),
-      currentDate.getUTCSeconds()
-    );
-    const utcString = utcDate.toISOString();
-    return utcString;
+    return currentUtcString();
   });
 
   const [currentUtcHour, setCurrentUtcHour] = useState(() => {
-    // Get the current UTC hour when the component mounts
-    const currentDate = new Date().getUTCHours();
-    console.log(currentDate);
-    return currentDate;
+    return currentUtcHours();
   });
   const [timezoneResults, setTimezoneResults] =
     useState<TimeZoneResults | null>(null);
@@ -44,7 +54,6 @@ const TimeZoneComparison: React.FC = () => {
         currentUtc,
         timeZoneConverterRequest
       );
-      console.log(result);
       setTimezoneResults(result);
     };
 
@@ -53,10 +62,9 @@ const TimeZoneComparison: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentDate = new Date().getUTCHours();
-      console.log(currentDate);
-      setCurrentUtcHour(currentDate);
-    }, 5000); // Update every minute
+      setCurrentUtc(currentUtcString());
+      setCurrentUtcHour(currentUtcHours());
+    }, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
 
@@ -102,7 +110,6 @@ const TimeZoneComparison: React.FC = () => {
                 {tz.hours.map((hour: Hours, hIndex) => {
                   const sourceHour =
                     timezoneResults.source.hours[hIndex].utcHour;
-                  const localDay = "Same day";
                   const isCurrentHour = hour.utcHour === currentUtcHour;
 
                   return (
