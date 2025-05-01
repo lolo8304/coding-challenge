@@ -84,6 +84,21 @@ public class TimezoneDatabase {
         }
     }
 
+    public List<String> getTimezoneIds() {
+        return timezones.stream().map(TimezoneAbbr::tzIdentifier).toList();
+    }
+    public List<String> getTimezoneCountries() {
+        // unique list of countries
+        var countries = new HashSet<String>();
+        for (var tz : timezones) {
+            var countryCodes = tz.countryCodes().split(",");
+            for (var countryCode : countryCodes) {
+                countries.add(countryCode.trim());
+            }
+        }
+        return new ArrayList<>(countries).stream().sorted(String::compareTo).filter(x -> !x.isBlank()).toList();
+    }
+
     private static UniqueList<TimezoneAbbr> newTimezoneAbbrList() {
         return new UniqueList<>(TimezoneAbbr.getComparator());
     }
@@ -97,7 +112,7 @@ public class TimezoneDatabase {
     }
 
     public List<TimezoneAbbr> getTimezoneLikeCities(String[] cities) {
-        List<TimezoneAbbr> result = new ArrayList<>();
+        List<TimezoneAbbr> result = new UniqueList<>(TimezoneAbbr.getComparator());
         for (var city : cities) {
             var zone = this.getTimezoneById(city);
             if (zone.isPresent()) {

@@ -1,0 +1,33 @@
+meta {
+  name: CET -> London to 5 cities
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:4567/timezone-converter?utc=2025-03-26T08:44:44.688522Z&hours=24
+  body: json
+  auth: inherit
+}
+
+params:query {
+  utc: 2025-03-26T08:44:44.688522Z
+  hours: 24
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "source": "Europe/London",
+    "cities": [
+      "Toronto",
+      "Zurich",
+      "Dubai",
+      "Tokyo",
+      "Sydney"
+    ]
+  }
+}

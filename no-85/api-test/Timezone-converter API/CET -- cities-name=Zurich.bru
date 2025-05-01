@@ -1,17 +1,17 @@
 meta {
-  name: CET -> Toronot
+  name: CET -> cities?name=Zurich
   type: http
-  seq: 3
+  seq: 6
 }
 
-post {
-  url: http://localhost:4567/timezone-converter?utc=2025-03-26T08:44:44.688522Z
-  body: json
+get {
+  url: http://localhost:4567/cities?name=Zurich
+  body: none
   auth: inherit
 }
 
 params:query {
-  utc: 2025-03-26T08:44:44.688522Z
+  name: Zurich
 }
 
 headers {

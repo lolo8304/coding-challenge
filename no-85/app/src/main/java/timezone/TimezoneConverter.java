@@ -81,10 +81,14 @@ public class TimezoneConverter {
     }
 
     public List<Map<String, String>> run(Instant utcTime) {
+        return run(utcTime, 8);
+    }
+
+    public List<Map<String, String>> run(Instant utcTime, Integer nofHours) {
         var sourceZone = TimezoneDatabase.instance().getTimezoneById(source);
         if (sourceZone.isPresent()) {
             var zone = sourceZone.get();
-            return zone.mapTimeToTimezones(utcTime, this.targetTimezones, 8);
+            return zone.mapTimeToTimezones(utcTime, this.targetTimezones, nofHours);
         } else {
             return null;
         }

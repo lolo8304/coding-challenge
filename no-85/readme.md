@@ -8,7 +8,7 @@ by John Crickett
 Write an API that converts a given source time zone into multiple target time zones. The API should accept a date and time in the source time zone and return the equivalent date and time in the target time zones.
 The API should be able to handle daylight saving time changes and other time zone rules.
 
-# Build
+# Development
 
 ## Requirements
 
@@ -21,6 +21,14 @@ The API should be able to handle daylight saving time changes and other time zon
   - spark for web server
   - gson for json parsing
 - pure java classes 
+
+## Build
+
+```bash
+gradle installDist
+```
+
+
 
 ## Solution 
 
@@ -98,5 +106,5 @@ the order of the command line parameters is important.
 
 - add more test cases
 - impl better return values
-- impllement frontend using react
+- implement frontend using react
 - 0d00

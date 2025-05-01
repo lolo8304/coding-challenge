@@ -7,8 +7,6 @@
  */
 apply plugin: "application"
 
-mainClassName = "timezone.Timezone"
-
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()

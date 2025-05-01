@@ -1,17 +1,13 @@
 meta {
-  name: CET -> Toronot
+  name: CET -> timezone counteis
   type: http
-  seq: 3
+  seq: 5
 }
 
-post {
-  url: http://localhost:4567/timezone-converter?utc=2025-03-26T08:44:44.688522Z
-  body: json
+get {
+  url: http://localhost:4567/countries
+  body: none
   auth: inherit
-}
-
-params:query {
-  utc: 2025-03-26T08:44:44.688522Z
 }
 
 headers {

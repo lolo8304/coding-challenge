@@ -1,5 +1,7 @@
 package timezone;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.zone.ZoneRules;
@@ -64,6 +66,7 @@ public record TimezoneAbbr(String countryCodes, String tzIdentifier, String comm
         );
     }
 
+    @SerializedName("countries")
     public String[] countries() {
         return Arrays.stream(this.countryCodes.split(",")).map(String::trim).toArray(String[]::new);
     }
