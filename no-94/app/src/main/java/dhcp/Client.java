@@ -28,11 +28,6 @@ public class Client implements Callable<Result> {
         }
     }
 
-    @Option(names = "-t", description = "-b specifies byte positions")
-    int test = 8080;
-    @Option(names = "-f", arity = "0..", description = "-b specifies byte positions")
-    boolean flag = false;
-
     public static boolean verbose() {
         return _verbose >= 1;
     }
@@ -46,7 +41,16 @@ public class Client implements Callable<Result> {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
 
-        System.out.println("Stage 0: Initializing dev environment");
+        var dhcp = new DhcpProcess().run();
+        if (verbose()) {
+            System.out.println("DHCP Client started with the following configuration:");
+            System.out.printf("Server IP: %s%n", dhcp.getServerIp());
+            System.out.printf("Client IP: %s%n", dhcp.getClientIp());
+            System.out.printf("Subnet Mask: %s%n", dhcp.getSubnetMask());
+            System.out.printf("Gateway: %s%n", dhcp.getGateway());
+            System.out.printf("DNS Server: %s%n", dhcp.getServerIp());
+        }
+
         return new Result();
     }
 }
