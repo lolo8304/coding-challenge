@@ -1,3 +1,3 @@
-#!/bin/bash
-./app/build/install/app/bin/app "$@"
+#!/bin/zsh
+./app/build/install/app/bin/app  "$@"
 

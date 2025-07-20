@@ -45,23 +45,23 @@ public class TimezoneDatabase {
                     tzOpt.ifPresent(tz -> {
                         var alias = tz.backwardAliasName();
                         if (!tz.isBackward()) {
-                            this.timezonesById.computeIfAbsent(tz.tzIdentifier(), _ -> newTimezoneAbbrList()).add(tz);
+                            this.timezonesById.computeIfAbsent(tz.tzIdentifier(), x -> newTimezoneAbbrList()).add(tz);
                             // Add timezone to the map using both standard and daylight saving time abbreviations
                             if (tz.timezoneSdt() != null && !tz.timezoneSdt().isBlank()) {
-                                this.timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(), _ -> newTimezoneAbbrList()).add(tz);
+                                this.timezonesByAbbr.computeIfAbsent(tz.timezoneSdt(), x -> newTimezoneAbbrList()).add(tz);
                             }
                             if (tz.timezoneDst() != null && !tz.timezoneDst().isBlank()) {
                                 if (!tz.timezoneDst().equals(tz.timezoneSdt())) {
-                                    this.timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), _ -> newTimezoneAbbrList()).add(tz);
+                                    this.timezonesByAbbr.computeIfAbsent(tz.timezoneDst(), x -> newTimezoneAbbrList()).add(tz);
                                 }
                             }
                             timezones.add(tz);
                             var countries = Arrays.stream(tz.countryCodes().split(",")).map(String::trim).toList();
                             for (var country : countries) {
-                                var debugList = timezonesByCountry.computeIfAbsent(country, _ -> newTimezoneAbbrList());
+                                var debugList = timezonesByCountry.computeIfAbsent(country, x -> newTimezoneAbbrList());
                                 debugList.add(tz);
                             }
-                        } else alias.ifPresent(s -> fill2ndPass.computeIfAbsent(s, _ -> newTimezoneAbbrList()).add(tz));
+                        } else alias.ifPresent(s -> fill2ndPass.computeIfAbsent(s, x -> newTimezoneAbbrList()).add(tz));
                     });
                 }
             }
@@ -74,7 +74,7 @@ public class TimezoneDatabase {
 
                     var countries = Arrays.stream(tz.countryCodes().split(",")).map(String::trim).toList();
                     for (var country : countries) {
-                        timezonesByCountry.computeIfAbsent(country, _ -> newTimezoneAbbrList()).add(aliasTz);
+                        timezonesByCountry.computeIfAbsent(country, x -> newTimezoneAbbrList()).add(aliasTz);
                     }
 
                 }

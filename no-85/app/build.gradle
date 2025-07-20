@@ -37,3 +37,7 @@ tasks.named('test') {
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
+
+application {
+    mainClassName = 'timezone.Timezone'
+}

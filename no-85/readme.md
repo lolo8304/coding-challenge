@@ -104,7 +104,4 @@ the order of the command line parameters is important.
 
 # TODO
 
-- add more test cases
 - impl better return values
-- implement frontend using react
-- 0d00
