@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/no-30/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/no-30/.idea/modules/app/no-30.app.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-30/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-30/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-30/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-30/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-5/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/no-5/.idea/misc.xml" afterDir="false" />
-    </list>
+    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
