@@ -5,38 +5,13 @@
 
 import dhcp.message.DhcOption;
 import dhcp.message.DhcOptions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.file.Paths;
 
 class DhcpOptionsTest {
 
-    private Reader reader;
-
-    void ReadReader(String testfile) throws FileNotFoundException, URISyntaxException {
-        URL resource = DhcpOptionsTest.class.getResource("tests/"+testfile);
-        File file = Paths.get(resource.toURI()).toFile();
-        reader = new FileReader(file);
-    }
-
-    @AfterEach
-    void CloseReader() throws IOException {
-        if (reader != null) {
-            reader.close();
-        }
-    }
-
-    @Test void new_simpleoption_ok() throws URISyntaxException, IOException {
+    @Test void new_simpleoption_ok() {
         // Arrange
         // Action
         var option1 = new DhcOption(0);
@@ -47,7 +22,7 @@ class DhcpOptionsTest {
 
     }
 
-    @Test void new_option_with_data_ok() throws URISyntaxException, IOException {
+    @Test void new_option_with_data_ok()  {
         // Arrange
         var buffer = ByteBuffer.wrap(new byte[500]);
         // Action
@@ -61,7 +36,7 @@ class DhcpOptionsTest {
         assert buffer.position() == 5 : "Buffer position should be 5 after appending option with tagged data";
     }
 
-    @Test void new_option_with_code_and_taggeddata_ok() throws URISyntaxException, IOException {
+    @Test void new_option_with_code_and_taggeddata_ok()  {
         // Arrange
         var buffer = ByteBuffer.wrap(new byte[500]);
 
@@ -78,7 +53,7 @@ class DhcpOptionsTest {
 
     }
 
-    @Test void new_option_with_code_and_taggeddata2_ok() throws URISyntaxException, IOException {
+    @Test void new_option_with_code_and_taggeddata2_ok()  {
         // Arrange
         var buffer = ByteBuffer.wrap(new byte[500]);
 
@@ -152,7 +127,7 @@ class DhcpOptionsTest {
         assert buffer.position() == 5 : "Buffer position should be 4 after appending option with null data and tagged data";
     }
 
-    @Test void new_withend_option_ok() throws URISyntaxException, IOException {
+    @Test void new_withend_option_ok()  {
         // Arrange
         var buffer = ByteBuffer.wrap(new byte[500]);
         // Action
@@ -258,8 +233,8 @@ class DhcpOptionsTest {
         options.add(new DhcOption(10, new byte[]{1, 2, 3}));
         // Assert
         assert options.getOptions().size() == 1 : "Options should contain one option";
-        assert options.getOptions().get(0).getCode() == 10 : "Option code should be 10";
-        assert options.getOptions().get(0).getData().length == 3 : "Option data length should be 3";
+        assert options.getOptions().getFirst().getCode() == 10 : "Option code should be 10";
+        assert options.getOptions().getFirst().getData().length == 3 : "Option data length should be 3";
     }
 
     @Test void setToBuffer_empty_ok() {
