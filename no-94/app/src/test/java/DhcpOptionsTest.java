@@ -4,6 +4,7 @@
 
 
 import dhcp.message.DhcOption;
+import dhcp.message.DhcOptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -206,5 +207,80 @@ class DhcpOptionsTest {
         int codeUInt = option1.getCodeUInt();
         // Assert
         assert codeUInt == 0 : "getCodeUInt() should return 0 for option with code 0";
+    }
+
+    @Test void newOptions_single_ok() {
+        // Arrange
+        var buffer = ByteBuffer.wrap(new byte[500]);
+        // Action
+        var options = new DhcOptions().add(1, new byte[]{1, 2, 3})
+                                      .add(2, new byte[]{4, 5, 6});
+        options.setToBuffer(buffer);
+
+        // Assert
+        // 1, 2, 3, 4, 5, 6, 0, 255
+        assert buffer.position() == 249 : "Buffer position should be 248 but was "+ buffer.position()+" after setting options";
+    }
+
+    @Test void newOptions_multiple_ok() {
+        // Arrange
+        var buffer = ByteBuffer.wrap(new byte[500]);
+        // Action
+        var options = new DhcOptions()
+                .add(10, new byte[]{1, 2, 3})
+                .add(11, new byte[]{4, 5, 6})
+                .add(12, new byte[]{7, 8, 9});
+        options.setToBuffer(buffer);
+
+        // Assert
+        // 10, 3, 1, 2, 3,   11, 3, 4, 5, 6,    12, 3, 7, 8, 9,     0, 255
+        assert buffer.position() == 256 : "Buffer position should be 257 but was "+ buffer.position()+" after setting multiple options";
+    }
+
+    @Test void newOptions_withdataanddata2_ok() {
+        // Arrange
+        var buffer = ByteBuffer.wrap(new byte[500]);
+        // Action
+        var options = new DhcOptions()
+                .add(10, new byte[]{1, 2, 3})
+                .add(11, new byte[]{4, 5, 6}, new byte[]{7, 8});
+        options.setToBuffer(buffer);
+
+        // Assert
+        // 10, 3, 1, 2, 3,   11, 5, 4, 5, 6, 7, 8,   0, 255
+        assert buffer.position() == 253 : "Buffer position should be 254 but was "+ buffer.position()+" after setting options with data and tagged data";
+    }
+
+    @Test void add_option_ok() {
+        // Arrange
+        var options = new DhcOptions();
+        // Action
+        options.add(new DhcOption(10, new byte[]{1, 2, 3}));
+        // Assert
+        assert options.getOptions().size() == 1 : "Options should contain one option";
+        assert options.getOptions().get(0).getCode() == 10 : "Option code should be 10";
+        assert options.getOptions().get(0).getData().length == 3 : "Option data length should be 3";
+    }
+
+    @Test void setToBuffer_empty_ok() {
+        // Arrange
+        var buffer = ByteBuffer.wrap(new byte[500]);
+        var options = new DhcOptions();
+        // Action
+        options.setToBuffer(buffer);
+        // Assert
+        assert buffer.position() == 241 : "Buffer position should be 241 but was "+ buffer.position()+" after setting empty options";
+    }
+
+    @Test void setToBuffer_with0and255_ok() {
+        // Arrange
+        var buffer = ByteBuffer.wrap(new byte[500]);
+        var options = new DhcOptions();
+        // Action
+        options.add(new DhcOption(0));
+        options.add(new DhcOption(255));
+        options.setToBuffer(buffer);
+        // Assert
+        assert buffer.position() == 241 : "Buffer position should be 241 after setting options with code 0 and 255";
     }
 }

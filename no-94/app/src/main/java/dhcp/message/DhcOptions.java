@@ -52,11 +52,9 @@ public class DhcOptions {
     public void setToBuffer(ByteBuffer buffer) {
         buffer.position(240);
         // Set padding option if needed
-        if (!this.options.isEmpty()) {
-            addPadOption(buffer);
-        }
-        for (var option : this.options) {
-            if (option.getCode() == 0 || option.getCode() == 255) continue; // Skip padding options
+        var withoutPad = this.options.stream()
+                .filter(option -> option.getCode() != 0 && option.getCode() != -1).toList();
+        for (var option : withoutPad) {
             option.appendToBuffer(buffer);
         }
         // Add end option all the time
