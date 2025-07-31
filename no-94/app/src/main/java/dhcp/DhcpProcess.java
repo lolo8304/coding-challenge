@@ -38,8 +38,8 @@ public class DhcpProcess {
     }
 
     public DhcpProcess run() throws IOException {
-        this.start();
         try {
+            this.start();
             this.discover();
             this.receiveOffer();
             this.sendRequest();

@@ -16,24 +16,31 @@ public class DhcpMessage {
     public static final byte DHCPNAK = 6;
     public static final byte DHCPRELEASE = 7;
 
+    public static final byte BOOTREQUEST = 1;
+    public static final byte BOOTREPLY = 2;
+
     private final byte messageType;
+    private final byte op;
     private byte[] offerIp;
     private byte[] serverIp;
     private final byte[] transactionId;
     private byte[] clientIdentifier;
     private byte[] clientIp;
+    private final DhcOptions options = new DhcOptions();
 
     private byte[] bytes;
 
     public DhcpMessage(byte messageType, byte[] clientIdentifier, byte[] transactionId) {
-        this.bytes = new byte[548]; // 236 BOOTP + 312 options (max)
+        this.op = BOOTREQUEST;
         this.messageType = messageType;
         this.clientIdentifier = clientIdentifier;
         this.transactionId = transactionId;
+        this.bytes = new byte[548]; // 236 BOOTP + 312 options (max)
         this.bytes = this.buildBuffer();
     }
 
     public DhcpMessage(byte[] bytes, byte messageType, byte[] offerIp, byte[] serverIp, byte[] transactionId) {
+        this.op = BOOTREPLY;
         this.bytes = bytes;
         this.messageType = messageType;
         this.offerIp = offerIp;
@@ -87,6 +94,7 @@ public class DhcpMessage {
         buf.put((byte) 1); // htype
         buf.put((byte) 6); // hlen
         buf.put((byte) 0); // hops
+
         buf.put(transactionId); // xid
         buf.putShort((short) 0); // secs
         buf.putShort((short) 0x8000); // flags (broadcast)
@@ -96,36 +104,20 @@ public class DhcpMessage {
         buf.putInt(0); // giaddr
 
         buf.put(this.clientIdentifier); // chaddr (first 6 bytes)
-        buf.position(236); // skip to options
+
+        buf.position(236); // skip to magic cookie position
         buf.putInt(0x63825363); // magic cookie
 
-        buf.put((byte) 53); // DHCP Message Type
-        buf.put((byte) 1);
-        buf.put(messageType);
-
-        buf.put((byte) 61); // Client identifier
-        buf.put((byte) (1 + this.clientIdentifier.length));
-        buf.put((byte) 1);
-        buf.put(this.clientIdentifier);
+        this.options.add(53, messageType);
+        this.options.add((byte) 62, new byte[]{0x01}, this.clientIdentifier); // Client identifier option
 
         if (messageType == DHCPREQUEST) {
-            buf.put((byte) 50); // Requested IP
-            buf.put((byte) 4);
-            buf.put(this.offerIp); // Offered IP address
-
-            buf.put((byte) 54); // Server identifier
-            buf.put((byte) 4);
-            buf.put(this.serverIp);
+            this.options.add(50, this.offerIp); // Requested IP address
+            this.options.add(54, this.serverIp); // Server identifier
         }
 
-        buf.put((byte) 55); // Parameter Request List
-        buf.put((byte) 3);
-        buf.put((byte) 1); // Subnet mask
-        buf.put((byte) 3); // Router
-        buf.put((byte) 6); // DNS
-
-        buf.put((byte) 255); // End
-
+        this.options.add(55, new byte[]{1, 3, 6}); // Parameter Request List (Subnet mask, Router, DNS)
+        this.options.setToBuffer(buf);
         return Arrays.copyOf(buffer.array(), buffer.position());
     }
 
