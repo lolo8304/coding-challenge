@@ -1,5 +1,7 @@
 package dhcp.message;
 
+import dhcp.YourClient;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -19,23 +21,29 @@ public class DhcpMessage {
     public static final byte BOOTREQUEST = 1;
     public static final byte BOOTREPLY = 2;
 
+    public static final byte HTYPE_ETHERNET = 1;
+
     private final byte messageType;
     private final byte op;
+    private final byte[] hostName;
     private byte[] offerIp;
     private byte[] serverIp;
     private final byte[] transactionId;
     private byte[] clientIdentifier;
     private byte[] clientIp;
+    private int leaseTime;
     private final DhcOptions options = new DhcOptions();
 
     private byte[] bytes;
 
-    public DhcpMessage(byte messageType, byte[] clientIdentifier, byte[] transactionId) {
+    public DhcpMessage(byte messageType, byte[] transactionId) {
         this.op = BOOTREQUEST;
         this.messageType = messageType;
-        this.clientIdentifier = clientIdentifier;
+        this.clientIdentifier = YourClient.getInstance().clientIdentifier();
+        this.hostName = YourClient.getInstance().hostName();
         this.transactionId = transactionId;
         this.bytes = new byte[548]; // 236 BOOTP + 312 options (max)
+        this.leaseTime = 90 * 24 * 60 * 60; // Default lease time: 90 days in seconds
         this.bytes = this.buildBuffer();
     }
 
@@ -43,6 +51,7 @@ public class DhcpMessage {
         this.op = BOOTREPLY;
         this.bytes = bytes;
         this.messageType = messageType;
+        this.hostName = YourClient.getInstance().hostName();
         this.offerIp = offerIp;
         this.serverIp = serverIp;
         this.transactionId = transactionId;
@@ -53,8 +62,6 @@ public class DhcpMessage {
     }
 
     private byte[] buildBuffer() {
-        var buffer = ByteBuffer.wrap(this.bytes);
-
         /* Buffer from RFC
            0                   1                   2                   3
    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -89,7 +96,7 @@ public class DhcpMessage {
    +---------------------------------------------------------------+
          */
 
-        ByteBuffer buf = ByteBuffer.allocate(548);
+        var buf = ByteBuffer.allocate(548);
         buf.put((byte) 1); // op
         buf.put((byte) 1); // htype
         buf.put((byte) 6); // hlen
@@ -98,27 +105,41 @@ public class DhcpMessage {
         buf.put(transactionId); // xid
         buf.putShort((short) 0); // secs
         buf.putShort((short) 0x8000); // flags (broadcast)
-        buf.putInt(0); // ciaddr
-        buf.putInt(0); // yiaddr
-        buf.putInt(0); // siaddr
-        buf.putInt(0); // giaddr
+        buf.put(Converters.convertEmptyAddress()); // ciaddr - client IP address
+        buf.put(Converters.convertEmptyAddress()); // yiaddr - your IP address
+        buf.put(Converters.convertEmptyAddress()); // siaddr - server IP address
+        buf.put(Converters.convertEmptyAddress()); // giaddr - gateway IP address
 
-        buf.put(this.clientIdentifier); // chaddr (first 6 bytes)
+        buf.put(Converters.convertAddress(this.clientIdentifier)); // chaddr (first 6 bytes) - client hardware address
+        // server  host name (sname) and boot file name (file) are not used in this message
+        //buf.put(new byte[64]); // sname - server host name (not used)
+        //buf.put(new byte[128]); // file - boot file name (not used)
 
         buf.position(236); // skip to magic cookie position
         buf.putInt(0x63825363); // magic cookie
 
         this.options.add(53, messageType);
-        this.options.add((byte) 62, new byte[]{0x01}, this.clientIdentifier); // Client identifier option
-
+        this.options.add(55, new byte[]{1, 121, 3, 6, 15, 114, 119, (byte)252, 95, 44, 46}); // Parameter request list
+        this.options.add(57, Converters.convertUIntToByteArray(1500)); // Maximum DHCP message size
+        this.options.add(61, Converters.convertByteToByteArray(HTYPE_ETHERNET), this.clientIdentifier); // Client identifier option
         if (messageType == DHCPREQUEST) {
-            this.options.add(50, this.offerIp); // Requested IP address
-            this.options.add(54, this.serverIp); // Server identifier
+            this.options.add(50, Converters.convertAddress(this.offerIp)); // Requested IP address
+            this.options.add(54, Converters.convertAddress(this.serverIp)); // Server identifier
+            this.options.add(12, Converters.convertAddress(YourClient.getInstance().hostName())); // Host name (not used)
         }
 
-        this.options.add(55, new byte[]{1, 3, 6}); // Parameter Request List (Subnet mask, Router, DNS)
+        if (this.leaseTime > 0) {
+            this.options.add(51, Converters.convertIntToByteArray(this.leaseTime)); // Lease time
+        }
         this.options.setToBuffer(buf);
-        return Arrays.copyOf(buffer.array(), buffer.position());
+        if (buf.position() % 4 != 0) {
+            // Pad to 4-byte boundary
+            int padding = 4 - (buf.position() % 4);
+            for (int i = 0; i < padding; i++) {
+                buf.put((byte) 0);
+            }
+        }
+        return Arrays.copyOf(buf.array(), buf.position());
     }
 
     public boolean isResponseOfMessageType(byte msgType) {
@@ -156,10 +177,6 @@ public class DhcpMessage {
             case DHCPRELEASE -> "DHCPRELEASE";
             default -> "UNKNOWN";
         };
-    }
-
-    public byte getMessageType() {
-        return this.messageType;
     }
 
     public byte getResponseType() {

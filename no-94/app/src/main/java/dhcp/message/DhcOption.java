@@ -65,7 +65,7 @@ public class DhcOption {
 
     @Override
     public String toString() {
-        return "DhcOption{code=%s, length=%s, data=%s}".formatted(code, length, data != null ? bytesToString(data) : "null");
+        return "DhcOption{code=%02x/%s, length=%s, data=%s}".formatted(code, code, length, data != null ? bytesToString(data) : "null");
     }
 
     private String bytesToString(byte[] bytes) {
@@ -81,7 +81,7 @@ public class DhcOption {
             } else {
                 sb.append(", ");
             }
-            sb.append(b & 0xFF); // Convert byte to unsigned int
+            sb.append("%02x".formatted(b)); // Convert byte to unsigned int
         }
         sb.append("]");
         return sb.toString().trim();

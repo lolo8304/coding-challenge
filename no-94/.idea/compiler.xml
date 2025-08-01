@@ -12,10 +12,22 @@
         </processorPath>
         <module name="no-6.app.main" />
       </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <option name="project" value="no-94/app" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/info.picocli/picocli-codegen/4.7.1/8432df2dd8f0065beb54f2dd4a30b36532ab997d/picocli-codegen-4.7.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/info.picocli/picocli/4.7.1/7ac5efc1f895a237eb3d8e77375d7c7a7dbbaae7/picocli-4.7.1.jar" />
+        </processorPath>
+        <module name="no-94.app.main" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="23" />
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="no-94.app.main" options="-Aproject=no-94/app" />
+    </option>
   </component>
 </project>

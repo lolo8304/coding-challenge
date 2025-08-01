@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DHCP Protocol Summary - RFC 2131</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        th { background-color: #eee; }
+        code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<h1>DHCP Protocol Summary (RFC 2131)</h1>
+<p>Based on <a href="https://datatracker.ietf.org/doc/html/rfc2131#page-9" target="_blank">RFC 2131</a></p>
+
+<h2>DHCP Message Format (BOOTP Packet)</h2>
+<table>
+    <thead>
+    <tr><th>Field</th><th>Length</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>op</td><td>1 byte</td><td>Message op code: <code>1 = BOOTREQUEST</code>, <code>2 = BOOTREPLY</code></td></tr>
+    <tr><td>htype</td><td>1 byte</td><td>Hardware type (e.g., <code>1 = Ethernet</code>)</td></tr>
+    <tr><td>hlen</td><td>1 byte</td><td>Hardware address length (e.g., <code>6 for Ethernet</code>)</td></tr>
+    <tr><td>hops</td><td>1 byte</td><td>Client sets to 0, used by relay agents</td></tr>
+    <tr><td>xid</td><td>4 bytes</td><td>Transaction ID</td></tr>
+    <tr><td>secs</td><td>2 bytes</td><td>Seconds elapsed since client began address acquisition</td></tr>
+    <tr><td>flags</td><td>2 bytes</td><td>Flags (bit 0 = broadcast flag)</td></tr>
+    <tr><td>ciaddr</td><td>4 bytes</td><td>Client IP address (if already bound)</td></tr>
+    <tr><td>yiaddr</td><td>4 bytes</td><td>"Your" IP address (offered by server)</td></tr>
+    <tr><td>siaddr</td><td>4 bytes</td><td>Server IP address</td></tr>
+    <tr><td>giaddr</td><td>4 bytes</td><td>Relay agent IP address</td></tr>
+    <tr><td>chaddr</td><td>16 bytes</td><td>Client hardware address</td></tr>
+    <tr><td>sname</td><td>64 bytes</td><td>Optional server host name</td></tr>
+    <tr><td>file</td><td>128 bytes</td><td>Boot file name</td></tr>
+    <tr><td>options</td><td>variable</td><td>Optional parameters field (see below)</td></tr>
+    </tbody>
+</table>
+
+<h1>DHCP Hardware Types (HTYPE)</h1>
+<p>Defined in <a href="https://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml" target="_blank">IANA ARP Hardware Types</a></p>
+
+<table>
+    <thead>
+    <tr><th>HTYPE</th><th>Name</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>0</td><td>Reserved</td><td>Reserved</td></tr>
+    <tr><td>1</td><td>Ethernet</td><td>10Mb Ethernet (RFC 894)</td></tr>
+    <tr><td>2</td><td>Experimental Ethernet</td><td>Experimental Ethernet (3Mb)</td></tr>
+    <tr><td>3</td><td>Amateur Radio AX.25</td><td>AX.25</td></tr>
+    <tr><td>4</td><td>Proteon ProNET Token Ring</td><td>ProNET Token Ring</td></tr>
+    <tr><td>5</td><td>Chaos</td><td>Chaos</td></tr>
+    <tr><td>6</td><td>IEEE 802 Networks</td><td>IEEE 802.2</td></tr>
+    <tr><td>7</td><td>ARCNET</td><td>ARCNET</td></tr>
+    <tr><td>8</td><td>Hyperchannel</td><td>Hyperchannel</td></tr>
+    <tr><td>9</td><td>Lanstar</td><td>Lanstar</td></tr>
+    <tr><td>10</td><td>Autonet Short Address</td><td>Autonet Short Address</td></tr>
+    <tr><td>11</td><td>LocalTalk</td><td>LocalTalk</td></tr>
+    <tr><td>12</td><td>LocalNet</td><td>LocalNet (IBM PCNet or SYTEK LocalNET)</td></tr>
+    <tr><td>13</td><td>Ultra link</td><td>Ultra link</td></tr>
+    <tr><td>14</td><td>SMDS</td><td>SMDS</td></tr>
+    <tr><td>15</td><td>Frame Relay</td><td>Frame Relay</td></tr>
+    <tr><td>16</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM (for RFC 2225)</td></tr>
+    <tr><td>17</td><td>HDLC</td><td>HDLC</td></tr>
+    <tr><td>18</td><td>Fibre Channel</td><td>Fibre Channel</td></tr>
+    <tr><td>19</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM (RFC 2495)</td></tr>
+    <tr><td>20</td><td>Serial Line</td><td>Serial Line</td></tr>
+    <tr><td>21</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM</td></tr>
+    <tr><td>22</td><td>MIL-STD-188-220</td><td>Metric Military Network</td></tr>
+    <tr><td>23</td><td>MetricNet</td><td>MetricNet</td></tr>
+    <tr><td>24</td><td>IEEE 1394.1995</td><td>FireWire</td></tr>
+    <tr><td>25</td><td>MAPOS</td><td>Multiple Access Protocol over SONET/SDH</td></tr>
+    <tr><td>26</td><td>Twinaxial</td><td>Twinaxial Ethernet</td></tr>
+    <tr><td>27</td><td>EUI-64</td><td>EUI-64 based address</td></tr>
+    <tr><td>28</td><td>HIPARP</td><td>High Performance Radio LAN</td></tr>
+    <tr><td>29</td><td>IP and ARP over ISO 7816-3</td><td>Smartcard</td></tr>
+    <tr><td>30</td><td>ARPSec</td><td>Security using ARP</td></tr>
+    <tr><td>31</td><td>IPsec Tunnel</td><td>Encapsulation for ARP</td></tr>
+    <tr><td>32</td><td>InfiniBand</td><td>InfiniBand</td></tr>
+    </tbody>
+</table>  <h1>DHCP Hardware Types (HTYPE)</h1>
+<p>Defined in <a href="https://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml" target="_blank">IANA ARP Hardware Types</a></p>
+
+<table>
+    <thead>
+    <tr><th>HTYPE</th><th>Name</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>0</td><td>Reserved</td><td>Reserved</td></tr>
+    <tr><td>1</td><td>Ethernet</td><td>10Mb Ethernet (RFC 894)</td></tr>
+    <tr><td>2</td><td>Experimental Ethernet</td><td>Experimental Ethernet (3Mb)</td></tr>
+    <tr><td>3</td><td>Amateur Radio AX.25</td><td>AX.25</td></tr>
+    <tr><td>4</td><td>Proteon ProNET Token Ring</td><td>ProNET Token Ring</td></tr>
+    <tr><td>5</td><td>Chaos</td><td>Chaos</td></tr>
+    <tr><td>6</td><td>IEEE 802 Networks</td><td>IEEE 802.2</td></tr>
+    <tr><td>7</td><td>ARCNET</td><td>ARCNET</td></tr>
+    <tr><td>8</td><td>Hyperchannel</td><td>Hyperchannel</td></tr>
+    <tr><td>9</td><td>Lanstar</td><td>Lanstar</td></tr>
+    <tr><td>10</td><td>Autonet Short Address</td><td>Autonet Short Address</td></tr>
+    <tr><td>11</td><td>LocalTalk</td><td>LocalTalk</td></tr>
+    <tr><td>12</td><td>LocalNet</td><td>LocalNet (IBM PCNet or SYTEK LocalNET)</td></tr>
+    <tr><td>13</td><td>Ultra link</td><td>Ultra link</td></tr>
+    <tr><td>14</td><td>SMDS</td><td>SMDS</td></tr>
+    <tr><td>15</td><td>Frame Relay</td><td>Frame Relay</td></tr>
+    <tr><td>16</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM (for RFC 2225)</td></tr>
+    <tr><td>17</td><td>HDLC</td><td>HDLC</td></tr>
+    <tr><td>18</td><td>Fibre Channel</td><td>Fibre Channel</td></tr>
+    <tr><td>19</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM (RFC 2495)</td></tr>
+    <tr><td>20</td><td>Serial Line</td><td>Serial Line</td></tr>
+    <tr><td>21</td><td>Asynchronous Transmission Mode (ATM)</td><td>ATM</td></tr>
+    <tr><td>22</td><td>MIL-STD-188-220</td><td>Metric Military Network</td></tr>
+    <tr><td>23</td><td>MetricNet</td><td>MetricNet</td></tr>
+    <tr><td>24</td><td>IEEE 1394.1995</td><td>FireWire</td></tr>
+    <tr><td>25</td><td>MAPOS</td><td>Multiple Access Protocol over SONET/SDH</td></tr>
+    <tr><td>26</td><td>Twinaxial</td><td>Twinaxial Ethernet</td></tr>
+    <tr><td>27</td><td>EUI-64</td><td>EUI-64 based address</td></tr>
+    <tr><td>28</td><td>HIPARP</td><td>High Performance Radio LAN</td></tr>
+    <tr><td>29</td><td>IP and ARP over ISO 7816-3</td><td>Smartcard</td></tr>
+    <tr><td>30</td><td>ARPSec</td><td>Security using ARP</td></tr>
+    <tr><td>31</td><td>IPsec Tunnel</td><td>Encapsulation for ARP</td></tr>
+    <tr><td>32</td><td>InfiniBand</td><td>InfiniBand</td></tr>
+    </tbody>
+</table>
+
+<h2>DHCP Message Types (Option 53)</h2>
+<table>
+    <thead>
+    <tr><th>Code</th><th>Message Type</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>1</td><td>DHCPDISCOVER</td></tr>
+    <tr><td>2</td><td>DHCPOFFER</td></tr>
+    <tr><td>3</td><td>DHCPREQUEST</td></tr>
+    <tr><td>4</td><td>DHCPDECLINE</td></tr>
+    <tr><td>5</td><td>DHCPACK</td></tr>
+    <tr><td>6</td><td>DHCPNAK</td></tr>
+    <tr><td>7</td><td>DHCPRELEASE</td></tr>
+    <tr><td>8</td><td>DHCPINFORM</td></tr>
+    </tbody>
+</table>
+
+<h2>DHCP Options Table</h2>
+<table>
+    <thead>
+    <tr><th>Code</th><th>Option Name</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>0</td><td>Pad</td><td>Padding for alignment</td></tr>
+    <tr><td>1</td><td>Subnet Mask</td><td>Client subnet mask</td></tr>
+    <tr><td>2</td><td>Time Offset</td><td>Time offset in seconds from UTC</td></tr>
+    <tr><td>3</td><td>Router</td><td>List of routers</td></tr>
+    <tr><td>4</td><td>Time Server</td><td>List of time servers</td></tr>
+    <tr><td>5</td><td>Name Server</td><td>IEN 116 name servers</td></tr>
+    <tr><td>6</td><td>Domain Name Server</td><td>DNS servers</td></tr>
+    <tr><td>7</td><td>Log Server</td><td>Log servers</td></tr>
+    <tr><td>8</td><td>Cookie Server</td><td>Cookie servers</td></tr>
+    <tr><td>9</td><td>LPR Server</td><td>LPR print servers</td></tr>
+    <tr><td>10</td><td>Impress Server</td><td>Impress servers</td></tr>
+    <tr><td>11</td><td>Resource Location Server</td><td>RLP servers</td></tr>
+    <tr><td>12</td><td>Host Name</td><td>Client host name</td></tr>
+    <tr><td>13</td><td>Boot File Size</td><td>Size of boot file in 512-byte blocks</td></tr>
+    <tr><td>14</td><td>Merit Dump File</td><td>Path to dump file</td></tr>
+    <tr><td>15</td><td>Domain Name</td><td>Client domain name</td></tr>
+    <tr><td>16</td><td>Swap Server</td><td>IP address of swap server</td></tr>
+    <tr><td>17</td><td>Root Path</td><td>Path name to root disk</td></tr>
+    <tr><td>18</td><td>Extensions Path</td><td>Path for extensions file</td></tr>
+    <!-- Skipping 19-26 for brevity; in a full implementation you'd include all -->
+    <tr><td>28</td><td>Broadcast Address</td><td>Broadcast address</td></tr>
+    <tr><td>50</td><td>Requested IP Address</td><td>Requested client IP address</td></tr>
+    <tr><td>51</td><td>IP Address Lease Time</td><td>Lease duration in seconds</td></tr>
+    <tr><td>52</td><td>Option Overload</td><td>Options overloading indication</td></tr>
+    <tr><td>53</td><td>DHCP Message Type</td><td>DHCP message type</td></tr>
+    <tr><td>54</td><td>Server Identifier</td><td>DHCP server IP address</td></tr>
+    <tr><td>55</td><td>Parameter Request List</td><td>List of requested options</td></tr>
+    <tr><td>56</td><td>Message</td><td>Error message or information</td></tr>
+    <tr><td>57</td><td>Maximum DHCP Message Size</td><td>Maximum size of DHCP message</td></tr>
+    <tr><td>58</td><td>Renewal Time (T1)</td><td>Time until renewal</td></tr>
+    <tr><td>59</td><td>Rebinding Time (T2)</td><td>Time until rebinding</td></tr>
+    <tr><td>60</td><td>Vendor Class Identifier</td><td>Vendor-specific ID</td></tr>
+    <tr><td>61</td><td>Client Identifier</td><td>Client ID (e.g., MAC address)</td></tr>
+    <tr><td>255</td><td>End</td><td>End of options list</td></tr>
+    </tbody>
+</table>
+
+<h2>Constants</h2>
+<table>
+    <thead>
+    <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>Client Port</td><td>68</td><td>UDP source port for client</td></tr>
+    <tr><td>Server Port</td><td>67</td><td>UDP destination port for server</td></tr>
+    <tr><td>Magic Cookie</td><td>99.130.83.99</td><td>Option field identifier</td></tr>
+    </tbody>
+</table>
+
+<h2>Flags Field</h2>
+<table>
+    <thead>
+    <tr><th>Bit</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>0</td><td>Broadcast flag: 1 = broadcast response, 0 = unicast</td></tr>
+    <tr><td>1-15</td><td>Reserved</td></tr>
+    </tbody>
+</table>
+
+<footer>
+    <p>Generated from RFC 2131 DHCP Protocol Summary.</p>
+</footer>
+</body>
+</html>

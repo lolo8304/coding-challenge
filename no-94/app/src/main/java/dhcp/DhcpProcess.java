@@ -32,7 +32,6 @@ public class DhcpProcess {
     private DatagramSocket socket;
 
     public DhcpProcess() {
-        this.clientMacAddress = this.macAddress();
         this.transactionId = new byte[4];
         new Random().nextBytes(transactionId);
     }
@@ -66,7 +65,7 @@ public class DhcpProcess {
     }
 
     public void discover() throws IOException {
-        var msg = new DhcpMessage(DhcpMessage.DHCPDISCOVER, this.clientMacAddress, this.transactionId);
+        var msg = new DhcpMessage(DhcpMessage.DHCPDISCOVER, this.transactionId);
         this.send(msg);
         System.out.println("[1 DISCOVER] Sent DHCPDISCOVER broadcast to server.");
     }
@@ -89,7 +88,7 @@ public class DhcpProcess {
     }
 
     private void sendRequest() throws IOException {
-        var msg = new DhcpMessage(DhcpMessage.DHCPREQUEST, this.clientMacAddress, this.transactionId);
+        var msg = new DhcpMessage(DhcpMessage.DHCPREQUEST, this.transactionId);
         var data = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), SERVER_PORT);
         socket.send(packet);
@@ -113,15 +112,7 @@ public class DhcpProcess {
         }
     }
 
-    private byte[] macAddress() {
-        try {
-            var nif = NetworkInterface.getNetworkInterfaces().nextElement();
-            var mac = nif.getHardwareAddress();
-            return Arrays.copyOf(mac, 6);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to get MAC address", e);
-        }
-    }
+
 
 
     public void send(DhcpMessage msg) throws IOException {
