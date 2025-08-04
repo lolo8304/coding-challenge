@@ -46,10 +46,6 @@ public class DhcpMessage {
     private byte hops; // hops - number of hops, used by relay agents to indicate the number of hops a message has taken
     private byte hardwareAddressLength; // hlen - hardware address length, 6 for Ethernet
 
-    public static DhcpMessage buildDiscoverMessage(byte[] transactionId) {
-        return new DhcpMessage(DHCPDISCOVER, transactionId);
-    }
-
     public static DhcpMessage parse(byte[] bytes) throws IOException {
         if (bytes == null || bytes.length < 240) {
             throw new IOException("Buffer is too short to parse DHCP message");

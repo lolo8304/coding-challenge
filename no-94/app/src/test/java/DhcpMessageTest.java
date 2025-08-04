@@ -170,6 +170,7 @@ public class DhcpMessageTest {
         // Assert
         assertEquals(dhcp.message.DhcpMessage.DHCPACK, msg.getMessageType());
         assertEquals(DhcpMessage.BOOTREPLY, msg.getOp());
+        assertEquals("DHCPACK", msg.getMessageTypeString());
         assertArrayEquals(YourTestClient.getInstance().serverIp(), msg.getServerIp());
         assertArrayEquals(YourTestClient.getInstance().offerIp(), msg.getOfferedIp().getAddress());
         assertArrayEquals(YourTestClient.getInstance().offerIp(), msg.getOfferIp());
