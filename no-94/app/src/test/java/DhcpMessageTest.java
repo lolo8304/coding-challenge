@@ -83,6 +83,7 @@ public class DhcpMessageTest {
 
         // Assert
         assertArrayEquals(transactionId, msg.getTransactionId());
+        assertEquals(DhcpMessage.BOOTREPLY, msg.getOp());
         assertEquals(dhcp.message.DhcpMessage.DHCPOFFER, msg.getMessageType());
         assertArrayEquals(YourTestClient.getInstance().serverIp(), msg.getServerIp());
         assertArrayEquals(YourTestClient.getInstance().offerIp(), msg.getOfferedIp().getAddress());
@@ -168,6 +169,7 @@ public class DhcpMessageTest {
 
         // Assert
         assertEquals(dhcp.message.DhcpMessage.DHCPACK, msg.getMessageType());
+        assertEquals(DhcpMessage.BOOTREPLY, msg.getOp());
         assertArrayEquals(YourTestClient.getInstance().serverIp(), msg.getServerIp());
         assertArrayEquals(YourTestClient.getInstance().offerIp(), msg.getOfferedIp().getAddress());
         assertArrayEquals(YourTestClient.getInstance().offerIp(), msg.getOfferIp());
