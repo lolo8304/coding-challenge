@@ -20,9 +20,6 @@ public class DhcOption {
         this.length = length;
         this.data = data;
     }
-    public DhcOption(int code, int length, byte[] data) {
-        this((byte)code, (byte)length, data);
-    }
     public DhcOption(byte code, byte[] data, byte[] data2) {
         this(code, getFlattenedData(data, data2));
     }
@@ -37,9 +34,6 @@ public class DhcOption {
     }
     public DhcOption(byte code, byte data) {
         this(code, (byte)1, new byte[]{data});
-    }
-    public DhcOption(int code, byte data) {
-        this((byte)code, data);
     }
     public DhcOption(byte code) {
         this(code, null);
@@ -91,7 +85,7 @@ public class DhcOption {
     public void appendToBuffer(ByteBuffer buffer) {
         buffer.put(code);
         if (this.code != 0 && this.code != -1) {
-            buffer.put((byte)length);
+            buffer.put(length);
         }
         if (this.data == null || this.data.length == 0) {
             return;
