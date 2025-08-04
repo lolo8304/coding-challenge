@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+@SuppressWarnings("UnusedReturnValue")
 @Getter
 @Setter
 public class DhcOptions {
