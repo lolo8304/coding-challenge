@@ -11,7 +11,6 @@ import java.util.ArrayList;
 @Setter
 public class DhcOptions {
     public static final DhcOption END_OPTION = new DhcOption((byte) 255);
-    public static final DhcOption PAD_OPTION = new DhcOption((byte) 0);
 
     private final ArrayList<DhcOption> options;
 
