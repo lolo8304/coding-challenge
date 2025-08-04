@@ -22,29 +22,37 @@ public class DhcOptions {
     public DhcOptions add(int code, byte data) {
         return add((byte) code, data);
     }
+
     public DhcOptions add(byte code, byte data) {
         this.options.add(new DhcOption(code, data));
         return this;
     }
+
     public DhcOptions add(DhcpOptionEnum codeEnum, byte data) {
         return add(codeEnum.getCode(), data);
     }
+
     public DhcOptions add(int code, byte[] data) {
         return add((byte) code, data);
     }
+
     public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data) {
         return add(codeEnum.getCode(), data);
     }
+
     public DhcOptions add(byte code, byte[] data) {
         this.options.add(new DhcOption(code, data));
         return this;
     }
+
     public DhcOptions add(int code, byte[] data, byte[] data2) {
         return add((byte) code, data, data2);
     }
+
     public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data, byte[] data2) {
         return add(codeEnum.getCode(), data, data2);
     }
+
     public DhcOptions add(byte code, byte[] data, byte[] data2) {
         this.options.add(new DhcOption(code, data, data2));
         return this;
@@ -65,10 +73,6 @@ public class DhcOptions {
         }
         // Add end option all the time
         addEndOption(buffer);
-    }
-
-    private void addPadOption(ByteBuffer buffer) {
-        PAD_OPTION.appendToBuffer(buffer);
     }
 
     private void addEndOption(ByteBuffer buffer) {
@@ -106,24 +110,10 @@ public class DhcOptions {
         }
         return null; // Option not found
     }
+
     public DhcOption get(DhcpOptionEnum codeEnum) {
         return get(codeEnum.getCode());
     }
-
-    public byte[] getBytes(DhcpOptionEnum codeEnum) {
-        DhcOption option = get(codeEnum);
-        if (option != null) {
-            return option.getData();
-        }
-        return new byte[0]; // Return empty byte array if option not found
-    }
-    public byte[] getBytes(int code) {
-        DhcOption option = get(code);
-        if (option != null) {
-            return option.getData();
-        }
-        return new byte[0]; // Return empty byte array if option not found
-}
 
     public byte getByte(DhcpOptionEnum dhcpOptionEnum) {
         DhcOption option = get(dhcpOptionEnum);
