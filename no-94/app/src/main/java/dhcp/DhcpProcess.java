@@ -1,6 +1,8 @@
 package dhcp;
 
+import dhcp.message.Converters;
 import dhcp.message.DhcpMessage;
+import dhcp.message.DhcpOptionEnum;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -69,7 +71,13 @@ public class DhcpProcess {
     public void discover() throws IOException {
         var msg = new DhcpMessage(DhcpMessage.DHCPDISCOVER, this.transactionId);
         this.send(msg);
-        System.out.println("[1 DISCOVER] Sent DHCPDISCOVER broadcast to server.");
+        if (Client.verbose()) {
+            System.out.println("\n[1 DISCOVER] Sent DHCPDISCOVER broadcast to server.");
+        }
+        if (Client.verbose2()) {
+            System.out.println("[1 DISCOVER] DHCPDISCOVER message in hex:");
+            System.out.println(Converters.convertByteArraryToHexDump(msg.getBytes()));
+        }
     }
 
     public void receiveOffer() throws IOException {
@@ -78,6 +86,10 @@ public class DhcpProcess {
         socket.setSoTimeout(TIMEOUT_MS);
         socket.receive(packet);
         var msg = new DhcpMessage(buffer);
+        if (Client.verbose2()) {
+            System.out.println("[2 OFFER] Received DHCPOFFER message in hex:");
+            System.out.println(Converters.convertByteArraryToHexDump(msg.getBytes()));
+        }
 
         if (msg.isResponseOfMessageType()) {
             this.serverIp = packet.getAddress();
@@ -91,6 +103,10 @@ public class DhcpProcess {
 
     private void sendRequest() throws IOException {
         var msg = new DhcpMessage(DhcpMessage.DHCPREQUEST, this.transactionId);
+        if (Client.verbose2()) {
+            System.out.println("[3 REQUEST] Sent DHCPREQUEST message in hex:");
+            System.out.println(Converters.convertByteArraryToHexDump(msg.getBytes()));
+        }
         var data = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), SERVER_PORT);
         socket.send(packet);
@@ -103,11 +119,21 @@ public class DhcpProcess {
         socket.setSoTimeout(TIMEOUT_MS);
         socket.receive(packet);
         var msg = new DhcpMessage(buffer);
+        if (Client.verbose2()) {
+            System.out.println("[4 ACK] DHCPACK message in hex:");
+            System.out.println(Converters.convertByteArraryToHexDump(msg.getBytes()));
+        }
 
-        if (msg.isResponseOfMessageType()) {
+        if (msg.isResponseOfMessageType(DhcpMessage.DHCPACK)) {
             this.clientIp = msg.getLeasedIp();
             System.out.printf("[4 ACK] DHCPACK received. Lease IP: %s%n", this.clientIp);
         } else if (msg.isResponseOfMessageType(DhcpMessage.DHCPNAK)) {
+            var error = msg.getOptions().get(DhcpOptionEnum.MESSAGE);
+            if (error != null && error.getData().length > 0) {
+                System.out.printf("[4 NAK] DHCPNAK received. Lease rejected: %s%n", new String(error.getData()));
+            } else {
+                System.out.println("[4 NAK] DHCPNAK received. Lease rejected.");
+            }
             throw new IOException("[4 NAK] DHCPNAK received. Lease rejected.");
         } else {
             throw new IOException("4 Unexpected response: %s".formatted(buffer[242]));

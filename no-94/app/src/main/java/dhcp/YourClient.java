@@ -20,9 +20,20 @@ public class YourClient {
 
     public byte[] clientIdentifier() {
         try {
-            var nif = NetworkInterface.getNetworkInterfaces().nextElement();
-            var mac = nif.getHardwareAddress();
-            return Arrays.copyOf(mac, 6);
+            var nifs = NetworkInterface.getNetworkInterfaces();
+            while (nifs.hasMoreElements()) {
+                var nif = nifs.nextElement();
+                if (nif.getName().equals(Client.getNetworkInterfaceName())) {
+                    // Check if the network interface is up and running
+                    if (nif.isUp() && !nif.isLoopback() && !nif.isVirtual()) {
+                        var mac = nif.getHardwareAddress();
+                        if (mac != null && mac.length == 6) {
+                            return Arrays.copyOf(mac, 6);
+                        }
+                    }
+                }
+            }
+            throw new RuntimeException("No active network interface found");
         } catch (Exception e) {
             throw new RuntimeException("Unable to get MAC address", e);
         }

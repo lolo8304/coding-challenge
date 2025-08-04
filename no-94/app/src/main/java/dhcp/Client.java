@@ -14,10 +14,14 @@ import java.util.concurrent.Callable;
 public class Client implements Callable<Result> {
 
     public static int _verbose = 0;
+    static String _networkInterfaceName;
+
     @Option(names = "-v", description = "verbose model level 1")
     boolean verbose = false;
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
+    @Option(names = "-n", description = "network interface to use. default en0")
+    String networkInterfaceName = "en0";
 
     public static void main(String[] args) {
         var dhcp = new Client();
@@ -37,10 +41,19 @@ public class Client implements Callable<Result> {
         return _verbose >= 2;
     }
 
+    public static String getNetworkInterfaceName() {
+        return _networkInterfaceName;
+    }
+
     @Override
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
+        if (this.networkInterfaceName != null) {
+            _networkInterfaceName = this.networkInterfaceName;
+        } else {
+            _networkInterfaceName = "en0"; // Default network interface
+        }
 
         var dhcp = new DhcpProcess().run();
         if (verbose()) {
