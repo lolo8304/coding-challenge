@@ -13,6 +13,20 @@ public class Converters {
         return bytes;
     }
 
+    public static int convertByteArrayToInt(byte[] bytes) {
+        if (bytes.length != 4) {
+            throw new IllegalArgumentException("Byte array must be exactly 4 bytes long");
+        }
+        return ((bytes[0] & 0xFF) << 24) |
+               ((bytes[1] & 0xFF) << 16) |
+               ((bytes[2] & 0xFF) << 8) |
+               (bytes[3] & 0xFF);
+    }
+
+    public static int convertHexToInt(String hex) {
+        return convertByteArrayToInt(convertHexToByteArray(hex));
+    }
+
     public static byte[] convertIntToByteArray(int value) {
         return new byte[] {
                 (byte) (value >> 24),
@@ -57,9 +71,9 @@ public class Converters {
 
     public static byte[] convertHexDumpIntoByteArray(String hexdump) {
             /* hex dump example
-0000   01 01 06 00 40 a4 72 29 00 00 00 00 00 00 00 00
-0010   00 00 00 00 00 00 00 00 00 00 00 00 52 98 ee c8
-0020   86 c3 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0000   01 01 06 00 40 a4 72 2c 00 00 00 00 00 00 00 00
+0010   00 00 00 00 00 00 00 00 00 00 00 00 82 c1 45 d3
+0020   81 94 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 0030   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 0040   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 0050   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -73,7 +87,7 @@ public class Converters {
 00d0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 00e0   00 00 00 00 00 00 00 00 00 00 00 00 63 82 53 63
 00f0   35 01 01 37 0b 01 79 03 06 0f 72 77 fc 5f 2c 2e
-0100   39 02 05 dc 3d 07 01 52 98 ee c8 86 c3 33 04 00
+0100   39 02 05 dc 3d 07 01 82 c1 45 d3 81 94 33 04 00
 0110   76 a7 00 ff 00 00 00 00 00 00 00 00 00 00 00 00
 0120   00 00 00 00 00 00 00 00 00 00 00 00
          */

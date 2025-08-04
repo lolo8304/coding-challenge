@@ -11,11 +11,13 @@ import java.nio.ByteBuffer;
 public class DhcOption {
 
     private final byte code;
+    private final DhcpOptionEnum codeEnum;
     private final byte length;
     private final byte[] data;
 
     public DhcOption(byte code, byte length, byte[] data) {
         this.code = code;
+        this.codeEnum = DhcpOptionEnum.fromCode(code);
         this.length = length;
         this.data = data;
     }
@@ -65,7 +67,7 @@ public class DhcOption {
 
     @Override
     public String toString() {
-        return "DhcOption{code=%02x/%s, length=%s, data=%s}".formatted(code, code, length, data != null ? bytesToString(data) : "null");
+        return "DhcOption{code=%s(%s),hex=%02x, length=%s, data=%s}".formatted(codeEnum, code, code, length, data != null ? bytesToString(data) : "null");
     }
 
     private String bytesToString(byte[] bytes) {
@@ -89,9 +91,7 @@ public class DhcOption {
 
     public void appendToBuffer(ByteBuffer buffer) {
         buffer.put(code);
-        if (this.code >= 0 && this.code < 3 || this.code == -1) {
-            // For options 0, 1, 2, and 255, the length is not used
-        } else {
+        if (this.code != 0 && this.code != -1) {
             buffer.put((byte)length);
         }
         if (this.data == null || this.data.length == 0) {

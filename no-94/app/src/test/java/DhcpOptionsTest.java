@@ -33,7 +33,7 @@ class DhcpOptionsTest {
         assert option1.getLength() == 4 : "Option length should be 4";
         assert option1.getData() != null : "Option data should not be null";
         assert option1.getData().length == 4 : "Option data length should be 4";
-        assert buffer.position() == 5 : "Buffer position should be 5 after appending option with tagged data";
+        assert buffer.position() == 6 : "Buffer position should be 6 (code, len, data) after appending option with tagged data";
     }
 
     @Test void new_option_with_code_and_taggeddata_ok()  {
@@ -146,7 +146,7 @@ class DhcpOptionsTest {
         // Action
         String str = option1.toString();
         // Assert
-        assert str.equals("DhcOption{code=10, length=3, data=[1, 2, 3]}") : "toString() should return correct string representation";
+        assert str.equals("DhcOption{code=IMPRESS_SERVER(10),hex=0a, length=3, data=[01, 02, 03]}") : "toString() should return correct string representation";
     }
     @Test void toString_null_ok() {
         // Arrange
@@ -154,7 +154,7 @@ class DhcpOptionsTest {
         // Action
         String str = option1.toString();
         // Assert
-        assert str.equals("DhcOption{code=10, length=0, data=null}") : "toString() should return correct string representation for null data";
+        assert str.equals("DhcOption{code=IMPRESS_SERVER(10),hex=0a, length=0, data=null}") : "toString() should return correct string representation for null data";
     }
 
     @Test void getCodeUInt_255() {
@@ -193,8 +193,8 @@ class DhcpOptionsTest {
         options.setToBuffer(buffer);
 
         // Assert
-        // 1, 2, 3, 4, 5, 6, 0, 255
-        assert buffer.position() == 249 : "Buffer position should be 248 but was "+ buffer.position()+" after setting options";
+        // 1, 3 -> 1, 2, 3. 2,3 -> 4, 5, 6, 0, 255
+        assert buffer.position() == 251 : "Buffer position should be 251 but was "+ buffer.position()+" after setting options";
     }
 
     @Test void newOptions_multiple_ok() {

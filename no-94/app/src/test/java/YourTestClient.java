@@ -7,17 +7,17 @@ public class YourTestClient extends YourClient {
         // Private constructor to prevent instantiation
     }
 
-    public static YourClient getInstance() {
+    public static YourTestClient getInstance() {
         if (instance == null) {
             instance = new YourTestClient();
         }
-        return instance;
+        return (YourTestClient)instance;
     }
 
     @Override
     public byte[] clientIdentifier() {
         // Override to provide a specific client identifier for testing
-        return Converters.convertHexToByteArray("52 98 ee c8 86 c3");
+        return Converters.convertHexToByteArray("82 c1 45 d3 81 94");
     }
 
     @Override
@@ -35,6 +35,21 @@ public class YourTestClient extends YourClient {
     @Override
     public byte[] transactionId() {
         // Override to provide a specific transaction ID for testing
-        return Converters.convertHexToByteArray("40 a4 72 29");
+        return Converters.convertHexToByteArray("40 a4 72 2c");
+    }
+
+    public byte[] offerIp() {
+        // Override to provide a specific offer IP for testing
+        return Converters.convertHexToByteArray("0a 00 00 82");
+    }
+
+    public byte[] clientIp() {
+        // Override to provide a specific offer IP for testing
+        return Converters.convertHexToByteArray("00 00 00 00");
+    }
+
+    public byte[] serverIp() {
+        // Override to provide a specific server IP for testing
+        return Converters.convertHexToByteArray("0a 00 00 01");
     }
 }

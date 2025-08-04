@@ -75,7 +75,7 @@ public class DhcpProcess {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.setSoTimeout(TIMEOUT_MS);
         socket.receive(packet);
-        var msg = new DhcpMessage(buffer, DhcpMessage.DHCPOFFER, this.offeredIp.getAddress(), this.serverIp.getAddress(), this.transactionId);
+        var msg = new DhcpMessage(buffer);
 
         if (msg.isResponseOfMessageType()) {
             this.serverIp = packet.getAddress();
@@ -100,7 +100,7 @@ public class DhcpProcess {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.setSoTimeout(TIMEOUT_MS);
         socket.receive(packet);
-        var msg = new DhcpMessage(buffer, DhcpMessage.DHCPACK, this.offeredIp.getAddress(), this.serverIp.getAddress(), this.transactionId);
+        var msg = new DhcpMessage(buffer);
 
         if (msg.isResponseOfMessageType()) {
             this.clientIp = msg.getLeasedIp();
