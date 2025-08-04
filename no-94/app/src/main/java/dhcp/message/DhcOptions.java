@@ -36,20 +36,18 @@ public class DhcOptions {
     public void add(byte code, byte[] data) {
         this.options.add(new DhcOption(code, data));
     }
-    public DhcOptions add(int code, byte[] data, byte[] data2) {
-        return add((byte) code, data, data2);
+    public void add(int code, byte[] data, byte[] data2) {
+        add((byte) code, data, data2);
     }
-    public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data, byte[] data2) {
-        return add(codeEnum.getCode(), data, data2);
+    public void add(DhcpOptionEnum codeEnum, byte[] data, byte[] data2) {
+        add(codeEnum.getCode(), data, data2);
     }
-    public DhcOptions add(byte code, byte[] data, byte[] data2) {
+    public void add(byte code, byte[] data, byte[] data2) {
         this.options.add(new DhcOption(code, data, data2));
-        return this;
     }
 
-    public DhcOptions add(DhcOption option) {
+    public  void add(DhcOption option) {
         this.options.add(option);
-        return this;
     }
 
     public void setToBuffer(ByteBuffer buffer) {
