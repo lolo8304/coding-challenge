@@ -18,36 +18,40 @@ public class DhcOptions {
         this.options = new ArrayList<>();
     }
 
-    public void add(int code, byte data) {
-        add((byte) code, data);
+    public DhcOptions add(int code, byte data) {
+        return add((byte) code, data);
     }
-    public void add(byte code, byte data) {
+    public DhcOptions add(byte code, byte data) {
         this.options.add(new DhcOption(code, data));
+        return this;
     }
-    public void add(DhcpOptionEnum codeEnum, byte data) {
-        add(codeEnum.getCode(), data);
+    public DhcOptions add(DhcpOptionEnum codeEnum, byte data) {
+        return add(codeEnum.getCode(), data);
     }
-    public void add(int code, byte[] data) {
-        add((byte) code, data);
+    public DhcOptions add(int code, byte[] data) {
+        return add((byte) code, data);
     }
-    public void add(DhcpOptionEnum codeEnum, byte[] data) {
-        add(codeEnum.getCode(), data);
+    public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data) {
+        return add(codeEnum.getCode(), data);
     }
-    public void add(byte code, byte[] data) {
+    public DhcOptions add(byte code, byte[] data) {
         this.options.add(new DhcOption(code, data));
+        return this;
     }
-    public void add(int code, byte[] data, byte[] data2) {
-        add((byte) code, data, data2);
+    public DhcOptions add(int code, byte[] data, byte[] data2) {
+        return add((byte) code, data, data2);
     }
-    public void add(DhcpOptionEnum codeEnum, byte[] data, byte[] data2) {
-        add(codeEnum.getCode(), data, data2);
+    public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data, byte[] data2) {
+        return add(codeEnum.getCode(), data, data2);
     }
-    public void add(byte code, byte[] data, byte[] data2) {
+    public DhcOptions add(byte code, byte[] data, byte[] data2) {
         this.options.add(new DhcOption(code, data, data2));
+        return this;
     }
 
-    public  void add(DhcOption option) {
+    public DhcOptions add(DhcOption option) {
         this.options.add(option);
+        return this;
     }
 
     public void setToBuffer(ByteBuffer buffer) {
