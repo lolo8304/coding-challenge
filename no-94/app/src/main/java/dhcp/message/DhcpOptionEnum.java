@@ -1,8 +1,10 @@
 package dhcp.message;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
-
+@Getter
 public enum DhcpOptionEnum {
     PAD(0),
     SUBNET_MASK(1),
@@ -113,10 +115,6 @@ public enum DhcpOptionEnum {
 
     DhcpOptionEnum(int code) {
         this.code = code;
-    }
-
-    public int getCode() {
-        return code;
     }
 
     public static DhcpOptionEnum fromCode(int code) {
