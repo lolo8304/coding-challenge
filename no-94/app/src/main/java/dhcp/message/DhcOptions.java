@@ -15,32 +15,26 @@ public class DhcOptions {
     private final ArrayList<DhcOption> options;
 
     public DhcOptions() {
-        this.options = new ArrayList<DhcOption>();
+        this.options = new ArrayList<>();
     }
 
-    public DhcOptions(ArrayList<DhcOption> options) {
-        this.options = options;
+    public void add(int code, byte data) {
+        add((byte) code, data);
     }
-
-    public DhcOptions add(int code, byte data) {
-        return add((byte) code, data);
-    }
-    public DhcOptions add(byte code, byte data) {
+    public void add(byte code, byte data) {
         this.options.add(new DhcOption(code, data));
-        return this;
     }
-    public DhcOptions add(DhcpOptionEnum codeEnum, byte data) {
-        return add(codeEnum.getCode(), data);
+    public void add(DhcpOptionEnum codeEnum, byte data) {
+        add(codeEnum.getCode(), data);
     }
-    public DhcOptions add(int code, byte[] data) {
-        return add((byte) code, data);
+    public void add(int code, byte[] data) {
+        add((byte) code, data);
     }
-    public DhcOptions add(DhcpOptionEnum codeEnum, byte[] data) {
-        return add(codeEnum.getCode(), data);
+    public void add(DhcpOptionEnum codeEnum, byte[] data) {
+        add(codeEnum.getCode(), data);
     }
-    public DhcOptions add(byte code, byte[] data) {
+    public void add(byte code, byte[] data) {
         this.options.add(new DhcOption(code, data));
-        return this;
     }
     public DhcOptions add(int code, byte[] data, byte[] data2) {
         return add((byte) code, data, data2);
