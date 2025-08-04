@@ -31,8 +31,10 @@ The focus is on demonstrating the basic DHCP client operations.
 
 To build the project:
 
-```sh
+```bash
 ./gradlew build
+```
+
 
 ## Run
 
