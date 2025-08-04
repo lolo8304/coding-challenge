@@ -38,7 +38,6 @@ public class DhcpMessageTest {
 0100   39 02 05 dc 3d 07 01 82 c1 45 d3 81 94 33 04 00
 0110   76 a7 00 ff 00 00 00 00 00 00 00 00 00 00 00 00
 0120   00 00 00 00 00 00 00 00 00 00 00 00""";
-        var bytes = Converters.convertHexDumpIntoByteArray(hex);
 
         // Act
         var transactionId = YourTestClient.getInstance().transactionId();
@@ -118,8 +117,6 @@ public class DhcpMessageTest {
 0100   39 02 05 dc 3d 07 01 82 c1 45 d3 81 94 32 04 0a
 0110   00 00 82 36 04 0a 00 00 01 0c 0a 4d 61 63 42 6f
 0120   6f 6b 50 72 6f ff 00 00 00 00 00 00""";
-
-        var bytes = Converters.convertHexDumpIntoByteArray(hex);
 
         // Act
         var transactionId = YourTestClient.getInstance().transactionId();

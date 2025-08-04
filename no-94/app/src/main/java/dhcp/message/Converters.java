@@ -94,7 +94,7 @@ public class Converters {
         var bytes = new byte[500];
         var index = 0;
         for (var line : hexdump.split("\n")) {
-            var hexBytes = Arrays.stream(line.split(" ")).filter(x -> !x.equals("")).toArray(String[]::new);
+            var hexBytes = Arrays.stream(line.split(" ")).filter(x -> !x.isEmpty()).toArray(String[]::new);
             for (int i = 1; i < hexBytes.length; i++) {
                 bytes[index++] = (byte) Integer.parseInt(hexBytes[i], 16);
             }
