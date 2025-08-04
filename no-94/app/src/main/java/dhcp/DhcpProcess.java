@@ -103,6 +103,9 @@ public class DhcpProcess {
 
     private void sendRequest() throws IOException {
         var msg = new DhcpMessage(DhcpMessage.DHCPREQUEST, this.transactionId);
+        msg.setServerIp(this.serverIp.getAddress());
+        msg.setOfferIp(this.offeredIp.getAddress());
+        msg.updateBuffer();
         if (Client.verbose2()) {
             System.out.println("[3 REQUEST] Sent DHCPREQUEST message in hex:");
             System.out.println(Converters.convertByteArraryToHexDump(msg.getBytes()));
