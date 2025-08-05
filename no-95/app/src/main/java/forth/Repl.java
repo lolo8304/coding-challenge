@@ -37,6 +37,7 @@ public class Repl implements Callable<Result> {
         return _verbose >= 1;
     }
 
+    @SuppressWarnings("unused")
     public static boolean verbose2() {
         return _verbose >= 2;
     }
