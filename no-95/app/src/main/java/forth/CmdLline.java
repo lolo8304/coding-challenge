@@ -23,6 +23,8 @@ public class CmdLline {
     }
 
     public void run(String cmd) {
-
+        if (Repl.verbose()) {
+            System.out.println("Executing command: " + cmd);
+        }
     }
 }
