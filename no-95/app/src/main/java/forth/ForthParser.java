@@ -26,6 +26,23 @@ public class ForthParser {
                 instructions.add(
                         context -> context.push(i)
                 );
+            } else if (token.equals(".\"")) {
+                var strBuilder = new StringBuilder();
+                strBuilder.append(token);
+                token = scanner.nextToken();
+                while (token != null && !token.endsWith("\"")) {
+                    strBuilder.append(' ').append(token);
+                    token = scanner.nextToken();
+                }
+                if (token == null) {
+                    throw new RuntimeException("No end quote \" found");
+                }
+                strBuilder.append(' ').append(token);
+                var builderString = strBuilder.toString(); // format ." _______ _____" (3 --> -1)
+                var toPrint = builderString.substring(3, builderString.length()-1);
+                instructions.add(
+                        context -> context.executePrint(toPrint)
+                );
             } else {
                 String t = token;
                 instructions.add(

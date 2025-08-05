@@ -72,6 +72,15 @@ public class ForthInterpreter {
             var n1 = stack.pop();
             outputBuilder.append(n1);
         });
+        this.words.put("emit",  () -> {
+            var n1 = stack.pop();
+            outputBuilder.append((char)n1.intValue());
+        });
+        this.words.put("cr",  () -> outputBuilder.append("\n"));
+        this.words.put(".*",  () -> {
+            var n1 = stack.pop();
+            outputBuilder.append((char)n1.intValue());
+        });
     }
 
     public void run(String line) {
@@ -111,6 +120,9 @@ public class ForthInterpreter {
         } else {
             System.out.println(word + " ?");
         }
+    }
+    public void executePrint(String string) {
+        outputBuilder.append(string);
     }
 
 }

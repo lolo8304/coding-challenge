@@ -35,6 +35,6 @@ public class CmdLline {
         }
         this.forth.run(cmd);
         var output = this.forth.outputToPrint();
-        if (!output.isEmpty()) System.out.println(output);
+        if (!output.isEmpty()) System.out.print(output);
     }
 }
