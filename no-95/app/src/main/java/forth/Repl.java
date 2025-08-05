@@ -20,6 +20,9 @@ public class Repl implements Callable<Result> {
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
 
+    @Option(names = {"-c", "--command"}, description = "command to execute - default: interactive mode")
+    String command;
+
     public static void main(String[] args) {
         var repl = new Repl();
         var cmd = new CommandLine(repl);
@@ -42,10 +45,12 @@ public class Repl implements Callable<Result> {
     public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
-        new Repl().run();
+        if (this.command != null) {
+            new CmdLline().run(this.command);
+            return new Result();
+        }
+        new CmdLline().run();
         return new Result();
     }
 
-    private void run() {
-    }
 }
