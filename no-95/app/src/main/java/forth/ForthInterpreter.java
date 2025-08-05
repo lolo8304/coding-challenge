@@ -24,6 +24,26 @@ public class ForthInterpreter {
             var n1 = stack.pop();
             stack.push(n1 + n2);
         });
+        this.words.put("-",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 - n2);
+        });
+        this.words.put("*",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 * n2);
+        });
+        this.words.put("/",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 / n2);
+        });
+        this.words.put("mod",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 % n2);
+        });
     }
 
     public void run(String line) {
@@ -37,10 +57,11 @@ public class ForthInterpreter {
         var s = this.stack.size();
         if (s == 0) return "";
         var builder = new StringBuilder();
-        this.stack.forEach(i -> {
-            builder.append(i);
+        var stackEntriesReversed = this.stack.toArray(Integer[]::new);
+        for (int i = stackEntriesReversed.length - 1; i >= 0; i--) {
+            builder.append(stackEntriesReversed[i]);
             builder.append(' ');
-        });
+        }
         return builder.toString();
     }
 
