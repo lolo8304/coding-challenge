@@ -4,9 +4,10 @@ import java.util.*;
 
 public class ForthInterpreter {
     private final Deque<Integer> stack;
-    private final Map<String, Runnable> words;
+    private final Map<String, Object> words;
     private final ForthParser parser;
     private StringBuilder outputBuilder;
+    private int pc;
 
     public interface Instruction {
         void execute(ForthInterpreter context);
@@ -17,49 +18,57 @@ public class ForthInterpreter {
         this.words = new HashMap<>();
         this.parser = new ForthParser();
         this.outputBuilder = new StringBuilder();
+        this.pc = 0;
         this.initializeBuiltIn();
     }
 
+    public void addBuiltInWord(String word, Runnable action) {
+        this.words.put(word,  action);
+    }
+    public void addDynamicWord(String word, List<ForthInterpreter.Instruction> instructions) {
+        this.words.put(word, instructions);
+    }
+
     private void initializeBuiltIn() {
-        this.words.put("+",  () -> {
+        this.addBuiltInWord("+",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 + n2);
         });
-        this.words.put("-",  () -> {
+        this.addBuiltInWord("-",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 - n2);
         });
-        this.words.put("*",  () -> {
+        this.addBuiltInWord("*",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 * n2);
         });
-        this.words.put("/",  () -> {
+        this.addBuiltInWord("/",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 / n2);
         });
-        this.words.put("mod",  () -> {
+        this.addBuiltInWord("mod",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 % n2);
         });
-        this.words.put("swap",  () -> {
+        this.addBuiltInWord("swap",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n2);
             stack.push(n1);
         });
-        this.words.put("dup",  () -> stack.push(stack.peek()));
-        this.words.put("over",  () -> {
+        this.addBuiltInWord("dup",  () -> stack.push(stack.peek()));
+        this.addBuiltInWord("over",  () -> {
             var n2 = stack.pop();
             var n1 = stack.peek();
             stack.push(n2);
             stack.push(n1);
         });
-        this.words.put("rot",  () -> {
+        this.addBuiltInWord("rot",  () -> {
             var n3 = stack.pop();
             var n2 = stack.pop();
             var n1 = stack.pop();
@@ -67,26 +76,31 @@ public class ForthInterpreter {
             stack.push(n3);
             stack.push(n1);
         });
-        this.words.put("drop", stack::pop);
-        this.words.put(".",  () -> {
+        this.addBuiltInWord("drop", stack::pop);
+        this.addBuiltInWord(".",  () -> {
             var n1 = stack.pop();
             outputBuilder.append(n1);
         });
-        this.words.put("emit",  () -> {
+        this.addBuiltInWord("emit",  () -> {
             var n1 = stack.pop();
             outputBuilder.append((char)n1.intValue());
         });
-        this.words.put("cr",  () -> outputBuilder.append("\n"));
-        this.words.put(".*",  () -> {
+        this.addBuiltInWord("cr",  () -> outputBuilder.append("\n"));
+        this.addBuiltInWord(".*",  () -> {
             var n1 = stack.pop();
             outputBuilder.append((char)n1.intValue());
         });
     }
 
     public void run(String line) {
-        var instructions = parser.parse(line);
-        for (Instruction instruction : instructions) {
+        this.run(parser.parse(line));
+    }
+    public void run(List<ForthInterpreter.Instruction> instructions) {
+        this.pc = 0;
+        while (this.pc < instructions.size()) {
+            var instruction = instructions.get(this.pc);
             instruction.execute(this);
+            this.pc++;
         }
     }
 
@@ -116,13 +130,27 @@ public class ForthInterpreter {
     public void executeWord(String word) {
         var wordRunner = this.words.get(word);
         if (wordRunner != null) {
-            wordRunner.run();
+            if (wordRunner instanceof Runnable runnable) {
+                runnable.run();
+            } else if (wordRunner instanceof List<?> list){
+                //noinspection unchecked
+                var wordInstructions = (List<ForthInterpreter.Instruction>)list;
+                this.run(wordInstructions);
+            }
         } else {
             System.out.println(word + " ?");
         }
     }
     public void executePrint(String string) {
         outputBuilder.append(string);
+    }
+
+    public void define(String word, List<ForthInterpreter.Instruction> instructions) {
+        this.addDynamicWord(word, instructions);
+    }
+
+    public void jumpTo(int i) {
+        this.pc = i - 1; // later we will increase it again in the loop after instruction
     }
 
 }
