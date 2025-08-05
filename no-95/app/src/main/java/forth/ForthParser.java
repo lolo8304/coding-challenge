@@ -54,13 +54,11 @@ public class ForthParser {
                 var jumpIndex = instructions.size();
                 instructions.add(null); // fill later
                 controlStack.push(jumpIndex); // replace with else
-                instructions.set(ifIndex, ctx -> {
-                    ctx.jumpTo(jumpIndex + 1);
-                });
+                instructions.set(ifIndex, ctx -> ctx.jumpTo(jumpIndex + 1));
             } else if (token.equals("then")) {
                 int jumpIndex = controlStack.pop(); // from if or else
-                instructions.set(jumpIndex, ctx -> {
-                    // dont do anything - just proceed
+                instructions.set(jumpIndex, _ -> {
+                    // don't do anything - just proceed
                 });
             } else if (token.equals(":")) {
                 var expression = new StringBuilder();
@@ -80,9 +78,7 @@ public class ForthParser {
                 }
                 var expressionInstructions = this.parse(expression.toString());
                 instructions.add(
-                        context -> {
-                            context.define(word, expressionInstructions);
-                        }
+                        context -> context.define(word, expressionInstructions)
                 );
             } else {
                 String t = token;
