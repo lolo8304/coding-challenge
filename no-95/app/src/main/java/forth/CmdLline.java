@@ -1,11 +1,16 @@
 package forth;
 
+import java.util.NoSuchElementException;
+
 public class CmdLline {
+    final ForthInterpreter forth;
     public CmdLline() {
+        this.forth = new ForthInterpreter();
     }
 
     public void run() {
         do {
+            System.out.print(this.forth.stackToString());
             System.out.print("ok> ");
             String line = System.console().readLine();
             if (line == null || line.equals("bye") || line.equals("^D")) {
@@ -16,7 +21,9 @@ public class CmdLline {
             }
             try {
                 this.run(line);
-            } catch (Exception e) {
+            } catch (NoSuchElementException e) {
+                System.out.println("Error: stack empty");
+            } catch (Error e) {
                 System.out.println("Error: " + e.getMessage());
             }
         } while (true);
@@ -26,5 +33,6 @@ public class CmdLline {
         if (Repl.verbose()) {
             System.out.println("Executing command: " + cmd);
         }
+        this.forth.run(cmd);
     }
 }
