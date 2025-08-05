@@ -1,7 +1,7 @@
 package forth;
 
 public class ForthScanner {
-    private String line;
+    private final String line;
     private int position;
 
     public ForthScanner(String line) {

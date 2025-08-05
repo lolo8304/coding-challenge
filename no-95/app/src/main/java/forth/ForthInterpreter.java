@@ -12,7 +12,7 @@ public class ForthInterpreter {
     }
 
     public ForthInterpreter() {
-        this.stack = new ArrayDeque<Integer>();
+        this.stack = new ArrayDeque<>();
         this.words = new HashMap<>();
         this.parser = new ForthParser();
         this.initializeBuiltIn();
@@ -38,7 +38,7 @@ public class ForthInterpreter {
         if (s == 0) return "";
         var builder = new StringBuilder();
         this.stack.forEach(i -> {
-            builder.append(String.valueOf(i));
+            builder.append(i);
             builder.append(' ');
         });
         return builder.toString();

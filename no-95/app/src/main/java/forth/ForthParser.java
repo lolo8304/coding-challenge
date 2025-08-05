@@ -7,6 +7,7 @@ public class ForthParser {
     public ForthParser() {
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     public List<ForthInterpreter.Instruction> parse(String line) {
         var instructions = new ArrayList<ForthInterpreter.Instruction>();
         var scanner = new ForthScanner(line);
@@ -23,16 +24,12 @@ public class ForthParser {
             } else if (token.matches("-?\\d+")) {
                 var i = Integer.parseInt(token);
                 instructions.add(
-                        context -> {
-                            context.push(i);
-                        }
+                        context -> context.push(i)
                 );
             } else {
                 String t = token;
                 instructions.add(
-                        context -> {
-                            context.executeWord(t);
-                        }
+                        context -> context.executeWord(t)
                 );
             }
             token = scanner.nextToken();
