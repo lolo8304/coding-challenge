@@ -50,9 +50,7 @@ public class ForthInterpreter {
             stack.push(n2);
             stack.push(n1);
         });
-        this.words.put("dup",  () -> {
-            stack.push(stack.peek());
-        });
+        this.words.put("dup",  () -> stack.push(stack.peek()));
         this.words.put("over",  () -> {
             var n2 = stack.pop();
             var n1 = stack.peek();
@@ -72,8 +70,8 @@ public class ForthInterpreter {
 
     public void run(String line) {
         var instructions = parser.parse(line);
-        for (int i = 0; i < instructions.size(); i++) {
-            instructions.get(i).execute(this);
+        for (Instruction instruction : instructions) {
+            instruction.execute(this);
         }
     }
 
