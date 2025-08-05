@@ -6,6 +6,7 @@ public class ForthInterpreter {
     private final Deque<Integer> stack;
     private final Map<String, Runnable> words;
     private final ForthParser parser;
+    private StringBuilder outputBuilder;
 
     public interface Instruction {
         void execute(ForthInterpreter context);
@@ -15,6 +16,7 @@ public class ForthInterpreter {
         this.stack = new ArrayDeque<>();
         this.words = new HashMap<>();
         this.parser = new ForthParser();
+        this.outputBuilder = new StringBuilder();
         this.initializeBuiltIn();
     }
 
@@ -66,6 +68,10 @@ public class ForthInterpreter {
             stack.push(n1);
         });
         this.words.put("drop", stack::pop);
+        this.words.put(".",  () -> {
+            var n1 = stack.pop();
+            outputBuilder.append(n1);
+        });
     }
 
     public void run(String line) {
@@ -73,6 +79,12 @@ public class ForthInterpreter {
         for (Instruction instruction : instructions) {
             instruction.execute(this);
         }
+    }
+
+    public String outputToPrint() {
+        var result = this.outputBuilder.toString();
+        if (!result.isEmpty()) this.outputBuilder = new StringBuilder();
+        return result;
     }
 
     public String stackToString() {
