@@ -44,6 +44,30 @@ public class ForthInterpreter {
             var n1 = stack.pop();
             stack.push(n1 % n2);
         });
+        this.words.put("swap",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n2);
+            stack.push(n1);
+        });
+        this.words.put("dup",  () -> {
+            stack.push(stack.peek());
+        });
+        this.words.put("over",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.peek();
+            stack.push(n2);
+            stack.push(n1);
+        });
+        this.words.put("rot",  () -> {
+            var n3 = stack.pop();
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n2);
+            stack.push(n3);
+            stack.push(n1);
+        });
+        this.words.put("drop", stack::pop);
     }
 
     public void run(String line) {
