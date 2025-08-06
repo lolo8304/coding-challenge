@@ -19,15 +19,16 @@ public class ForthParser {
             var shallReadTokenAtTheEnd = true; // flag to read token at the end of the loop
             if (token.equals("(")) {
                 // scan many ( comments
-                token = scanner.nextToken();
                 while (token != null && token.equals("(")) {
                     token = scanner.nextToken();
                 }
                 while (token != null && !token.equals(")")) {
                     token = scanner.nextToken();
                 }
+                if (token == null) {
+                    throw new RuntimeException("parsing comment - no end ) found");
+                }
                 // scan many ) comments
-                token = scanner.nextToken();
                 while (token != null && token.equals(")")) {
                     token = scanner.nextToken();
                 }

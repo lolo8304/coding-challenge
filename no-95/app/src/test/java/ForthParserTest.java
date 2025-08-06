@@ -109,4 +109,227 @@ class ForthParserTest {
         verify(mock, times(1)).push(20);
         verify(mock, times(1)).executeWord("+");
     }
+
+    @Test void parse_comment_empty() {
+        // Arrange
+        var code = "10 20 ( ) +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
+    }
+
+    @Test void parse_comment_still_open() {
+        // Arrange
+        var code = "10 20 ( n1 n2 - sum +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action & Assert
+        try {
+            parser.parse(code);
+
+            assert false; // Should not reach here
+        } catch (RuntimeException ex) {
+            assert ex.getMessage().equals("parsing comment - no end ) found");
+        }
+    }
+
+    @Test void parse_string() {
+        // Arrange
+        var code = ".\" Hello, World!\"";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.getFirst().execute(mock);
+
+        // Assert
+        assert instructions.size() == 1;
+        verify(mock, times(1)).executePrint("Hello, World!");
+    }
+
+    @Test void parse_stringWithBackslashes() {
+        // Arrange
+        var code = ".\" \\Hello\\, World!\"";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.getFirst().execute(mock);
+
+        // Assert
+        assert instructions.size() == 1;
+        verify(mock, times(1)).executePrint("\\Hello\\, World!");
+    }
+
+    @Test void parse_stringWithBackslashAtEnd() {
+        // Arrange
+        var code = ".\" Hello, World!\\\"";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.getFirst().execute(mock);
+
+        // Assert
+        assert instructions.size() == 1;
+        verify(mock, times(1)).executePrint("Hello, World!\\");
+    }
+
+    @Test void parse_stringNotClosed() {
+        // Arrange
+        var code = ".\" Hello, World!";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action & Assert
+        try {
+            parser.parse(code);
+            assert false; // Should not reach here
+        } catch (RuntimeException ex) {
+            assert ex.getMessage().equals("No end quote \" found");
+        }
+    }
+
+    @Test void parse_ifthen() {
+        // Arrange
+        var code = "10 10 = if .\"eq\" then";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 5; // 2 pushes, 1 equals, 1 if, 1 print, 1 then
+        verify(mock, times(2)).push(10);
+        verify(mock, times(1)).executeWord("=");
+        verify(mock, times(1)).pop();
+        verify(mock, times(1)).jumpTo(5);
+        verify(mock, times(1)).executeWord(".\"eq\"");
+    }
+
+    @Test void parse_ifelsethen_0() {
+        // Arrange
+        var code = "10 20 = if .\"eq\" else .\"ne\" then";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+        when(mock.pop()).thenReturn(0);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 7; // 2 pushes, 1 equals, 1 if, 1 print eq, 1 else, 1 print ne, 1 then
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("=");
+        verify(mock, times(1)).pop();
+        verify(mock, times(1)).jumpTo(7);
+        verify(mock, times(1)).executeWord(".\"ne\"");
+    }
+
+
+    @Test void parse_ifelsethen_minus1() {
+        // Arrange
+        var code = "10 10 = if .\"eq\" else .\"ne\" then";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+        when(mock.pop()).thenReturn(-1);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 7; // 2 pushes, 1 equals, 1 if, 1 print eq, 1 else, 1 print ne, 1 then
+        verify(mock, times(2)).push(10);
+        verify(mock, times(1)).executeWord("=");
+        verify(mock, times(1)).pop();
+        verify(mock, times(1)).jumpTo(7);
+        verify(mock, times(1)).executeWord(".\"ne\"");
+    }
+
+    @Test void parse_defineWord() {
+        // Arrange
+        var code = ": square dup * ; 10 square";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 1 define, 1 dup, 1 multiply
+        verify(mock, times(1)).define(eq("square"), any());
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).executeWord("square");
+    }
+
+    @Test void parse_defineWordInComplete() {
+        // Arrange
+        var code = ": square dup *";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action & Assert
+        try {
+            parser.parse(code);
+            assert false; // Should not reach here
+        } catch (RuntimeException ex) {
+            assert ex.getMessage().equals("parsing definition : __ ; - token ; not found");
+        }
+    }
+    @Test void parse_defineWordInCompleteExpressionEmpty() {
+        // Arrange
+        var code = ": square ;";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action & Assert
+        try {
+            parser.parse(code);
+            assert false; // Should not reach here
+        } catch (RuntimeException ex) {
+            assert ex.getMessage().equals("parsing definition : __ ; - expression is empty");
+        }
+    }
+
+    @Test void parse_doLoop() {
+        // Arrange
+        var code = "5 0 do .\" Test \" i . cr loop";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 8; // 2 pushes, 1 do, 1 print, 1 i, 1 cr, 1 loop
+        verify(mock, times(1)).push(5);
+        verify(mock, times(1)).push(0);
+        verify(mock, times(1)).pushLoop(0, 0);
+        verify(mock, times(1)).executeWord(".");
+        verify(mock, times(1)).executeWord("i");
+        verify(mock, times(1)).executeWord("cr");
+        verify(mock, times(1)).incrementLoop();
+        verify(mock, times(1)).popLoop();
+    }
+
 }
