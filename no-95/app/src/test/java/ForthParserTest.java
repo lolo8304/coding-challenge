@@ -76,9 +76,9 @@ class ForthParserTest {
         verify(mock, times(1)).executeWord("+");
     }
 
-    @Test void parse_commentmulti() {
+    @Test void parse_commentmultiLeft() {
         // Arrange
-        var code = "10 20 ( ( ( (  n1 n2 - sum ) +";
+        var code = "10 20 ( ( n1 n2 - sum ) +";
         var parser = new ForthParser();
         var mock = mock(ForthInterpreterOperationsAll.class);
 
@@ -93,7 +93,7 @@ class ForthParserTest {
         verify(mock, times(1)).executeWord("+");
     }
 
-    @Test void parse_commentmulti2() {
+    @Test void parse_commentmultiRight() {
         // Arrange
         var code = "10 20 (  n1 n2 - sum ) ) ) +";
         var parser = new ForthParser();
@@ -104,7 +104,7 @@ class ForthParserTest {
         instructions.forEach(x -> x.execute(mock));
 
         // Assert
-        assert instructions.size() == 5; // 2 pushes and 1 add
+        assert instructions.size() == 3; // 2 pushes and 1 add
         verify(mock, times(1)).push(10);
         verify(mock, times(1)).push(20);
         verify(mock, times(1)).executeWord("+");

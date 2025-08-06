@@ -15,14 +15,23 @@ public class ForthParser {
         var scanner = new ForthScanner(line);
         // Parse the input using the scanner
         var token = scanner.nextToken();
-        var inComment = false;
         while (token != null) {
-            if (token.equals("(") && !inComment) {
-                inComment = true;
-            } else if (inComment && !token.equals(")")) {
-                // skip
-            } else if (inComment) {
-                inComment = false;
+            var shallReadTokenAtTheEnd = true; // flag to read token at the end of the loop
+            if (token.equals("(")) {
+                // scan many ( comments
+                token = scanner.nextToken();
+                while (token != null && token.equals("(")) {
+                    token = scanner.nextToken();
+                }
+                while (token != null && !token.equals(")")) {
+                    token = scanner.nextToken();
+                }
+                // scan many ) comments
+                token = scanner.nextToken();
+                while (token != null && token.equals(")")) {
+                    token = scanner.nextToken();
+                }
+                shallReadTokenAtTheEnd = false;
             } else if (token.matches("-?\\d+")) {
                 var i = Integer.parseInt(token);
                 instructions.add(
@@ -114,7 +123,9 @@ public class ForthParser {
                     context -> context.executeWord(t)
                 );
             }
-            token = scanner.nextToken();
+            if (shallReadTokenAtTheEnd) {
+                token = scanner.nextToken();
+            }
         }
         return instructions;
     }
