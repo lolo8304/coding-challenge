@@ -211,6 +211,9 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     @Override
     public boolean incrementLoop() {
         LoopFrame top = loopStack.peek();
+        if (top == null) {
+            throw new RuntimeException("No active loop to increment");
+        }
         top.index++;
         return top.index < top.limit;
     }

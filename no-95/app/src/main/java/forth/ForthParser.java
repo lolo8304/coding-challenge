@@ -8,7 +8,6 @@ public class ForthParser {
     public ForthParser() {
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     public List<ForthInterpreter.Instruction> parse(String line) {
         var instructions = new ArrayList<ForthInterpreter.Instruction>();
         var controlStack = new ArrayDeque<Integer>();

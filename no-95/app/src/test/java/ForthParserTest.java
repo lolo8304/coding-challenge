@@ -5,8 +5,8 @@
 
 import forth.ForthInterpreterOperationsAll;
 import forth.ForthParser;
-import forth.ForthScanner;
 import org.junit.jupiter.api.Test;
+
 import static org.mockito.Mockito.*;
 
 class ForthParserTest {
@@ -131,7 +131,6 @@ class ForthParserTest {
         // Arrange
         var code = "10 20 ( n1 n2 - sum +";
         var parser = new ForthParser();
-        var mock = mock(ForthInterpreterOperationsAll.class);
 
         // Action & Assert
         try {
@@ -192,7 +191,6 @@ class ForthParserTest {
         // Arrange
         var code = ".\" Hello, World!";
         var parser = new ForthParser();
-        var mock = mock(ForthInterpreterOperationsAll.class);
 
         // Action & Assert
         try {
@@ -285,7 +283,6 @@ class ForthParserTest {
         // Arrange
         var code = ": square dup *";
         var parser = new ForthParser();
-        var mock = mock(ForthInterpreterOperationsAll.class);
 
         // Action & Assert
         try {
@@ -299,7 +296,6 @@ class ForthParserTest {
         // Arrange
         var code = ": square ;";
         var parser = new ForthParser();
-        var mock = mock(ForthInterpreterOperationsAll.class);
 
         // Action & Assert
         try {
