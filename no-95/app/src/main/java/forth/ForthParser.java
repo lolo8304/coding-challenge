@@ -70,7 +70,6 @@ public class ForthParser {
                     });
                 } else {
                     instructions.set(patchIndex, ctx -> {
-                        // no-op: jump target is right here
                         ctx.jumpTo(thenIndex);
                     });
                 }
