@@ -3,14 +3,110 @@
  */
 
 
+import forth.ForthInterpreterOperationsAll;
+import forth.ForthParser;
+import forth.ForthScanner;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
 
 class ForthParserTest {
 
-    @Test void new_simpleoption_ok() {
+    @Test void parse_integer() {
         // Arrange
-        // Action
-        // Assert
+        var code = "10";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
 
+        // Action
+        var instructions = parser.parse(code);
+        instructions.getFirst().execute(mock);
+
+        // Assert
+        assert instructions.size() == 1;
+        verify(mock, times(1)).push(10);
+    }
+
+    @Test void parse_addition() {
+        // Arrange
+        var code = "10 20 +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
+    }
+
+    @Test void parse_subtraction() {
+        // Arrange
+        var code = "30 10 -";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 subtract
+        verify(mock, times(1)).push(30);
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).executeWord("-");
+    }
+    @Test void parse_comment() {
+        // Arrange
+        var code = "10 20 ( n1 n2 - sum ) +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
+    }
+
+    @Test void parse_commentmulti() {
+        // Arrange
+        var code = "10 20 ( ( ( (  n1 n2 - sum ) +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
+    }
+
+    @Test void parse_commentmulti2() {
+        // Arrange
+        var code = "10 20 (  n1 n2 - sum ) ) ) +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 5; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
     }
 }

@@ -2,7 +2,7 @@ package forth;
 
 import java.util.*;
 
-public class ForthInterpreter {
+public class ForthInterpreter implements ForthInterpreterOperationsAll {
     private final Deque<Integer> stack;
     private final Map<String, Object> words;
     private final Deque<LoopFrame> loopStack = new ArrayDeque<>();
@@ -12,7 +12,7 @@ public class ForthInterpreter {
     private int pc;
 
     public interface Instruction {
-        void execute(ForthInterpreter context);
+        void execute(ForthInterpreterOperationsAll context);
     }
 
     public ForthInterpreter() {
@@ -160,9 +160,11 @@ public class ForthInterpreter {
 
     /* parser execution hooks */
 
+    @Override
     public void push(Integer token) {
         this.stack.push(token);
     }
+    @Override
     public void executeWord(String word) {
         var wordRunner = this.words.get(word);
         if (wordRunner != null) {
@@ -182,31 +184,38 @@ public class ForthInterpreter {
             System.out.println(word + " ?");
         }
     }
+    @Override
     public void executePrint(String string) {
         outputBuilder.append(string);
     }
 
+    @Override
     public void define(String word, List<ForthInterpreter.Instruction> instructions) {
         this.addDynamicWord(word, instructions);
     }
 
+    @Override
     public void jumpTo(int i) {
         this.pc = i - 1; // later we will increase it again in the loop after instruction
     }
+    @Override
     public Integer pop() {
         return this.stack.pop();
     }
 
+    @Override
     public void pushLoop(int start, int limit) {
         loopStack.push(new LoopFrame(start, limit));
     }
 
+    @Override
     public boolean incrementLoop() {
         LoopFrame top = loopStack.peek();
         top.index++;
         return top.index < top.limit;
     }
 
+    @Override
     public void popLoop() {
         loopStack.pop();
     }
