@@ -69,9 +69,7 @@ public class ForthParser {
                         if (ctx.pop() == 0) ctx.jumpTo(thenIndex);
                     });
                 } else {
-                    instructions.set(patchIndex, ctx -> {
-                        ctx.jumpTo(thenIndex);
-                    });
+                    instructions.set(patchIndex, ctx -> ctx.jumpTo(thenIndex));
                 }
             } else if (token.equals(":")) {
                 var expression = new StringBuilder();
