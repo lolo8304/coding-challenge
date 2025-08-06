@@ -90,6 +90,40 @@ public class ForthInterpreter {
             var n1 = stack.pop();
             outputBuilder.append((char)n1.intValue());
         });
+        this.addBuiltInWord("<",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 < n2 ? -1 : 0);
+        });
+        this.addBuiltInWord(">",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 > n2 ? -1 : 0);
+        });
+        this.addBuiltInWord("=",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(Objects.equals(n1, n2) ? -1 : 0);
+        });
+        this.addBuiltInWord("<>",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(Objects.equals(n1, n2) ? 0 : -1);
+        });
+        this.addBuiltInWord("and",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1.equals(-1) && n2.equals(-1) ? -1 : 0);
+        });
+        this.addBuiltInWord("or",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1.equals(-1) || n2.equals(-1) ? -1 : 0);
+        });
+        this.addBuiltInWord("invert",  () -> {
+            var n1 = stack.pop();
+            stack.push(n1.equals(-1) ? 0 : -1);
+        });
     }
 
     public void run(String line) {
@@ -152,5 +186,9 @@ public class ForthInterpreter {
     public void jumpTo(int i) {
         this.pc = i - 1; // later we will increase it again in the loop after instruction
     }
+    public Integer pop() {
+        return this.stack.pop();
+    }
+
 
 }

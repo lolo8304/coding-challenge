@@ -46,20 +46,34 @@ public class ForthParser {
                         context -> context.executePrint(toPrint)
                 );
             } else if (token.equals("if")) {
-                var jumpIndex = instructions.size();
+                var ifIndex = instructions.size();
                 instructions.add(null); // fill later
-                controlStack.push(jumpIndex);
+                controlStack.push(ifIndex);
             } else if (token.equals("else")) {
                 var ifIndex = controlStack.pop(); // from if
-                var jumpIndex = instructions.size();
+                var elseIndex = instructions.size();
                 instructions.add(null); // fill later
-                controlStack.push(jumpIndex); // replace with else
-                instructions.set(ifIndex, ctx -> ctx.jumpTo(jumpIndex + 1));
-            } else if (token.equals("then")) {
-                int jumpIndex = controlStack.pop(); // from if or else
-                instructions.set(jumpIndex, _ -> {
-                    // don't do anything - just proceed
+                controlStack.push(-elseIndex); // replace with else
+                instructions.set(ifIndex, ctx -> {
+                    if (ctx.pop().equals(0)) {
+                        ctx.jumpTo(elseIndex + 1);
+                    }
                 });
+            } else if (token.equals("then")) {
+                int patchIndex = controlStack.pop(); // from if or else
+                var elseAlreadyChecked = patchIndex < 0;
+                patchIndex = Math.abs(patchIndex);
+                int thenIndex = instructions.size();
+                if (!elseAlreadyChecked) {
+                    instructions.set(patchIndex, ctx -> {
+                        if (ctx.pop() == 0) ctx.jumpTo(thenIndex);
+                    });
+                } else {
+                    instructions.set(patchIndex, ctx -> {
+                        // no-op: jump target is right here
+                        ctx.jumpTo(thenIndex);
+                    });
+                }
             } else if (token.equals(":")) {
                 var expression = new StringBuilder();
                 token = scanner.nextToken();
