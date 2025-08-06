@@ -89,12 +89,29 @@ public class ForthParser {
                 }
                 var expressionInstructions = this.parse(expression.toString());
                 instructions.add(
-                        context -> context.define(word, expressionInstructions)
+                    context -> context.define(word, expressionInstructions)
                 );
+            } else if (token.equals("do")) {
+                int doStart = instructions.size();
+                instructions.add(ctx -> {
+                    int start = ctx.pop();
+                    int limit = ctx.pop();
+                    ctx.pushLoop(start, limit);
+                });
+                controlStack.push(doStart);
+            } else if (token.equals("loop")) {
+                int loopStart = controlStack.pop();
+                instructions.add(ctx -> {
+                    if (ctx.incrementLoop()) {
+                        ctx.jumpTo(loopStart+1);
+                    } else {
+                        ctx.popLoop();
+                    }
+                });
             } else {
                 String t = token;
                 instructions.add(
-                        context -> context.executeWord(t)
+                    context -> context.executeWord(t)
                 );
             }
             token = scanner.nextToken();

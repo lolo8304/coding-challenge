@@ -5,6 +5,8 @@ import java.util.*;
 public class ForthInterpreter {
     private final Deque<Integer> stack;
     private final Map<String, Object> words;
+    private final Deque<LoopFrame> loopStack = new ArrayDeque<>();
+
     private final ForthParser parser;
     private StringBuilder outputBuilder;
     private int pc;
@@ -166,11 +168,16 @@ public class ForthInterpreter {
         if (wordRunner != null) {
             if (wordRunner instanceof Runnable runnable) {
                 runnable.run();
-            } else if (wordRunner instanceof List<?> list){
+            } else if (wordRunner instanceof List<?> list) {
                 //noinspection unchecked
-                var wordInstructions = (List<ForthInterpreter.Instruction>)list;
+                var wordInstructions = (List<ForthInterpreter.Instruction>) list;
                 this.run(wordInstructions);
             }
+        } else if (word.equalsIgnoreCase("i")) {
+            if (loopStack.isEmpty()) {
+                throw new RuntimeException("No active loop for 'i'");
+            }
+            stack.push(loopStack.peek().index);
         } else {
             System.out.println(word + " ?");
         }
@@ -190,5 +197,28 @@ public class ForthInterpreter {
         return this.stack.pop();
     }
 
+    public void pushLoop(int start, int limit) {
+        loopStack.push(new LoopFrame(start, limit));
+    }
+
+    public boolean incrementLoop() {
+        LoopFrame top = loopStack.peek();
+        top.index++;
+        return top.index < top.limit;
+    }
+
+    public void popLoop() {
+        loopStack.pop();
+    }
+
+    private static class LoopFrame {
+        int index;
+        int limit;
+
+        LoopFrame(int index, int limit) {
+            this.index = index;
+            this.limit = limit;
+        }
+    }
 
 }
