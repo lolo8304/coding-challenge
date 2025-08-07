@@ -127,17 +127,13 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             stack.push(n1.equals(-1) ? 0 : -1);
         });
 
-        this.addBuiltInWord("depth", () -> {
-            stack.push(stack.size());
-        });
+        this.addBuiltInWord("depth", () -> stack.push(stack.size()));
         this.addBuiltInWord("clear", stack::clear);
         this.addBuiltInWord("bye",  () -> {
             System.out.println("bye");
             System.exit(0);
         });
-        this.addBuiltInWord(".s",  () -> {
-            outputBuilder.append(stackToString());
-        });
+        this.addBuiltInWord(".s",  () -> outputBuilder.append(stackToString()));
 
     }
 
