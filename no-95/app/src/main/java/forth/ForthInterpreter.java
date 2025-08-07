@@ -64,6 +64,13 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             stack.push(n1);
         });
         this.addBuiltInWord("dup",  () -> stack.push(stack.peek()));
+        this.addBuiltInWord("2dup",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.peek();
+            stack.push(n2);
+            stack.push(n1);
+            stack.push(n2);
+        });
         this.addBuiltInWord("over",  () -> {
             var n2 = stack.pop();
             var n1 = stack.peek();

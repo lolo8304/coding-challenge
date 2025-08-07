@@ -40,6 +40,10 @@ public class CmdLline {
             if (line.trim().isEmpty()) {
                 continue;
             }
+            if (line.startsWith("\\ ")) {
+                // irgnore comments
+                continue;
+            }
             this.forth.run(line);
         }
         var output = this.forth.outputToPrint();
