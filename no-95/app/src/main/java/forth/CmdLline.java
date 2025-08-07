@@ -11,6 +11,7 @@ public class CmdLline {
     }
 
     public void run() {
+        System.out.println("Welcome to the Forth interpreter!");
         do {
             System.out.print(this.forth.stackToString());
             System.out.print("ok> ");
