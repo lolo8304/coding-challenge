@@ -126,6 +126,19 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             var n1 = stack.pop();
             stack.push(n1.equals(-1) ? 0 : -1);
         });
+
+        this.addBuiltInWord("depth", () -> {
+            stack.push(stack.size());
+        });
+        this.addBuiltInWord("clear", stack::clear);
+        this.addBuiltInWord("bye",  () -> {
+            System.out.println("bye");
+            System.exit(0);
+        });
+        this.addBuiltInWord(".s",  () -> {
+            outputBuilder.append(stackToString());
+        });
+
     }
 
     public void run(String line) {
