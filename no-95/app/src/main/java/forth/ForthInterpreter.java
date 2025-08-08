@@ -1,6 +1,7 @@
 package forth;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ForthInterpreter implements ForthInterpreterOperationsAll {
     private final Deque<Integer> stack;
@@ -25,6 +26,9 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     }
 
     public void addBuiltInWord(String word, Runnable action) {
+        this.words.put(word,  action);
+    }
+    public void addBuiltInWord(String word, Consumer<ForthInterpreter> action) {
         this.words.put(word,  action);
     }
     public void addDynamicWord(String word, List<ForthInterpreter.Instruction> instructions) {
@@ -95,19 +99,25 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             outputBuilder.append((char)n1.intValue());
         });
         this.addBuiltInWord("cr",  () -> outputBuilder.append("\n"));
-        this.addBuiltInWord(".*",  () -> {
-            var n1 = stack.pop();
-            outputBuilder.append((char)n1.intValue());
-        });
         this.addBuiltInWord("<",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 < n2 ? -1 : 0);
         });
+        this.addBuiltInWord("<=",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 <= n2 ? -1 : 0);
+        });
         this.addBuiltInWord(">",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
             stack.push(n1 > n2 ? -1 : 0);
+        });
+        this.addBuiltInWord(">=",  () -> {
+            var n2 = stack.pop();
+            var n1 = stack.pop();
+            stack.push(n1 >= n2 ? -1 : 0);
         });
         this.addBuiltInWord("=",  () -> {
             var n2 = stack.pop();
@@ -180,24 +190,43 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     public void push(Integer token) {
         this.stack.push(token);
     }
+
+    @Override
+    public Integer pop() {
+        return this.stack.pop();
+    }
+
+    @Override
+    public Integer peek() {
+        return this.stack.peek();
+    }
+
     @Override
     public void executeWord(String word) {
-        var wordRunner = this.words.get(word);
+        var wordRunner = word != null && !word.isBlank() ? this.words.get(word) : null;
         if (wordRunner != null) {
-            if (wordRunner instanceof Runnable runnable) {
-                runnable.run();
-            } else if (wordRunner instanceof List<?> list) {
-                //noinspection unchecked
-                var wordInstructions = (List<ForthInterpreter.Instruction>) list;
-                this.run(wordInstructions);
+            switch (wordRunner) {
+                case Runnable runnable -> runnable.run();
+                case Consumer<?> consumer -> {
+                    //noinspection unchecked
+                    var consumerAction = (Consumer<ForthInterpreter>) consumer;
+                    consumerAction.accept(this);
+                }
+                case List<?> list -> {
+                    //noinspection unchecked
+                    var wordInstructions = (List<Instruction>) list;
+                    this.run(wordInstructions);
+                }
+                default -> {
+                }
             }
-        } else if (word.equalsIgnoreCase("i")) {
+        } else if (word != null && word.equalsIgnoreCase("i")) {
             if (loopStack.isEmpty()) {
                 throw new RuntimeException("No active loop for 'i'");
             }
             stack.push(loopStack.peek().index);
         } else {
-            System.out.println(word + " ?");
+            this.executePrint(word + " ?");
         }
     }
     @Override
@@ -213,10 +242,6 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     @Override
     public void jumpTo(int i) {
         this.pc = i - 1; // later we will increase it again in the loop after instruction
-    }
-    @Override
-    public Integer pop() {
-        return this.stack.pop();
     }
 
     @Override
