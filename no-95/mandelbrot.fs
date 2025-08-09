@@ -1,10 +1,8 @@
 \ Define the pixel gradient string (from lightest to darkest)
-create charset
-  s" .'`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$" ,
+create charset s" .tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$" ,
 
 \ Fetch character from charset given an index
-: get-char ( idx -- c )
-  charset + c@ ;
+: get-char ( idx -- c )  charset + c@ ;
 
 \ Complex number square: (r i -- r^2 i^2 r*i)
 : csquare ( r i -- r2 i2 ri )

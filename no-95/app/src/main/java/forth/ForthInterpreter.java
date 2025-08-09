@@ -7,10 +7,12 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     private final Deque<Integer> stack;
     private final Map<String, Object> words;
     private final Deque<LoopFrame> loopStack = new ArrayDeque<>();
+    private final byte[] memory = new byte[4 * 1024];
 
     private final ForthParser parser;
     private StringBuilder outputBuilder;
-    private int pc;
+    private int pc = 0;
+    private int dsp = 0; // data stack pointer to next free data stack slot
 
     public interface Instruction {
         void execute(ForthInterpreterOperationsAll context);
@@ -152,6 +154,70 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         });
         this.addBuiltInWord(".s",  () -> outputBuilder.append(stackToString()));
 
+        this.addBuiltInWord("allot", (ForthInterpreter interpreter) -> {
+            var length = interpreter.pop();
+            interpreter.charAllot(length);
+        });
+
+        this.addBuiltInWord("here", (ForthInterpreter interpreter) -> {
+            interpreter.push(this.dsp);
+        });
+
+        this.addBuiltInWord("cells", (ForthInterpreter interpreter) -> {
+            interpreter.push(interpreter.pop() * 4);
+        });
+
+        this.addBuiltInWord("cell+", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            interpreter.push(address + 4);
+        });
+
+        this.addBuiltInWord("cell-", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            interpreter.push(address - 4);
+        });
+
+        this.addBuiltInWord("c@", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            int i = interpreter.getCharMemory(address);
+            interpreter.push(i);
+        });
+
+        this.addBuiltInWord("c!", (ForthInterpreter interpreter) -> {
+            var value = interpreter.pop();
+            var address = interpreter.pop();
+            interpreter.setCharMemory(address, (char)value.intValue());
+        });
+
+        this.addBuiltInWord("!", (ForthInterpreter interpreter) -> {
+            var value = interpreter.pop();
+            var address = interpreter.pop();
+            interpreter.setCell(address, value);
+        });
+
+        this.addBuiltInWord("@", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            var value = interpreter.getCell(address);
+            interpreter.push(value);
+        });
+
+        this.addBuiltInWord("move", (ForthInterpreter interpreter) -> {
+            // (fromAddr toAddr len -- )
+            var length = interpreter.pop();
+            var destAddress = interpreter.pop();
+            var sourceAddress = interpreter.pop();
+            if (length <= 0) {
+                throw new RuntimeException("Move length must be positive");
+            }
+            if (sourceAddress.equals(destAddress)) {
+                return; // No need to move if source and destination are the same
+            }
+            for (int i = 0; i < length; i++) {
+                var value = interpreter.getCell(sourceAddress + i * 4);
+                interpreter.setCell(destAddress + i * 4, value);
+            }
+        });
+
     }
 
     public void run(String line) {
@@ -263,6 +329,220 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     public void popLoop() {
         loopStack.pop();
     }
+
+    /* variables */
+
+    @Override
+    public Variable defineVariable(String name, Integer address, Integer length) {
+        if (this.words.containsKey(name)) {
+            throw new RuntimeException("Variable '" + name + "' already defined");
+        }
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid memory address for variable '" + name + "'");
+        }
+        if (length <= 0) {
+            throw new RuntimeException("Variable '" + name + "' length must be positive");
+        }
+        if (address + length >= this.dsp) {
+            throw new RuntimeException("Variable '" + name + "' address " + address + " and length "+length+ " is not in the data range");
+        }
+        var var = new Variable(address, length);
+        this.words.put(name, var);
+        return var;
+    }
+
+
+    @Override
+    public Variable defineVariable(String name) {
+        if (this.words.containsKey(name)) {
+            throw new RuntimeException("Variable '" + name + "' already defined");
+        }
+        var var = new Variable(this.dsp, null);
+        this.words.put(name, var);
+        return var;
+    }
+
+
+    @Override
+    public Variable getVariable(String name) {
+        if (!this.words.containsKey(name)) {
+            throw new RuntimeException("Variable '" + name + "' not defined");
+        }
+        var word = this.words.get(name);
+        if (word instanceof Variable variable && !(word instanceof Constant)) {
+            return variable;
+        } else {
+            throw new RuntimeException("Word '" + name + "' is not a variable");
+        }
+    }
+
+
+    private char readChar(int address) {
+        return (char) memory[address];
+    }
+    private Integer readCell(int address) {
+        return ((memory[address] & 0xFF) << 24) |
+               ((memory[address + 1] & 0xFF) << 16) |
+               ((memory[address + 2] & 0xFF) << 8) |
+               ((memory[address + 3] & 0xFF));
+    }
+    private void writeChar(int address, char value) {
+        memory[address] = (byte) value;
+    }
+    private void writeCell(int address, Integer cell) {
+        memory[address] = (byte) (cell >> 24);
+        memory[address + 1] = (byte) (cell >> 16);
+        memory[address + 2] = (byte) (cell >> 8);
+        memory[address + 3] = (byte) (cell & 0xFF);
+    }
+
+    @Override
+    public Integer getCell(Integer address) {
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid memory address: " + address);
+        }
+        return readCell(address);
+    }
+
+    @Override
+    public void setCell(Integer address, Integer value) {
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid memory address: " + address);
+        }
+        if (value == null) {
+            throw new RuntimeException("Value to set cannot be null");
+        }
+        writeCell(address, value);
+    }
+
+    @Override
+    public Integer cellAllot(Integer length) {
+        if (length == null) {
+            throw new RuntimeException("Allot length cannot be null");
+        }
+        if (length <= 0) {
+            throw new RuntimeException("Allot length must be positive");
+        }
+        if (length * 4 > memory.length) {
+            throw new RuntimeException("Allot length exceeds memory size");
+        }
+        if (this.dsp + length * 4 > memory.length) {
+            throw new RuntimeException("Not enough memory to allot " + length + " cells");
+        }
+        int address = this.dsp;
+        // Initialize the memory for the allotted space
+        for (int i = 0; i < length; i++) {
+            writeCell(this.dsp + i * 4, rndInt()); // Fill with random integers
+        }
+        this.dsp += length * 4; // Move the data stack pointer
+        return address;
+    }
+
+    /* constants */
+
+    @Override
+    public Constant defineConstant(String name, Integer address, Integer length) {
+        if (this.words.containsKey(name)) {
+            throw new RuntimeException("Constant '" + name + "' already defined");
+        }
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid memory address for constant '" + name + "'");
+        }
+        if (length <= 0) {
+            throw new RuntimeException("Constant '" + name + "' length must be positive");
+        }
+        if (address >= this.dsp) {
+            throw new RuntimeException("Constant '" + name + "' address " + address + " and length "+length+ " is not in the data range");
+        }
+        var constant = new Constant(address, length);
+        this.words.put(name, constant);
+        return constant;
+    }
+
+    @Override
+    public Constant defineConstant(String name) {
+        if (this.words.containsKey(name)) {
+            throw new RuntimeException("Constant '" + name + "' already defined");
+        }
+        var address = this.charAllot(1);
+        var constant = new Constant(address, 1);
+        this.words.put(name, constant);
+        return constant;
+    }
+
+
+    @Override
+    public Constant getConstant(String name) {
+        if (!this.words.containsKey(name)) {
+            throw new RuntimeException("Constant '" + name + "' not defined");
+        }
+        var word = this.words.get(name);
+        if (word instanceof Constant constant) {
+            return constant;
+        } else {
+            throw new RuntimeException("Word '" + name + "' is not a constant");
+        }
+    }
+
+    @Override
+    public char getCharMemory(Integer address) {
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid constant memory address: " + address);
+        }
+        return readChar(address);
+    }
+
+    @Override
+    public void setCharMemory(Integer address, char value) {
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid constant memory address: " + address);
+        }
+        writeChar(address, value);
+    }
+
+    @Override
+    public Integer charAllot(Integer length) {
+        if (length == null) {
+            throw new RuntimeException("Constant allot length cannot be null");
+        }
+        if (length <= 0) {
+            throw new RuntimeException("Constant allot length must be positive");
+        }
+        if (length > memory.length) {
+            throw new RuntimeException("Constant allot length exceeds constant memory size");
+        }
+        if (this.dsp + length > memory.length) {
+            throw new RuntimeException("Not enough constant memory to allot " + length + " characters");
+        }
+        int address = this.dsp;
+        // Initialize the constant memory for the allotted space
+        for (int i = 0; i < length; i++) {
+            memory[this.dsp + i] = (byte)('A' + rndInt() % 26); // Fill with random uppercase letters
+        }
+        this.dsp += length;
+        return address;
+    }
+
+    @Override
+    public Integer stringAllot(String value) {
+        if (value == null) {
+            throw new RuntimeException("String allot value cannot be null");
+        }
+        var length = value.length();
+        if (length == 0) {
+            throw new RuntimeException("String allot value cannot be empty");
+        }
+        var address = this.charAllot(length);
+        for (int i = 0; i < length; i++) {
+            memory[address + i] = (byte)value.charAt(i);
+        }
+        return address;
+    }
+
+    private Integer rndInt() {
+        return (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
 
     private static class LoopFrame {
         int index;

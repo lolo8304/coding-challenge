@@ -13,10 +13,10 @@ This challenge is based on the [Forth Interpreter Challenge](https://codingchall
 - Interactive REPL (Read-Eval-Print Loop)
 - Error handling for invalid commands
 - Support for comments in code
-- Basic control flow with conditionals
+- Basic built-in commands
 - Support for defining and using variables
 - File execution with option '-f' for batch processing of commands
-- Load files with the `-l` option
+- Support for loading files with the `-l` option
 
 # Usage
 
@@ -73,17 +73,20 @@ You can load a file with the `-l` option and then execute commands:
 ```bash
 ./forth.sh -l script.forth
 ok> 1 2 + .
-3 ok>```
+3 ok>
+```
 
 # Commands implemented
 
-- Arithmetic operations: `+`, `-`, `*`, `/`
+- Arithmetic operations: `+`, `-`, `*`, `/
+- Comparison: `=`, `<`, `>`, `<=`, `>=`, `<>`, `and`, `or`, `not`
 - Stack manipulation: `dup`, `drop`, `swap`, `over`
 - Control flow: `if`, `else`, `then`
 - Input/output: `.` (print top of stack)
 - Comments: `\` (everything after this on the line is ignored)
 - Defining new words: `: <word> <definition> ;`
-- Loops: 'do', 'loop'
+- Loops: `do`, `loop`
+- Stack inspection: `.s` (show stack)
+- Clear stack: `clear`
 - Variables: `variable <name>`, `@` (fetch), `!` (store)
-- clear stack: `clear`
-- show stack: .s
+

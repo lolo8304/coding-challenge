@@ -37,7 +37,7 @@ public class ForthParser {
                 instructions.add(
                         context -> context.push(i)
                 );
-            } else if (token.equals(".\"")) {
+            } else if (token.equals(".\"") || token.equals("s\"")) {
                 var strBuilder = new StringBuilder();
                 strBuilder.append(token);
                 token = scanner.nextToken();
@@ -50,10 +50,22 @@ public class ForthParser {
                 }
                 strBuilder.append(' ').append(token);
                 var builderString = strBuilder.toString(); // format ." _______ _____" (3 --> -1)
-                var toPrint = builderString.substring(3, builderString.length() - 1);
-                instructions.add(
-                        context -> context.executePrint(toPrint)
-                );
+                var isConstantString = builderString.startsWith("s\"");
+                if (isConstantString) {
+                    var constantString = builderString.substring(3, builderString.length() - 1);
+                    instructions.add(
+                            context -> {
+                                var address = context.stringAllot(constantString);
+                                context.push(address);
+                                context.push(constantString.length());
+                            }
+                    );
+                } else {
+                    var toPrint = builderString.substring(3, builderString.length() - 1);
+                    instructions.add(
+                            context -> context.executePrint(toPrint)
+                    );
+                }
             } else if (token.equals("if")) {
                 var ifIndex = instructions.size();
                 instructions.add(null); // fill later
@@ -80,7 +92,43 @@ public class ForthParser {
                 } else {
                     instructions.set(patchIndex, ctx -> ctx.jumpTo(thenIndex));
                 }
-            } else if (token.equals(":")) {
+            } else if (token.equals("create")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition create - word not found");
+                }
+                var word = token;
+                instructions.add(
+                        context -> {
+                            context.defineVariable(word);
+                        }
+                );
+            } else if (token.equals("variable")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition variable - word not found");
+                }
+                var word = token;
+                instructions.add(
+                    context -> {
+                        var variable = context.defineVariable(word);
+                        context.push(variable.getAddress());
+                        context.push(variable.getLength());
+                    }
+                );
+            } else if (token.equals("constant")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition constant - word not found");
+                }
+                var word = token;
+                instructions.add(
+                        context -> {
+                            var constant = context.defineConstant(word);
+                            context.push(constant.getAddress());
+                            context.push(constant.getLength());
+                        }
+                );            } else if (token.equals(":")) {
                 var expression = new StringBuilder();
                 token = scanner.nextToken();
                 var word = token;
