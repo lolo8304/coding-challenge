@@ -332,6 +332,20 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
 
     /* variables */
 
+    private Integer addressToIndex(Integer address) {
+        if (address < 0 || address >= memory.length) {
+            throw new RuntimeException("Invalid memory address: " + address);
+        }
+        return address - 1073741824; // 2^30
+    }
+
+    private Integer indexToAddress(Integer index) {
+        if (index < 0 || index >= memory.length) {
+            throw new RuntimeException("Invalid memory index: " + index);
+        }
+        return index + 1073741824; // 2^30
+    }
+
     @Override
     public Variable defineVariable(String name, Integer address, Integer length) {
         if (this.words.containsKey(name)) {
