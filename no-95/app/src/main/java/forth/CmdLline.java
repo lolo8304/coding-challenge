@@ -1,8 +1,9 @@
 package forth;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class CmdLline {
     final ForthInterpreter forth;
@@ -10,13 +11,25 @@ public class CmdLline {
         this.forth = new ForthInterpreter();
     }
 
-    public void run() {
+    private String readAll() throws IOException {
+        var in = new InputStreamReader(System.in, StandardCharsets.UTF_8);
+        var sb = new StringBuilder();
+
+        int ch = in.read();
+        sb.append((char) ch);
+        while (in.ready() && (ch = in.read()) != -1) { // -1 = EOF (^D on Unix, ^Z on Windows)
+            sb.append((char) ch);
+        }
+        return sb.toString().trim();
+    }
+
+    public void run() throws IOException {
         System.out.println("Welcome to the Forth interpreter!");
         do {
             System.out.print(this.forth.stackToString());
             System.out.print("ok> ");
-            String line = System.console().readLine();
-            if (line == null || line.equals("bye") || line.equals("^D")) {
+            var line = this.readAll();
+            if (line.equals("bye") || line.equals("^D")) {
                 break;
             }
             if (line.trim().isEmpty()) {
@@ -32,21 +45,34 @@ public class CmdLline {
         } while (true);
     }
 
+    private boolean isValidCommand(String line) {
+        if (line == null) {
+            return false;
+        }
+        if (line.isEmpty()) {
+            return false;
+        }
+        if (line.startsWith("\\")) {
+            return false;
+        }
+        if (line.length() == 1 && (int)line.charAt(0) == 65535) {
+            System.exit(0);
+        }
+        return true;
+    }
+
     public void run(String cmd) {
+        if (!this.isValidCommand(cmd)) {
+            return;
+        }
         if (Repl.verbose()) {
-            System.out.println("Executing command: " + cmd);
-        }
-        var lines = cmd.split("\n");
-        for (var line : lines) {
-            if (line.trim().isEmpty()) {
-                continue;
+            if (cmd.length() == 1) {
+                System.out.println("Executing command: " + cmd.charAt(0) + "(" + (int) cmd.charAt(0) + ")");
+            } else {
+                System.out.println("Executing command: " + cmd);
             }
-            if (line.startsWith("\\ ")) {
-                // irgnore comments
-                continue;
-            }
-            this.forth.run(line);
         }
+        this.forth.run(cmd);
         var output = this.forth.outputToPrint();
         if (!output.isEmpty()) System.out.print(output);
     }

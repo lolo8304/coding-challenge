@@ -60,6 +60,24 @@ class ForthInterpreterTest {
 
     }
 
+    @Test void execNewWord_SIMPLE() {
+        // Arrange
+        var interpreter = new ForthInterpreter();
+        interpreter.addBuiltInWord("SQUARE", (forth) -> {
+            var n = forth.pop();
+            forth.push(n * n);
+        });
+        interpreter.push(10);
+
+        // Action
+        interpreter.executeWord("square");
+        var result = interpreter.peek();
+
+        // Assert
+        assert result == 100 : "Expected 100, but got " + result;
+
+    }
+
     @Test void execNewWord_null() {
         // Arrange
         var interpreter = new ForthInterpreter();

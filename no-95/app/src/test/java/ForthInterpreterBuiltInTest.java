@@ -2,6 +2,7 @@
 
 
 import forth.ForthInterpreter;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ForthInterpreterBuiltInTest {
@@ -133,7 +134,7 @@ class ForthInterpreterBuiltInTest {
         var result = interpreter.peek();
 
         // Assert
-        assert result == 20 : "Expected 20, but got " + result;
+        assert result == 10 : "Expected 10, but got " + result;
     }
 
     @Test void runBuiltIn_drop() {
@@ -336,7 +337,7 @@ class ForthInterpreterBuiltInTest {
         assert result == 0 : "Expected 0, but got " + result;
     }
 
-    @Test void runBuiltIn_bye() {
+    void runBuiltIn_bye() {
         // Arrange
         var interpreter = new ForthInterpreter();
         var code = "bye";

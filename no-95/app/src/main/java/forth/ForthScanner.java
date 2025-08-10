@@ -21,6 +21,17 @@ public class ForthScanner {
         return line.substring(start, position);
     }
 
+    public String nextTokenAfterNewLine() {
+        skipWhitespace();
+        if (position >= line.length()) {
+            return null; // No more tokens
+        }
+        while (position < line.length() && line.charAt(position) != '\n' && line.charAt(position) != '\r') {
+            position++;
+        }
+        return this.nextToken();
+    }
+
     private void skipWhitespace() {
         while (position < line.length() && Character.isWhitespace(line.charAt(position))) {
             position++;

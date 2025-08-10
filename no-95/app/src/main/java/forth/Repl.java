@@ -7,6 +7,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 @Command(name = "forth-repl", mixinStandardHelpOptions = true, version = "forth-repl 1.0", description = "This challenge is to build your own Forth interpreter")
@@ -48,7 +49,7 @@ public class Repl implements Callable<Result> {
     }
 
     @Override
-    public Result call() {
+    public Result call() throws IOException {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
         if (this.file != null && this.command != null) {

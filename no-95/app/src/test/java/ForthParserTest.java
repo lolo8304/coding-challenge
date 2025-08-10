@@ -140,6 +140,55 @@ class ForthParserTest {
         }
     }
 
+    @Test void parse_comment_backslash() {
+        // Arrange
+        var code = "10 20 \\ this is a comment \n +";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 3; // 2 pushes and 1 add
+        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).executeWord("+");
+    }
+
+
+    @Test void parse_comment_backslashUntilEndOfLine() {
+        // Arrange
+        var code = "\\ this is a comment";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.isEmpty();
+    }
+
+    @Test void parse_comment_on_multiple_lines() {
+        // Arrange
+        var code = "\\ define and test a variable\n" +
+                "VARIABLE counter          \\ creates a cell initialized to 0\n" +
+                "counter @ . CR            \\ expect: 0\n";
+        var parser = new ForthParser();
+        var mock = mock(ForthInterpreterOperationsAll.class);
+
+        // Action
+        var instructions = parser.parse(code);
+        instructions.forEach(x -> x.execute(mock));
+
+        // Assert
+        assert instructions.size() == 6; // 2 pushes and 1 add
+    }
+
+
     @Test void parse_string() {
         // Arrange
         var code = ".\" Hello, World!\"";

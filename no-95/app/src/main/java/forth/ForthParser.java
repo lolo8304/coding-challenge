@@ -15,8 +15,12 @@ public class ForthParser {
         // Parse the input using the scanner
         var token = scanner.nextToken();
         while (token != null) {
+            var tokenLower = token.toLowerCase();
             var shallReadTokenAtTheEnd = true; // flag to read token at the end of the loop
-            if (token.equals("(")) {
+            if (token.equals("\\")) {
+                token = scanner.nextTokenAfterNewLine();
+                shallReadTokenAtTheEnd = false;
+            } else if (token.equals("(")) {
                 // scan many ( comments
                 while (token != null && token.equals("(")) {
                     token = scanner.nextToken();
@@ -55,9 +59,15 @@ public class ForthParser {
                     var constantString = builderString.substring(3, builderString.length() - 1);
                     instructions.add(
                             context -> {
-                                var address = context.stringAllot(constantString);
-                                context.push(address);
-                                context.push(constantString.length());
+                                Variable variable;
+                                if (context.hasVariable(builderString)) {
+                                    variable = context.getVariable(builderString);
+                                } else {
+                                    variable = context.defineVariable(builderString, constantString.length());
+                                    context.setStringMemory(variable.getAddress(), constantString);
+                                }
+                                context.push(variable.getAddress());
+                                context.push(variable.getLength());
                             }
                     );
                 } else {
@@ -66,11 +76,11 @@ public class ForthParser {
                             context -> context.executePrint(toPrint)
                     );
                 }
-            } else if (token.equals("if")) {
+            } else if (tokenLower.equals("if")) {
                 var ifIndex = instructions.size();
                 instructions.add(null); // fill later
                 controlStack.push(ifIndex);
-            } else if (token.equals("else")) {
+            } else if (tokenLower.equals("else")) {
                 var ifIndex = controlStack.pop(); // from if
                 var elseIndex = instructions.size();
                 instructions.add(null); // fill later
@@ -80,7 +90,7 @@ public class ForthParser {
                         ctx.jumpTo(elseIndex + 1);
                     }
                 });
-            } else if (token.equals("then")) {
+            } else if (tokenLower.equals("then")) {
                 int patchIndex = controlStack.pop(); // from if or else
                 var elseAlreadyChecked = patchIndex < 0;
                 patchIndex = Math.abs(patchIndex);
@@ -92,7 +102,7 @@ public class ForthParser {
                 } else {
                     instructions.set(patchIndex, ctx -> ctx.jumpTo(thenIndex));
                 }
-            } else if (token.equals("create")) {
+            } else if (tokenLower.equals("create")) {
                 token = scanner.nextToken();
                 if (token == null) {
                     throw new RuntimeException("parsing definition create - word not found");
@@ -100,10 +110,10 @@ public class ForthParser {
                 var word = token;
                 instructions.add(
                         context -> {
-                            context.defineVariable(word);
+                            context.defineVariable(word, 0);
                         }
                 );
-            } else if (token.equals("variable")) {
+            } else if (tokenLower.equals("variable")) {
                 token = scanner.nextToken();
                 if (token == null) {
                     throw new RuntimeException("parsing definition variable - word not found");
@@ -112,11 +122,9 @@ public class ForthParser {
                 instructions.add(
                     context -> {
                         var variable = context.defineVariable(word);
-                        context.push(variable.getAddress());
-                        context.push(variable.getLength());
                     }
                 );
-            } else if (token.equals("constant")) {
+            } else if (tokenLower.equals("constant")) {
                 token = scanner.nextToken();
                 if (token == null) {
                     throw new RuntimeException("parsing definition constant - word not found");
@@ -124,11 +132,12 @@ public class ForthParser {
                 var word = token;
                 instructions.add(
                         context -> {
-                            var constant = context.defineConstant(word);
-                            context.push(constant.getAddress());
-                            context.push(constant.getLength());
+                            var value = context.pop();
+                            var constant = context.defineConstant(word, 1);
+                            context.setCell(constant.getAddress(), value);
                         }
-                );            } else if (token.equals(":")) {
+                );
+            } else if (token.equals(":")) {
                 var expression = new StringBuilder();
                 token = scanner.nextToken();
                 var word = token;
@@ -148,7 +157,7 @@ public class ForthParser {
                 instructions.add(
                     context -> context.define(word, expressionInstructions)
                 );
-            } else if (token.equals("do")) {
+            } else if (tokenLower.equals("do")) {
                 int doStart = instructions.size();
                 instructions.add(ctx -> {
                     int start = ctx.pop();
@@ -156,7 +165,7 @@ public class ForthParser {
                     ctx.pushLoop(start, limit);
                 });
                 controlStack.push(doStart);
-            } else if (token.equals("loop")) {
+            } else if (tokenLower.equals("loop")) {
                 int loopStart = controlStack.pop();
                 instructions.add(ctx -> {
                     if (ctx.incrementLoop()) {
