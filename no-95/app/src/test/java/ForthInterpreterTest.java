@@ -30,7 +30,7 @@ class ForthInterpreterTest {
         var interpreter = new ForthInterpreter();
         interpreter.addBuiltInWord("sqrt", (forth) -> {
             var n = forth.pop();
-            forth.push((int) Math.sqrt(n));
+            forth.push((long) Math.sqrt(n));
         });
         var code = "16 sqrt";
 
@@ -49,7 +49,7 @@ class ForthInterpreterTest {
             var n = forth.pop();
             forth.push(n * n);
         });
-        interpreter.push(10);
+        interpreter.push(10L);
 
         // Action
         interpreter.executeWord("square");
@@ -67,7 +67,7 @@ class ForthInterpreterTest {
             var n = forth.pop();
             forth.push(n * n);
         });
-        interpreter.push(10);
+        interpreter.push(10L);
 
         // Action
         interpreter.executeWord("square");
@@ -94,8 +94,8 @@ class ForthInterpreterTest {
     @Test void execNewWord_plus() {
         // Arrange
         var interpreter = new ForthInterpreter();
-        interpreter.push(10);
-        interpreter.push(20);
+        interpreter.push(10L);
+        interpreter.push(20L);
 
         // Action
         interpreter.executeWord("+");
@@ -120,7 +120,7 @@ class ForthInterpreterTest {
         assert result == 42 : "Expected 42, but got " + result;
     }
 
-    @Test void stacktoString_empty() {
+    @Test void stackToString_empty() {
         // Arrange
         var interpreter = new ForthInterpreter();
 
@@ -131,18 +131,18 @@ class ForthInterpreterTest {
         assert result.isEmpty() : "Expected empty string, but got '" + result + "'";
     }
 
-    @Test void stacktoString_nonEmpty() {
+    @Test void stackToString_nonEmpty() {
         // Arrange
         var interpreter = new ForthInterpreter();
-        interpreter.push(10);
-        interpreter.push(20);
-        interpreter.push(30);
+        interpreter.push(10L);
+        interpreter.push(20L);
+        interpreter.push(30L);
 
         // Action
         var result = interpreter.stackToString();
 
         // Assert
-        assert result.equals("10 20 30 ") : "Expected '10 20 30 ', but got '" + result + "'";
+        assert result.equals("<3> 10 20 30 ") : "Expected '10 20 30 ', but got '" + result + "'";
     }
 
 
@@ -160,13 +160,13 @@ class ForthInterpreterTest {
     @Test void outputToPrint_nonEmpty() {
         // Arrange
         var interpreter = new ForthInterpreter();
-        interpreter.executeWord("dontKnow"); // this will print "dontKnow ?"
+        interpreter.executeWord("don'tKnow"); // this will print "dontKnow ?"
 
         // Action
         var result = interpreter.outputToPrint();
 
         // Assert
-        assert result.equals("dontKnow ?") : "Expected 'dontKnow ?', but got '" + result + "'";
+        assert result.equals("don'tKnow ?") : "Expected 'don'tKnow ?', but got '" + result + "'";
     }
 
 }

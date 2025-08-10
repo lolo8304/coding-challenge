@@ -21,7 +21,7 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 1;
-        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(10L);
     }
 
     @Test void parse_addition() {
@@ -36,8 +36,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -53,8 +53,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 subtract
-        verify(mock, times(1)).push(30);
-        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(30L);
+        verify(mock, times(1)).push(10L);
         verify(mock, times(1)).executeWord("-");
     }
     @Test void parse_comment() {
@@ -69,8 +69,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -86,8 +86,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -103,8 +103,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -120,8 +120,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -152,8 +152,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 3; // 2 pushes and 1 add
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("+");
     }
 
@@ -185,7 +185,7 @@ class ForthParserTest {
         instructions.forEach(x -> x.execute(mock));
 
         // Assert
-        assert instructions.size() == 6; // 2 pushes and 1 add
+        assert instructions.size() == 5; // 2 pushes and 1 add
     }
 
 
@@ -260,7 +260,7 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 5; // 2 pushes, 1 equals, 1 if, 1 print, 1 then
-        verify(mock, times(2)).push(10);
+        verify(mock, times(2)).push(10L);
         verify(mock, times(1)).executeWord("=");
         verify(mock, times(1)).pop();
         verify(mock, times(1)).jumpTo(5);
@@ -272,7 +272,7 @@ class ForthParserTest {
         var code = "10 20 = if .\"eq\" else .\"ne\" then";
         var parser = new ForthParser();
         var mock = mock(ForthInterpreterOperationsAll.class);
-        when(mock.pop()).thenReturn(0);
+        when(mock.pop()).thenReturn(0L);
 
         // Action
         var instructions = parser.parse(code);
@@ -280,8 +280,8 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 7; // 2 pushes, 1 equals, 1 if, 1 print eq, 1 else, 1 print ne, 1 then
-        verify(mock, times(1)).push(10);
-        verify(mock, times(1)).push(20);
+        verify(mock, times(1)).push(10L);
+        verify(mock, times(1)).push(20L);
         verify(mock, times(1)).executeWord("=");
         verify(mock, times(1)).pop();
         verify(mock, times(1)).jumpTo(7);
@@ -294,7 +294,7 @@ class ForthParserTest {
         var code = "10 10 = if .\"eq\" else .\"ne\" then";
         var parser = new ForthParser();
         var mock = mock(ForthInterpreterOperationsAll.class);
-        when(mock.pop()).thenReturn(-1);
+        when(mock.pop()).thenReturn(-1L);
 
         // Action
         var instructions = parser.parse(code);
@@ -302,7 +302,7 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 7; // 2 pushes, 1 equals, 1 if, 1 print eq, 1 else, 1 print ne, 1 then
-        verify(mock, times(2)).push(10);
+        verify(mock, times(2)).push(10L);
         verify(mock, times(1)).executeWord("=");
         verify(mock, times(1)).pop();
         verify(mock, times(1)).jumpTo(7);
@@ -322,7 +322,7 @@ class ForthParserTest {
         // Assert
         assert instructions.size() == 3; // 1 define, 1 dup, 1 multiply
         verify(mock, times(1)).define(eq("square"), any());
-        verify(mock, times(1)).push(10);
+        verify(mock, times(1)).push(10L);
         verify(mock, times(1)).executeWord("square");
     }
 
@@ -365,9 +365,9 @@ class ForthParserTest {
 
         // Assert
         assert instructions.size() == 8; // 2 pushes, 1 do, 1 print, 1 i, 1 cr, 1 loop
-        verify(mock, times(1)).push(5);
-        verify(mock, times(1)).push(0);
-        verify(mock, times(1)).pushLoop(0, 0);
+        verify(mock, times(1)).push(5L);
+        verify(mock, times(1)).push(0L);
+        verify(mock, times(1)).pushLoop(0, 0L);
         verify(mock, times(1)).executeWord(".");
         verify(mock, times(1)).executeWord("i");
         verify(mock, times(1)).executeWord("cr");

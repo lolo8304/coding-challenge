@@ -357,7 +357,7 @@ class ForthInterpreterBuiltInTest {
         var result = interpreter.outputToPrint();
 
         // Assert
-        assert result.equals("10 20 ") : "Expected '10 20 ', but got '" + result + "'";
+        assert result.equals("<2> 10 20 ") : "Expected '10 20 ', but got '" + result + "'";
     }
 
 

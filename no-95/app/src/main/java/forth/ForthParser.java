@@ -1,5 +1,7 @@
 package forth;
 
+import forth.memory.Variable;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,7 @@ public class ForthParser {
                 }
                 shallReadTokenAtTheEnd = false;
             } else if (token.matches("-?\\d+")) {
-                var i = Integer.parseInt(token);
+                var i = Long.parseLong(token);
                 instructions.add(
                         context -> context.push(i)
                 );
@@ -63,7 +65,7 @@ public class ForthParser {
                                 if (context.hasVariable(builderString)) {
                                     variable = context.getVariable(builderString);
                                 } else {
-                                    variable = context.defineVariable(builderString, constantString.length());
+                                    variable = context.defineVariable(builderString, (long)constantString.length());
                                     context.setStringMemory(variable.getAddress(), constantString);
                                 }
                                 context.push(variable.getAddress());
@@ -86,7 +88,7 @@ public class ForthParser {
                 instructions.add(null); // fill later
                 controlStack.push(-elseIndex); // replace with else
                 instructions.set(ifIndex, ctx -> {
-                    if (ctx.pop().equals(0)) {
+                    if (ctx.pop().equals(0L)) {
                         ctx.jumpTo(elseIndex + 1);
                     }
                 });
@@ -109,9 +111,7 @@ public class ForthParser {
                 }
                 var word = token;
                 instructions.add(
-                        context -> {
-                            context.defineVariable(word, 0);
-                        }
+                        context -> context.defineVariable(word, 0L)
                 );
             } else if (tokenLower.equals("variable")) {
                 token = scanner.nextToken();
@@ -120,9 +120,7 @@ public class ForthParser {
                 }
                 var word = token;
                 instructions.add(
-                    context -> {
-                        var variable = context.defineVariable(word);
-                    }
+                    context -> context.defineVariable(word)
                 );
             } else if (tokenLower.equals("constant")) {
                 token = scanner.nextToken();
@@ -133,7 +131,7 @@ public class ForthParser {
                 instructions.add(
                         context -> {
                             var value = context.pop();
-                            var constant = context.defineConstant(word, 1);
+                            var constant = context.defineConstant(word, 1L);
                             context.setCell(constant.getAddress(), value);
                         }
                 );
@@ -160,8 +158,8 @@ public class ForthParser {
             } else if (tokenLower.equals("do")) {
                 int doStart = instructions.size();
                 instructions.add(ctx -> {
-                    int start = ctx.pop();
-                    int limit = ctx.pop();
+                    var start = ctx.pop();
+                    var limit = ctx.pop();
                     ctx.pushLoop(start, limit);
                 });
                 controlStack.push(doStart);

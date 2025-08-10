@@ -1,18 +1,23 @@
 package forth;
 
+import forth.memory.Address;
+import forth.memory.Constant;
+import forth.memory.Memory;
+import forth.memory.Variable;
+
 import java.util.*;
 import java.util.function.Consumer;
 
 public class ForthInterpreter implements ForthInterpreterOperationsAll {
-    private final Deque<Integer> stack;
+    private final Deque<Long> stack;
     private final Map<String, Object> words;
     private final Deque<LoopFrame> loopStack = new ArrayDeque<>();
-    private final byte[] memory = new byte[4 * 1024];
+    private final Memory memory; // for data and code
+    private final Memory literalMemory; // for s-strings and other literals
 
     private final ForthParser parser;
     private StringBuilder outputBuilder;
-    private int pc = 0;
-    private int dsp = 0; // data stack pointer to next free data stack slot
+    private int pc;
 
     public interface Instruction {
         void execute(ForthInterpreterOperationsAll context);
@@ -23,6 +28,8 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         this.words = new HashMap<>();
         this.parser = new ForthParser();
         this.outputBuilder = new StringBuilder();
+        this.memory = new Memory(Address.Segment.DATA,2^20); // 2^20 bytes of memory (1 MB)
+        this.literalMemory = new Memory(Address.Segment.LITERAL, 2^20); // 2^20 bytes of constant memory (1 MB)
         this.pc = 0;
         this.initializeBuiltIn();
     }
@@ -147,49 +154,49 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         this.addBuiltInWord("<",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1 < n2 ? -1 : 0);
+            stack.push(n1 < n2 ? -1L : 0L);
         });
         this.addBuiltInWord("<=",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1 <= n2 ? -1 : 0);
+            stack.push(n1 <= n2 ? -1L : 0L);
         });
         this.addBuiltInWord(">",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1 > n2 ? -1 : 0);
+            stack.push(n1 > n2 ? -1L : 0L);
         });
         this.addBuiltInWord(">=",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1 >= n2 ? -1 : 0);
+            stack.push(n1 >= n2 ? -1L : 0L);
         });
         this.addBuiltInWord("=",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(Objects.equals(n1, n2) ? -1 : 0);
+            stack.push(Objects.equals(n1, n2) ? -1L : 0L);
         });
         this.addBuiltInWord("<>",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(Objects.equals(n1, n2) ? 0 : -1);
+            stack.push(Objects.equals(n1, n2) ? 0L : -1L);
         });
         this.addBuiltInWord("and",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1.equals(-1) && n2.equals(-1) ? -1 : 0);
+            stack.push(n1.equals(-1L) && n2.equals(-1L) ? -1L : 0L);
         });
         this.addBuiltInWord("or",  () -> {
             var n2 = stack.pop();
             var n1 = stack.pop();
-            stack.push(n1.equals(-1) || n2.equals(-1) ? -1 : 0);
+            stack.push(n1.equals(-1L) || n2.equals(-1L) ? -1L : 0L);
         });
         this.addBuiltInWord("invert",  () -> {
             var n1 = stack.pop();
-            stack.push(n1.equals(-1) ? 0 : -1);
+            stack.push(n1.equals(-1L) ? 0L : -1L);
         });
 
-        this.addBuiltInWord("depth", () -> stack.push(stack.size()));
+        this.addBuiltInWord("depth", () -> stack.push((long) stack.size()));
         this.addBuiltInWord("clear", stack::clear);
         this.addBuiltInWord("bye",  () -> {
             System.out.println("bye");
@@ -202,13 +209,9 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             interpreter.charAllot(length);
         });
 
-        this.addBuiltInWord("here", (ForthInterpreter interpreter) -> {
-            interpreter.push(this.dsp);
-        });
+        this.addBuiltInWord("here", (ForthInterpreter interpreter) -> interpreter.push(this.memory.getHere()));
 
-        this.addBuiltInWord("cells", (ForthInterpreter interpreter) -> {
-            interpreter.push(interpreter.pop() * 4);
-        });
+        this.addBuiltInWord("cells", (ForthInterpreter interpreter) -> interpreter.push(interpreter.pop() * 4));
 
         this.addBuiltInWord("cell+", (ForthInterpreter interpreter) -> {
             var address = interpreter.pop();
@@ -223,7 +226,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         this.addBuiltInWord("c@", (ForthInterpreter interpreter) -> {
             var address = interpreter.pop();
             int i = interpreter.getCharMemory(address);
-            interpreter.push(i);
+            interpreter.push((long)i);
         });
 
         this.addBuiltInWord("c!", (ForthInterpreter interpreter) -> {
@@ -254,23 +257,23 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         this.addBuiltInWord("move", (ForthInterpreter interpreter) -> {
             // (fromAddr toAddr len -- )
             var length = interpreter.pop();
-            var destAddress = interpreter.pop();
+            var destinationAddress = interpreter.pop();
             var sourceAddress = interpreter.pop();
             if (length <= 0) {
                 throw new RuntimeException("Move length must be positive");
             }
-            if (sourceAddress.equals(destAddress)) {
+            if (sourceAddress.equals(destinationAddress)) {
                 return; // No need to move if source and destination are the same
             }
             for (int i = 0; i < length; i++) {
                 var value = interpreter.getCell(sourceAddress + i * 4);
-                interpreter.setCell(destAddress + i * 4, value);
+                interpreter.setCell(destinationAddress + i * 4, value);
             }
         });
         this.addBuiltInWord("type", (ForthInterpreter interpreter) -> {
             var length = interpreter.pop();
             var address = interpreter.pop();
-            var s = readString(address, length);
+            var s = this.memory.readString(address, length);
             interpreter.executePrint(s);
         });
         this.addBuiltInWord("nip", (ForthInterpreter interpreter) -> {
@@ -298,7 +301,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
                 if (ch == -1) {
                     throw new RuntimeException("End of input reached");
                 }
-                interpreter.push(ch);
+                interpreter.push((long)ch);
             } catch (Exception e) {
                 throw new RuntimeException("Error reading key input: " + e.getMessage());
             }
@@ -327,7 +330,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         var s = this.stack.size();
         if (s == 0) return "";
         var builder = new StringBuilder();
-        var stackEntriesReversed = this.stack.toArray(Integer[]::new);
+        var stackEntriesReversed = this.stack.toArray(Long[]::new);
         builder.append("<").append(s).append("> ");
         for (int i = stackEntriesReversed.length - 1; i >= 0; i--) {
             builder.append(stackEntriesReversed[i]);
@@ -339,17 +342,17 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     /* parser execution hooks */
 
     @Override
-    public void push(Integer token) {
+    public void push(Long token) {
         this.stack.push(token);
     }
 
     @Override
-    public Integer pop() {
+    public Long pop() {
         return this.stack.pop();
     }
 
     @Override
-    public Integer peek() {
+    public Long peek() {
         return this.stack.peek();
     }
 
@@ -376,12 +379,8 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
                     var wordInstructions = (List<Instruction>) list;
                     this.run(wordInstructions);
                 }
-                case Constant constant -> {
-                    this.stack.push(getCell(constant.getAddress()));
-                }
-                case Variable variable -> {
-                    this.stack.push(variable.getAddress());
-                }
+                case Constant constant -> this.stack.push(getCell(constant.getAddress()));
+                case Variable variable -> this.stack.push(variable.getAddress());
                 default -> {
                 }
             }
@@ -410,7 +409,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     }
 
     @Override
-    public void pushLoop(int start, int limit) {
+    public void pushLoop(long start, long limit) {
         loopStack.push(new LoopFrame(start, limit));
     }
 
@@ -430,28 +429,14 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     }
 
     /* variables */
-
-    private Integer addressToIndex(Integer address) {
-        if (address < 0 || address >= memory.length) {
-            throw new RuntimeException("Invalid memory address: " + address);
-        }
-        return address - 1073741824; // 2^30
-    }
-
-    private Integer indexToAddress(Integer index) {
-        if (index < 0 || index >= memory.length) {
-            throw new RuntimeException("Invalid memory index: " + index);
-        }
-        return index + 1073741824; // 2^30
-    }
-
+    
     @Override
-    public Variable defineVariable(String name, Integer length) {
-        var address = this.dsp;
+    public Variable defineVariable(String name, Long length) {
+        var address = this.memory.getHere();
         if (this.words.containsKey(name)) {
             throw new RuntimeException("Variable '" + name + "' already defined");
         }
-        if (address < 0 || address >= memory.length) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address for variable '" + name + "'");
         }
         if (length < 0) {
@@ -468,7 +453,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
 
     @Override
     public Variable defineVariable(String name) {
-        return this.defineVariable(name, 1);
+        return this.defineVariable(name, 1L);
     }
 
 
@@ -484,57 +469,19 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             throw new RuntimeException("Word '" + name + "' is not a variable");
         }
     }
-    private String readString(int address, int length) {
-        if (address < 0 || address + length > memory.length) {
-            throw new RuntimeException("Invalid memory address or length for string: " + address + ", " + length);
-        }
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append((char) memory[address + i]);
-        }
-        return sb.toString();
-    }
-
-    private void writeString(int address, String value) {
-        if (address < 0 || address + value.length() > memory.length) {
-            throw new RuntimeException("Invalid memory address or length for string: " + address + ", " + value.length());
-        }
-        for (int i = 0; i < value.length(); i++) {
-            memory[address + i] = (byte) value.charAt(i);
-        }
-    }
-
-    private char readChar(int address) {
-        return (char) memory[address];
-    }
-    private Integer readCell(int address) {
-        return ((memory[address] & 0xFF) << 24) |
-               ((memory[address + 1] & 0xFF) << 16) |
-               ((memory[address + 2] & 0xFF) << 8) |
-               ((memory[address + 3] & 0xFF));
-    }
-    private void writeChar(int address, char value) {
-        memory[address] = (byte) value;
-    }
-    private void writeCell(int address, Integer cell) {
-        memory[address] = (byte) (cell >> 24);
-        memory[address + 1] = (byte) (cell >> 16);
-        memory[address + 2] = (byte) (cell >> 8);
-        memory[address + 3] = (byte) (cell & 0xFF);
-    }
 
     @Override
-    public void setStringMemory(Integer address, String value) {
-    if (address < 0 || address >= memory.length) {
+    public void setStringMemory(Long address, String value) {
+    if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address: " + address);
         }
         if (value == null) {
             throw new RuntimeException("Value to set cannot be null");
         }
-        if (value.length() + address > memory.length) {
+        if (value.length() + address > memory.getLength()) {
             throw new RuntimeException("String length exceeds memory size at address: " + address);
         }
-        this.writeString(address, value);
+        this.memory.writeString(address, value);
     }
 
     @Override
@@ -548,61 +495,43 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     }
 
     @Override
-    public String getStringMemory(Integer address, Integer length) {
-        return this.readString(address, length);
+    public String getStringMemory(Long address, Long length) {
+        return this.memory.readString(address, length);
     }
 
     @Override
-    public Integer getCell(Integer address) {
-        if (address < 0 || address >= memory.length) {
+    public Long getCell(Long address) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address: " + address);
         }
-        return readCell(address);
+        return this.memory.readCell(address);
     }
 
     @Override
-    public void setCell(Integer address, Integer value) {
-        if (address < 0 || address >= memory.length) {
+    public void setCell(Long address, Long value) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address: " + address);
         }
         if (value == null) {
             throw new RuntimeException("Value to set cannot be null");
         }
-        writeCell(address, value);
+        this.memory.writeCell(address, value);
     }
 
     @Override
-    public Integer cellAllot(Integer length) {
-        if (length == null) {
-            throw new RuntimeException("Allot length cannot be null");
-        }
-        if (length <= 0) {
-            throw new RuntimeException("Allot length must be positive");
-        }
-        if (length * 4 > memory.length) {
-            throw new RuntimeException("Allot length exceeds memory size");
-        }
-        if (this.dsp + length * 4 > memory.length) {
-            throw new RuntimeException("Not enough memory to allot " + length + " cells");
-        }
-        int address = this.dsp;
-        // Initialize the memory for the allotted space
-        for (int i = 0; i < length; i++) {
-            writeCell(this.dsp + i * 4, 0);
-        }
-        this.dsp += length * 4; // Move the data stack pointer
-        return address;
+    public Long cellAllot(Long length) {
+        return this.memory.cellAllot(length);
     }
 
     /* constants */
 
     @Override
-    public Constant defineConstant(String name, Integer length) {
-        var address = this.dsp;
+    public Constant defineConstant(String name, Long length) {
+        var address = this.memory.getHere();
         if (this.words.containsKey(name)) {
             throw new RuntimeException("Constant '" + name + "' already defined");
         }
-        if (address < 0 || address >= memory.length) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address for constant '" + name + "'");
         }
         if (length <= 0) {
@@ -616,7 +545,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
 
     @Override
     public Constant defineConstant(String name) {
-        return this.defineConstant(name, 1);
+        return this.defineConstant(name, 1L);
     }
 
 
@@ -634,70 +563,37 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     }
 
     @Override
-    public char getCharMemory(Integer address) {
-        if (address < 0 || address >= memory.length) {
+    public char getCharMemory(Long address) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid constant memory address: " + address);
         }
-        return readChar(address);
+        return this.memory.readChar(address);
     }
 
     @Override
-    public void setCharMemory(Integer address, char value) {
-        if (address < 0 || address >= memory.length) {
+    public void setCharMemory(Long address, char value) {
+        if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid constant memory address: " + address);
         }
-        writeChar(address, value);
+        this.memory.writeChar(address, value);
     }
 
     @Override
-    public Integer charAllot(Integer length) {
-        if (length == null) {
-            throw new RuntimeException("Constant allot length cannot be null");
-        }
-        if (length <= 0) {
-            throw new RuntimeException("Constant allot length must be positive");
-        }
-        if (length > memory.length) {
-            throw new RuntimeException("Constant allot length exceeds constant memory size");
-        }
-        if (this.dsp + length > memory.length) {
-            throw new RuntimeException("Not enough constant memory to allot " + length + " characters");
-        }
-        int address = this.dsp;
-        // Initialize the constant memory for the allotted space
-        for (int i = 0; i < length; i++) {
-            memory[this.dsp + i] = (byte)(' ');
-        }
-        this.dsp += length;
-        return address;
+    public Long charAllot(Long length) {
+        return this.memory.charAllot(length);
     }
 
     @Override
-    public Integer stringAllot(String value) {
-        if (value == null) {
-            throw new RuntimeException("String allot value cannot be null");
-        }
-        var length = value.length();
-        if (length == 0) {
-            return this.dsp;
-        }
-        var address = this.charAllot(length);
-        for (int i = 0; i < length; i++) {
-            memory[address + i] = (byte)value.charAt(i);
-        }
-        return address;
-    }
-
-    private Integer rndInt() {
-        return (int) (Math.random() * Integer.MAX_VALUE);
+    public Long stringAllot(String value) {
+        return this.memory.stringAllot(value);
     }
 
 
     private static class LoopFrame {
-        int index;
-        int limit;
+        long index;
+        long limit;
 
-        LoopFrame(int index, int limit) {
+        LoopFrame(long index, long limit) {
             this.index = index;
             this.limit = limit;
         }

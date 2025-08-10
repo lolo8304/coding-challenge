@@ -1,7 +1,7 @@
-package forth;
+package forth.memory;
 
 public class Constant extends Variable {
-    public Constant(Integer address, Integer length) {
+    public Constant(long address, Long length) {
         super(address, length);
     }
 }
