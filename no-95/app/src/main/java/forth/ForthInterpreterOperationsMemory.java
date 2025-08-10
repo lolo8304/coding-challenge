@@ -1,7 +1,5 @@
 package forth;
 
-import java.util.List;
-
 public interface ForthInterpreterOperationsMemory {
     boolean hasVariable(String name);
     Variable defineVariable(String name);
