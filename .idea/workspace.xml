@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/no-85/images/timezone-converter-ui-animated.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/no-85/images/timezone-converter-ui.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/no-85/app/src/main/java/timezone/Timezone.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/app/src/main/java/timezone/Timezone.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-85/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-85/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-85/frontend/src/components/TimeZoneComparison.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/src/components/TimeZoneComparison.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/no-85/timezone-UI.sh" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/timezone-UI.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/readme.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
