@@ -17,6 +17,7 @@ This challenge is based on the [Forth Interpreter Challenge](https://codingchall
 - Support for defining and using variables
 - File execution with option '-f' for batch processing of commands
 - Support for loading files with the `-l` option
+- creating buffer, byte aligned, 32-bit aligned, static literals. with initialisation and printing
 
 # Usage
 
@@ -115,8 +116,21 @@ ok>
 
 
 - Stack manipulation: `dup`, `drop`, `swap`, `over`, `2dup`, `2swap`
+
+```forth
+ok> 10 dup * . cr
+100
+ok> 10 20 swap
+<2> 20 10 ok> 
+```
+
 - Control flow: `if`, `else`, `then`
-- Input/output: `.` (print top of stack) `cr` for new line
+
+```forth
+ok> : fuzz dup 3 mod 0 = if .'fizz' drop else . then`
+```
+
+- Input/output: `.` (print top of stack) `cr` for new line `.s` to print stack
 - Comments: `\ all cleaned until end` or `( all in parenthisid are ignored )`
 - Defining new words: `: <word> <definition> ;`
 - Loops: `do`, `loop`
@@ -125,3 +139,4 @@ ok>
 - Variables: `variable <name>`, `@` (fetch), `!` (store)
 - constants: `42 constant everything`. cannot be overwritten and writing content directly to stack `everything`
 - flags / value: `true on echo-stack`. can be updated and written content to stack.  `echo-switch`
+- buffers byte aligned
