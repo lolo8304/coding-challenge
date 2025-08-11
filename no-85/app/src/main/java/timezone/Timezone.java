@@ -64,12 +64,12 @@ public class Timezone implements Callable<Result> {
         var now = Instant.now();
         var request = TimeZoneRequest.builder()
                 .source(this.sourceTimezone)
-                .countries(this.split(this.targetTimezoneCities))
-                .cities(this.split(this.targetTimezoneCountries))
+                .countries(this.split(this.targetTimezoneCountries))
+                .cities(this.split(this.targetTimezoneCities))
                 .timezones(this.split(this.targetTimezones))
                 .build();
         if (request.hasAnyParameters()) {
-            request.toTimezoneConverter().run(now);
+            System.out.println(request.toTimezoneConverter().run(now, 1));
             return new Result();
         } else {
             new TimezoneConverterController();
