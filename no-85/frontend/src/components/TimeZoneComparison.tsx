@@ -6,11 +6,8 @@ import WorldMapWithTimezones from "./WorldMapWithTimezones";
 const timeZoneConverterRequest = {
   source: "Europe/Zurich",
   cities: [
-    "GMT+12",
-    "Honolulu",
     "Toronto",
     "London",
-    "Madrid",
     "Los_Angeles",
     "Paris",
     "Berlin",
@@ -18,7 +15,6 @@ const timeZoneConverterRequest = {
     "Mexico_City",
     "Dubai",
     "Tokyo",
-    "New_York",
     "Sydney",
     "GMT-14",
   ],
@@ -46,6 +42,7 @@ const currentUtcString = () => {
 };
 
 const TimeZoneComparison: React.FC = () => {
+  const [simulationSwitch, setSimulationSwitch] = useState(false);
   const [currentUtc, setCurrentUtc] = useState(() => {
     return currentUtcString();
   });
@@ -75,14 +72,14 @@ const TimeZoneComparison: React.FC = () => {
     }, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
-/*
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentUtcHour((prev) => (prev + 1) % 24);
+      if (simulationSwitch) {
+          setCurrentUtcHour((prev) => (prev + 1) % 24);
+      }
     }, 2000); // Update every minute
     return () => clearInterval(interval);
-  }, []);
-*/
+  }, [simulationSwitch]);
   return (
     <div
       style={{
@@ -106,7 +103,15 @@ const TimeZoneComparison: React.FC = () => {
             marginBottom: "5px",
           }}
         >
-          Current UTC: {currentUtc}
+          Current UTC: {currentUtc} <button style={{
+                  border: "1px solid #ddd",
+                  padding: "5px",
+                  backgroundColor: "#c8f7c5",
+              }} onClick={() => {
+                  setSimulationSwitch(!simulationSwitch);
+                  setCurrentUtc(currentUtcString());
+                  setCurrentUtcHour(currentUtcHours());
+              }}>{simulationSwitch ? "Stop " : "Start "} (+1h each 2s)</button>
         </div>
         {!timezoneResults && <p>Loading...</p>}
         {timezoneResults &&
@@ -153,9 +158,9 @@ const TimeZoneComparison: React.FC = () => {
             </div>
           ))}
         <div className="w-400px">
-          <WorldMapWithTimezones
+          {(false && <WorldMapWithTimezones
             timezones={["Europe/Zurich", "America/Toronto"]}
-          />
+          />)}
         </div>
       </div>
     </div>
