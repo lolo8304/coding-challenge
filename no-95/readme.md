@@ -104,7 +104,16 @@ ok> 10 20 +
 <1> 30 ok> 
 ```
 
-- Comparison: `=`, `<`, `>`, `<=`, `>=`, `<>`, `and`, `or`, `not`
+- Comparison: `=`, `<`, `>`, `<=`, `>=`, `<>`, `and`, `or`, `not`, `false`, `true`
+  - boolean are represented as -1 = true. 0 = false
+
+```forth
+ok> 20 10 2 * = . cr
+-1
+ok> 
+```
+
+
 - Stack manipulation: `dup`, `drop`, `swap`, `over`, `2dup`, `2swap`
 - Control flow: `if`, `else`, `then`
 - Input/output: `.` (print top of stack) `cr` for new line
