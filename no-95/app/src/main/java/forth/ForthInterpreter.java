@@ -120,14 +120,6 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             stack.push(n3);
             stack.push(n1);
         });
-        this.addBuiltInWord("rot",  () -> {
-            var n3 = stack.pop();
-            var n2 = stack.pop();
-            var n1 = stack.pop();
-            stack.push(n2);
-            stack.push(n3);
-            stack.push(n1);
-        });
         this.addBuiltInWord("-rot",  () -> {
             var n3 = stack.pop();
             var n2 = stack.pop();
@@ -281,6 +273,12 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             var s = this.memory.readString(address, null);
             interpreter.executePrint(s);
         });
+        this.addBuiltInWord("zcount", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            var s = this.memory.readString(address, null);
+            interpreter.push(address);
+            interpreter.push((long)s.length());
+        });
         this.addBuiltInWord("nip", (ForthInterpreter interpreter) -> {
             var n2 = interpreter.pop();
             interpreter.pop();
@@ -318,7 +316,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             interpreter.push(-1L);
         });
         this.addDynamicWord("not", parser.parse("0 = if -1 else 0 then"));
-        this.run("true TO echo-stack");
+        this.run("false TO echo-stack");
         this.run(": .s? ( -- )  echo-stack IF .S THEN ;");
         this.addBuiltInWord("c,", (ForthInterpreter interpreter) -> {
             // C (address count -> count allot-char [count] ..... )
@@ -469,7 +467,7 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
     public Variable defineVariable(String name, Long length) {
         var address = this.memory.getHere();
         if (this.words.containsKey(name)) {
-            throw new RuntimeException("Variable '" + name + "' already defined");
+            this.executePrint(" redefined "+name+ " ");
         }
         if (address < 0 || address >= memory.getLength()) {
             throw new RuntimeException("Invalid memory address for variable '" + name + "'");

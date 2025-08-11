@@ -21,6 +21,22 @@ public class ForthScanner {
         return line.substring(start, position);
     }
 
+    public String nextTokenUntil(char delimiter) {
+        skipWhitespace();
+        if (position >= line.length()) {
+            return null; // No more tokens
+        }
+        int start = position;
+        while (position < line.length() && line.charAt(position) != delimiter) {
+            position++;
+        }
+        String token = line.substring(start, position);
+        if (position < line.length() && line.charAt(position) == delimiter) {
+            position++; // Skip the delimiter
+        }
+        return token;
+    }
+
     public String nextTokenAfterNewLine() {
         skipWhitespace();
         if (position >= line.length()) {

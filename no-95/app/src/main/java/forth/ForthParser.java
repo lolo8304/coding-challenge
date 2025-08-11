@@ -44,53 +44,52 @@ public class ForthParser {
                 instructions.add(
                         context -> context.push(i)
                 );
-            } else if (tokenLower.equals(".\"") || tokenLower.equals("s\"") || tokenLower.equals(",\"")) {
-                var strBuilder = new StringBuilder();
-                strBuilder.append(tokenLower);
-                token = scanner.nextToken();
-                while (token != null && !token.endsWith("\"")) {
-                    strBuilder.append(' ').append(token);
-                    token = scanner.nextToken();
-                }
-                if (token == null) {
-                    throw new RuntimeException("No end quote \" found");
-                }
-                strBuilder.append(' ').append(token);
-                var builderString = strBuilder.toString(); // format ." _______ _____" (3 --> -1)
-                var isConstantString = builderString.startsWith("s\"");
-                var isPrintString = builderString.startsWith(".\"");
-                var isStringAtHere = builderString.startsWith(",\"");
-                if (isConstantString) {
-                    var constantString = builderString.substring(3, builderString.length() - 1);
-                    instructions.add(
-                            context -> {
-                                Variable variable;
-                                if (context.hasVariable(builderString)) {
-                                    variable = context.getVariable(builderString);
-                                } else {
-                                    variable = context.defineVariable(builderString, (long)constantString.length());
-                                    context.setStringMemory(variable.getAddress(), constantString);
-                                }
-                                context.push(variable.getAddress());
-                                context.push(variable.getLength());
+            } else if (tokenLower.equals("s\"")) {
+                token = scanner.nextTokenUntil('\"');
+                var builderString = "%s %s\"".formatted(tokenLower, token);
+                var constantString = token;
+                instructions.add(
+                        context -> {
+                            Variable variable;
+                            if (context.hasVariable(builderString)) {
+                                variable = context.getVariable(builderString);
+                            } else {
+                                variable = context.defineVariable(builderString, (long)constantString.length());
+                                context.setStringMemory(variable.getAddress(), constantString);
                             }
-                    );
-                } else if (isPrintString) {
-                    var toPrint = builderString.substring(3, builderString.length() - 1);
-                    instructions.add(
-                            context -> context.executePrint(toPrint)
-                    );
-                } else {
-                    var hereString = builderString.substring(3, builderString.length() - 1);
-                    instructions.add(
-                            context -> {
-                                context.pop(); // pop the address of here
-                                var address = context.cellAllot((long)hereString.length());
-                                context.setStringMemory(address, hereString);
-                                context.push(address+hereString.length());
-                            }
-                    );
-                }
+                            context.push(variable.getAddress());
+                            context.push(variable.getLength());
+                        }
+                );
+            } else if (tokenLower.equals("z\"")) {
+                token = scanner.nextTokenUntil('\"');
+                var zString = token;
+                instructions.add(
+                        context -> {
+                            var address = context.pop(); // pop the address of the z-string
+                            context.cellAllot((long)zString.length()+1); // +1 for the zero terminator
+                            context.setStringMemory(address, zString);
+                            context.setCell(address + zString.length(), 0L); // zero terminator
+                            context.push(address + zString.length() + 1); // push the address of the zero terminator
+                        }
+                );
+            } else if (tokenLower.equals(".\"")) {
+                token = scanner.nextTokenUntil('\"');
+                var toPrint = token;
+                instructions.add(
+                        context -> context.executePrint(toPrint)
+                );
+            } else if (tokenLower.equals(",\"")) {
+                token = scanner.nextTokenUntil('\"');
+                var hereString = token;
+                instructions.add(
+                        context -> {
+                            context.pop(); // pop the address of here
+                            var address = context.cellAllot((long)hereString.length());
+                            context.setStringMemory(address, hereString);
+                            context.push(address+hereString.length());
+                        }
+                );
             } else if (tokenLower.equals("if")) {
                 var ifIndex = instructions.size();
                 instructions.add(null); // fill later

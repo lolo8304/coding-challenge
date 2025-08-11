@@ -1,5 +1,5 @@
 \ Define the pixel gradient string (from lightest to darkest)
-create charset s" .tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$" ,
+create charset 41 c, ," .tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 \ Fetch character from charset given an index
 : get-char ( idx -- c )  charset + c@ ;
