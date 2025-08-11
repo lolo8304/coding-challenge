@@ -55,12 +55,31 @@ Welcome to the Forth interpreter!
 ok> 
 ```
 
+- the elements in the stack are displayed with
+  <count> elem1 elem2 ...
+- you switch it off / on with a flag: 
+
+```forth
+<1> 10 ok> false to echo-switch
+ok> 1 7 4 10 20 * . cr
+200
+ok> true to echo-switch
+<3> 1 7 4 ok> 
+```
+
+- `clear` to clean the whole stack
+- `words` to show sorted list of words
+
+
+
 ## Command Line Mode
 You can also execute commands directly from the command line:
 ```bash
-./forth.sh -c "1 2 + ."
-3 ok>
+./forth.sh -c "1 2 + . cr"
+3
+ok>
 ``` 
+
 
 ## File Execution
 You can execute a file containing FORTH commands:   
@@ -78,15 +97,22 @@ ok> 1 2 + .
 
 # Commands implemented
 
-- Arithmetic operations: `+`, `-`, `*`, `/
+- Arithmetic operations: `+`, `-`, `*`, `/`, `mod`
+
+```forth
+ok> 10 20 +
+<1> 30 ok> 
+```
+
 - Comparison: `=`, `<`, `>`, `<=`, `>=`, `<>`, `and`, `or`, `not`
-- Stack manipulation: `dup`, `drop`, `swap`, `over`
+- Stack manipulation: `dup`, `drop`, `swap`, `over`, `2dup`, `2swap`
 - Control flow: `if`, `else`, `then`
-- Input/output: `.` (print top of stack)
-- Comments: `\` (everything after this on the line is ignored)
+- Input/output: `.` (print top of stack) `cr` for new line
+- Comments: `\ all cleaned until end` or `( all in parenthisid are ignored )`
 - Defining new words: `: <word> <definition> ;`
 - Loops: `do`, `loop`
 - Stack inspection: `.s` (show stack)
 - Clear stack: `clear`
 - Variables: `variable <name>`, `@` (fetch), `!` (store)
-
+- constants: `42 constant everything`. cannot be overwritten and writing content directly to stack `everything`
+- flags / value: `true on echo-stack`. can be updated and written content to stack.  `echo-switch`
