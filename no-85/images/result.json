@@ -1,0 +1,15 @@
+[
+  {
+    "source_time": "2025-08-11T16:35:22.011884Z",
+    "source_offset": "-04:00",
+    "target_0_id": "America/Los_Angeles",
+    "target_0_time": "2025-08-11T13:35:22.011884Z",
+    "target_0_offset_to_utc": "-07:00",
+    "target_0_offset_to_source": "-03:00",
+    "target_1_id": "Europe/Zurich",
+    "target_1_time": "2025-08-11T22:35:22.011884Z",
+    "target_1_offset_to_utc": "+02:00",
+    "target_1_offset_to_source": "+06:00",
+    "source_id": "America/New_York"
+  }
+]
