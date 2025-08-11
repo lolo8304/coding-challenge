@@ -8,6 +8,10 @@ by John Crickett
 Write an API that converts a given source time zone into multiple target time zones. The API should accept a date and time in the source time zone and return the equivalent date and time in the target time zones.
 The API should be able to handle daylight saving time changes and other time zone rules.
 
+# Result
+
+![timezone-converter-ui-animated.gif](images/timezone-converter-ui-animated.gif)
+
 # Development
 
 ## Requirements
