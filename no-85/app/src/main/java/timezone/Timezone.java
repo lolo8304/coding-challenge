@@ -9,6 +9,8 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import timezone.api.TimeZoneRequest;
 import timezone.api.TimezoneConverterController;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -69,7 +71,11 @@ public class Timezone implements Callable<Result> {
                 .timezones(this.split(this.targetTimezones))
                 .build();
         if (request.hasAnyParameters()) {
-            System.out.println(request.toTimezoneConverter().run(now, 1));
+            var gson = new GsonBuilder()
+                    .registerTypeAdapter(TimezoneAbbr.class, new TimezoneAbbrJsonAdapter())
+                    .create();
+            var json = gson.toJson(request.toTimezoneConverter().run(now, 1));
+            System.out.println(json);
             return new Result();
         } else {
             new TimezoneConverterController();
