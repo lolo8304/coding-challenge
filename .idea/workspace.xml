@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="" />
+    <list default="true" id="40c46af2-8a5b-43ce-877b-06dc8c1c267c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/app/src/main/java/timezone/Timezone.java" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/app/src/main/java/timezone/Timezone.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/frontend/src/components/TimeZoneComparison.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/frontend/src/components/TimeZoneComparison.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/no-85/timezone-UI.sh" beforeDir="false" afterPath="$PROJECT_DIR$/no-85/timezone-UI.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +21,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;lolo8304&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/lolo8304/coding-challenge.git&quot;,
+    &quot;accountId&quot;: &quot;f1248bf0-3e4c-45d9-b278-b118a05903b6&quot;
+  }
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -28,6 +48,8 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/Lolo/git/coding-challenge&quot;

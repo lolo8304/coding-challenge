@@ -6,4 +6,4 @@ if [ -f "package.json" ]; then
 else
   echo "No package.json found, skipping npm install."
 fi
-npm run
+npm run start
