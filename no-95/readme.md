@@ -320,7 +320,7 @@ variable counter  5 counter !
 \ .s ( -- ) show stack contents (non-standard but common)
 1 2 3 .s cr
 
-\ .s? ( -- flag ) true if stack non-empty? (implementation-specific)
+\ .s? ( -- ) print stack only if bon empty
 .s? . cr
 
 \ / ( n1 n2 -- q ) integer division
@@ -404,8 +404,9 @@ s" Hello" count type cr
 \ dup ( x -- x x ) duplicate top of stack
 5 dup .s cr
 
-\ echo-stack ( -- ) implementation-specific stack echo
-1 2 3 echo-stack  \ behavior depends on your system
+\ echo-stack ( -- bool ) sets flag true / false if stack agould be displayed at every command. default false (implemntation specific)
+true to echo-stack \ switch on
+false to echo-stack \ switch off
 
 \ emit ( char -- ) print a single character
 65 emit cr  \ prints: A
@@ -465,9 +466,6 @@ words
 \ zcount ( z-addr -- c-addr u ) get addr/len of C-string
 create msg z" Hello"
 msg zcount type cr
-
-\ zstr ( c-addr u -- z-addr ) make a zero-terminated string
-s" Hi" zstr zcount type cr
 
 \ ztype ( z-addr -- ) print a zero-terminated string
 create greet z" Hello"
