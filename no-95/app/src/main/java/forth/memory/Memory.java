@@ -4,11 +4,13 @@ public class Memory {
     private final DataAllocator dataAllocator;
     private final byte[] memory;
     private final int align; // Default alignment
+    private long here;
 
     public Memory(Address.Segment segment, int size) {
         this.align = segment == Address.Segment.DATA ? 4 : 1;
         this.dataAllocator = segment == Address.Segment.DATA ? new DataAllocator(segment, 0, this.align) : new DataAllocator(segment, 0);
         this.memory = new byte[size];
+        this.here = 0;
     }
 
     public int getLength() {
@@ -26,13 +28,23 @@ public class Memory {
     }
 
     public String readString(Long address, Long length) {
-        if (address < 0 || address + length > memory.length) {
-            throw new RuntimeException("Invalid memory address or length for string: " + address + ", " + length);
-        }
-        StringBuilder sb = new StringBuilder(length.intValue());
+        StringBuilder sb;
         var addr = Address.fromLong(address, this.align);
-        for (int i = 0; i < length; i++) {
-            sb.append((char) memory[addr.index(i)]);
+        if (length != null) {
+            if (address < 0 || address + length > memory.length) {
+                throw new RuntimeException("Invalid memory address or length for string: " + address + ", " + length);
+            }
+            sb = new StringBuilder(length.intValue());
+            for (int i = 0; i < length; i++) {
+                sb.append((char) memory[addr.index(i)]);
+            }
+        } else {
+            sb = new StringBuilder();
+            int i = 0;
+            while (addr.index(i) < memory.length && memory[addr.index(i)] != 0) {
+                sb.append((char) memory[addr.index(i)]);
+                i++;
+            }
         }
         return sb.toString();
     }
@@ -52,7 +64,7 @@ public class Memory {
         memory[addr.index()] = (byte) (value >> 24);
         memory[addr.index(1)] = (byte) (value >> 16);
         memory[addr.index(2)] = (byte) (value >> 8);
-        memory[addr.index(4)] = (byte) (value & 0xFF);
+        memory[addr.index(3)] = (byte) (value & 0xFF);
     }
 
     public Long readCell(Long address) {
@@ -106,7 +118,7 @@ public class Memory {
             throw new RuntimeException("Not enough constant memory to allot " + length + " characters");
         }
         var address = this.getHere();
-        this.dataAllocator.allot(length.intValue());
+        this.dataAllocator.allotNoAlign(length.intValue());
         return address;
     }
 
@@ -124,7 +136,7 @@ public class Memory {
             throw new RuntimeException("Not enough memory to allot " + length + " cells");
         }
         var address = this.getHere();
-        this.dataAllocator.allot(length.intValue());
+        this.dataAllocator.allot(length.intValue() * this.align);
         return address;
     }
 

@@ -28,7 +28,7 @@ public class CmdLline {
     public void run() throws IOException {
         System.out.println("Welcome to the Forth interpreter!");
         do {
-            System.out.print(this.forth.stackToString());
+            run(".s?");
             System.out.print("ok> ");
             var line = this.readAll();
             if (line.equals("bye") || line.equals("^D")) {
@@ -41,7 +41,7 @@ public class CmdLline {
                 this.run(line);
             } catch (NoSuchElementException e) {
                 System.out.println("Error: stack empty");
-            } catch (Error e) {
+            } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
         } while (true);

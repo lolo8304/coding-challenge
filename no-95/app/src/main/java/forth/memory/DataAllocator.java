@@ -30,5 +30,11 @@ public final class DataAllocator {
         here = Math.addExact(here, n);
         return this.segment == Address.Segment.DATA ? Address.data(start, cellSize) : Address.literal(start, n);   // immutable, segment-relative
     }
+    /** Ensure cell alignment, then allot n bytes and return the start address. */
+    public Address allotNoAlign(int n) {
+        long start = here;
+        here = Math.addExact(here, n);
+        return this.segment == Address.Segment.DATA ? Address.data(start, cellSize) : Address.literal(start, n);   // immutable, segment-relative
+    }
     public long here() { return here; }
 }

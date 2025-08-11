@@ -1,5 +1,6 @@
 package forth;
 
+import forth.memory.Constant;
 import forth.memory.Variable;
 
 import java.util.ArrayDeque;
@@ -43,9 +44,9 @@ public class ForthParser {
                 instructions.add(
                         context -> context.push(i)
                 );
-            } else if (token.equals(".\"") || token.equals("s\"")) {
+            } else if (tokenLower.equals(".\"") || tokenLower.equals("s\"") || tokenLower.equals(",\"")) {
                 var strBuilder = new StringBuilder();
-                strBuilder.append(token);
+                strBuilder.append(tokenLower);
                 token = scanner.nextToken();
                 while (token != null && !token.endsWith("\"")) {
                     strBuilder.append(' ').append(token);
@@ -57,6 +58,8 @@ public class ForthParser {
                 strBuilder.append(' ').append(token);
                 var builderString = strBuilder.toString(); // format ." _______ _____" (3 --> -1)
                 var isConstantString = builderString.startsWith("s\"");
+                var isPrintString = builderString.startsWith(".\"");
+                var isStringAtHere = builderString.startsWith(",\"");
                 if (isConstantString) {
                     var constantString = builderString.substring(3, builderString.length() - 1);
                     instructions.add(
@@ -72,10 +75,20 @@ public class ForthParser {
                                 context.push(variable.getLength());
                             }
                     );
-                } else {
+                } else if (isPrintString) {
                     var toPrint = builderString.substring(3, builderString.length() - 1);
                     instructions.add(
                             context -> context.executePrint(toPrint)
+                    );
+                } else {
+                    var hereString = builderString.substring(3, builderString.length() - 1);
+                    instructions.add(
+                            context -> {
+                                context.pop(); // pop the address of here
+                                var address = context.cellAllot((long)hereString.length());
+                                context.setStringMemory(address, hereString);
+                                context.push(address+hereString.length());
+                            }
                     );
                 }
             } else if (tokenLower.equals("if")) {
@@ -111,7 +124,24 @@ public class ForthParser {
                 }
                 var word = token;
                 instructions.add(
-                        context -> context.defineVariable(word, 0L)
+                        context -> {
+                            context.push(context.defineVariable(word, 0L).getAddress());
+                        }
+                );
+            } else if (tokenLower.equals("char")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition char expects a character");
+                }
+                var character = token;
+                if (character.length() != 1) {
+                    throw new RuntimeException("parsing definition char - expected a single character, got: " + character);
+                }
+                instructions.add(
+                        context -> {
+                            var charValue = (long) character.charAt(0);
+                            context.push(charValue);
+                        }
                 );
             } else if (tokenLower.equals("variable")) {
                 token = scanner.nextToken();
@@ -131,7 +161,41 @@ public class ForthParser {
                 instructions.add(
                         context -> {
                             var value = context.pop();
-                            var constant = context.defineConstant(word, 1L);
+                            var constant = context.defineConstant(word, 1L).makeReadOnly();
+                            context.setCell(constant.getAddress(), value);
+                        }
+                );
+            } else if (tokenLower.equals("value")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition value - word not found");
+                }
+                var word = token;
+                instructions.add(
+                        context -> {
+                            var value = context.pop();
+                            var constant = context.defineConstant(word, 1L).makeReadWrite();
+                            context.setCell(constant.getAddress(), value);
+                        }
+                );
+            } else if (tokenLower.equals("to")) {
+                token = scanner.nextToken();
+                if (token == null) {
+                    throw new RuntimeException("parsing definition value - word not found");
+                }
+                var word = token;
+                instructions.add(
+                        context -> {
+                            var value = context.pop();
+                            Constant constant;
+                            if (context.hasConstant(word)) {
+                                constant = context.getConstant(word);
+                                if (!constant.isWritable()) {
+                                    throw new RuntimeException("Value " + word + " is read-only and cannot be modified");
+                                }
+                            } else {
+                                constant = context.defineConstant(word, 1L).makeReadWrite();
+                            }
                             context.setCell(constant.getAddress(), value);
                         }
                 );

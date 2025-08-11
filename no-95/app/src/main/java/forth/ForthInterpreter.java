@@ -28,8 +28,8 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
         this.words = new HashMap<>();
         this.parser = new ForthParser();
         this.outputBuilder = new StringBuilder();
-        this.memory = new Memory(Address.Segment.DATA,2^20); // 2^20 bytes of memory (1 MB)
-        this.literalMemory = new Memory(Address.Segment.LITERAL, 2^20); // 2^20 bytes of constant memory (1 MB)
+        this.memory = new Memory(Address.Segment.DATA,1 << 20); // 2^20 bytes of memory (1 MB)
+        this.literalMemory = new Memory(Address.Segment.LITERAL, 1 << 20); // 2^20 bytes of constant memory (1 MB)
         this.pc = 0;
         this.initializeBuiltIn();
     }
@@ -276,6 +276,11 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
             var s = this.memory.readString(address, length);
             interpreter.executePrint(s);
         });
+        this.addBuiltInWord("ztype", (ForthInterpreter interpreter) -> {
+            var address = interpreter.pop();
+            var s = this.memory.readString(address, null);
+            interpreter.executePrint(s);
+        });
         this.addBuiltInWord("nip", (ForthInterpreter interpreter) -> {
             var n2 = interpreter.pop();
             interpreter.pop();
@@ -306,6 +311,34 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
                 throw new RuntimeException("Error reading key input: " + e.getMessage());
             }
         });
+        this.addBuiltInWord("false", (ForthInterpreter interpreter) -> {
+            interpreter.push(0L);
+        });
+        this.addBuiltInWord("true", (ForthInterpreter interpreter) -> {
+            interpreter.push(-1L);
+        });
+        this.addDynamicWord("not", parser.parse("0 = if -1 else 0 then"));
+        this.run("true TO echo-stack");
+        this.run(": .s? ( -- )  echo-stack IF .S THEN ;");
+        this.addBuiltInWord("c,", (ForthInterpreter interpreter) -> {
+            // C (address count -> count allot-char [count] ..... )
+            var val = interpreter.pop();
+            var address = interpreter.pop();
+            var allotAddress = interpreter.charAllot(1L);
+            if (!address.equals(allotAddress)) {
+                throw new RuntimeException("Address mismatch: expected " + allotAddress + ", got " + address);
+            }
+            interpreter.setCharMemory(address, (char) val.intValue());
+            interpreter.push(address+1);
+        });
+        this.addBuiltInWord("count", (ForthInterpreter interpreter) -> {
+            // (address -- address+1 length)
+            var address = interpreter.pop();
+            int count = interpreter.getCharMemory(address);
+            interpreter.push(address + 1);
+            interpreter.push((long) count);
+        });
+
     }
 
     public void run(String line) {
@@ -379,7 +412,9 @@ public class ForthInterpreter implements ForthInterpreterOperationsAll {
                     var wordInstructions = (List<Instruction>) list;
                     this.run(wordInstructions);
                 }
-                case Constant constant -> this.stack.push(getCell(constant.getAddress()));
+                case Constant constant -> {
+                    this.stack.push(getCell(constant.getAddress()));
+                }
                 case Variable variable -> this.stack.push(variable.getAddress());
                 default -> {
                 }
