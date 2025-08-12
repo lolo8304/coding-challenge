@@ -50,9 +50,6 @@ public class Mandelbrot implements Callable<Result> {
     @Option(names = "-i", description = "max iterations - default 1000")
     int maxIterations = 1000;
 
-    @Option(names = "-d", description = "dpi in pixel - default 72dpi")
-    int dpi = 72;
-
     @Option(names = "-o", description = "outpuf file name - default mandelbrot.png")
     String outputFileName = "mandelbrot.png";
 
@@ -64,7 +61,7 @@ public class Mandelbrot implements Callable<Result> {
         if (this.guiOutput) this.consoleOutput = false;
         if (this.guiOutput) this.width = width != 100 ? this.width : 1000;
         if (this.consoleOutput) this.width = width != 100 ? this.width : 100;
-        var explorer = new MandelbrotExplorer(this.dpi, this.outputFileName);
+        var explorer = new MandelbrotExplorer();
         var context = this.consoleOutput ? new MandelbrotTerminalContext(explorer, this.width, this.maxIterations) : new MandelbrotGuiContext(explorer, this.width, this.maxIterations);
         explorer.setContext(context);
         explorer.run();

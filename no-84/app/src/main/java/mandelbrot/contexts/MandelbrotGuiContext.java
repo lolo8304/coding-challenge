@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MandelbrotGuiContext extends MandelbrotAbstractContext {
     final int[] context;
@@ -42,6 +44,7 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
         }
         final boolean[] opened = new boolean[1];
         opened[0] = false;
+        System.out.println("Mandelbrot explorer: "+pixelsSpeed+" pixels/s");
         SwingUtilities.invokeLater(() -> {
             var frame = new JFrame("Mandelbrot explorer: "+pixelsSpeed+" pixels/s");
             var panel = new MandelbrotPanel(this);
@@ -125,6 +128,8 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
     class Interpolator {
 
         public static final int MAX_DENSITY = 256;
+        private static Map<String, Color> colorMap = new HashMap<>();
+
         private final Color from;
         private final Color to;
         private Color[] cache;
@@ -132,6 +137,11 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
 
         public static Color hexToColor(String hex) {
             // Remove the '#' if present
+            var hexOriginal = hex;
+            var cachedColor = colorMap.get(hexOriginal);
+            if (cachedColor != null) {
+                return cachedColor;
+            }
             if (hex.startsWith("#")) {
                 hex = hex.substring(1);
             }
@@ -142,7 +152,10 @@ public class MandelbrotGuiContext extends MandelbrotAbstractContext {
             int blue = Integer.parseInt(hex.substring(4, 6), 16);
 
             // Create and return the Color object
-            return new Color(red, green, blue);
+            var c = new Color(red, green, blue);
+            colorMap.put(hexOriginal, c);
+            colorMap.put(hex, c); // also store lower case version
+            return c;
         }
 
 
