@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:4567/timezone-converter?utc=2025-03-26T08:44:44.688522Z
+  url: http://localhost:4567/timezone-converter?utc=2025-08-01T08:00:00Z
   body: json
   auth: inherit
 }
 
 params:query {
-  utc: 2025-03-26T08:44:44.688522Z
+  utc: 2025-08-01T08:00:00Z
 }
 
 headers {
@@ -20,9 +20,7 @@ headers {
 
 body:json {
   {
-    "source": "Europe/Zurich",
-    "countries": [
-      "US", "CA", "AU"
-    ]
+      "source": "America/New_York",
+      "cities": ["Europe/Zurich", "America/Los_Angeles"]
   }
 }
