@@ -22,7 +22,7 @@ technical difficulties:
 
 # Result
 
-![mandelbrot-lol8304-zoomin-explorer-2.gif](images/mandelbrot-lol8304-zoomin-explorer-2.gif)
+![mandelbrot-lolo8304-zoomin-grep.gif](images/mandelbrot-lolo8304-zoomin-grep.gif)
 
 # Development
 
