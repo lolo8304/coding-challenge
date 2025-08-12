@@ -22,7 +22,7 @@ technical difficulties:
 
 # Result
 
-![mandelbrot-explorer-ui.gif](images/mandelbrot-explorer-ui.gif)
+![mandelbrot-lol8304-zoomin-explorer-2.gif](images/mandelbrot-lol8304-zoomin-explorer-2.gif)
 
 # Development
 
@@ -162,6 +162,8 @@ This challenge is to build your own application layer load balancer
 we are comparing the first rendering and calculte the number of pixels / s.
 
 start: -w 1000 -i 10000
+
+you can see speed in the title bar of the window and the console output.
 
 ```bash
 
