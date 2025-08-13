@@ -1,9 +1,6 @@
 package ocr.image;
 
-import ocr.image.processing.MakeGrayscale;
-import ocr.image.processing.Pipeline;
-import ocr.image.processing.ReplaceBackgroundUntilPercentage;
-import ocr.image.processing.Scale;
+import ocr.image.processing.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -73,10 +70,11 @@ public final class SimpleRGBImage {
         }
         ImgBuffer imgBuffer = loadRgbImage(args[0]);
         System.out.println("Loaded: " + imgBuffer.width() + "x" + imgBuffer.height());
+        var backgroundColor = new RGB(255, 0, 0); // Red background
         var pipeline = new Pipeline()
-                .addStep(new ReplaceBackgroundUntilPercentage(75, new RGB(255, 0, 0)))
-                .addStep(new MakeGrayscale())
-                .addStep(new Scale(50));
+                .addStep(new ReplaceBackgroundUntilPercentage(75, backgroundColor))
+                .addStep(new Scale(50))
+                .addStep(new Raster(backgroundColor));
         var image = pipeline.process(new Image(imgBuffer));
         var reconstructed = newRgbImage(image.getWidth(), image.getHeight(), image.getPixels());
 
