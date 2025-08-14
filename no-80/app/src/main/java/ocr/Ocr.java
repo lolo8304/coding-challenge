@@ -18,6 +18,19 @@ public class Ocr implements Callable<Result> {
     @Option(names = "-vv", description = "verbose model level 2")
     boolean verbose2 = false;
 
+    @Option(names = "-s", description = "show image after processing - default is true")
+    boolean showImage = true;
+    @Option(names = "-r", description = "show raster image after processing - default is false")
+    boolean showRasterImage = false;
+    @Option(names = "-c", description = "show contours after processing - default is true")
+    boolean showContours = true;
+
+    @Option(names = "-w", description = "width of the image to process, default is 0 (no scaling)")
+    int width = 0;
+
+    @Option(names = "-f", description = "file to process", required = true)
+    String filePathName = null;
+
     public static void main(String[] args) {
         var ocr = new Ocr();
         var cmd = new CommandLine(ocr);
@@ -38,9 +51,11 @@ public class Ocr implements Callable<Result> {
     }
 
     @Override
-    public Result call() throws IOException {
+    public Result call() throws Exception {
         if (this.verbose) _verbose = 1;
         if (this.verbose2) _verbose = 2;
+        new OcrDetector(this.width, showImage, showRasterImage, showContours)
+                .detectText(this.filePathName);
         return new Result();
     }
 

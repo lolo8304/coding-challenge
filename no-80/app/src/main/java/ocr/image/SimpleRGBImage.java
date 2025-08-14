@@ -37,6 +37,10 @@ public final class SimpleRGBImage {
         return out;
     }
 
+    public static ImgBuffer newRgbImage(Image image) {
+        return newRgbImage(image.getWidth(), image.getHeight(), image.getPixels());
+    }
+
     /** New_img = new_rgb_image(w, h, pixels) */
     public static ImgBuffer newRgbImage(int w, int h, RGB[] pixels) {
         if (pixels.length != w * h)
@@ -45,7 +49,8 @@ public final class SimpleRGBImage {
         int i = 0;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                bi.setRGB(x, y, pixels[i++].toArgb());
+                var p = pixels[i++];
+                bi.setRGB(x, y, p != null ? p.toArgb() : 0); // Default to black if null
             }
         }
         return new ImgBuffer(bi);
